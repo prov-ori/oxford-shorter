@@ -7,3 +7,4 @@
 .sidebar{overflow:hidden}.sidebar>*{flex-shrink:0}.sidebar #toc{flex:1 1 auto;min-height:0;overflow:auto;padding-right:4px}.sidebar-bottom{margin-top:0;padding-top:18px}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 .prose h4,.prose h5,.prose h6{font-family:Georgia,"Times New Roman",serif;line-height:1.5;margin:1.4em 0 .6em;scroll-margin-top:24px}.prose h4{font-size:1.05em}.prose h5,.prose h6{font-size:1em}.prose .box h4,.prose .box h5{font-family:"Segoe UI",Arial,sans-serif;font-size:.85em}.prose .box ul{margin-top:.4em}#partialNotice{background:var(--tint);border-color:var(--line);color:var(--ink)}
+.prose .table-wrap{max-width:100%;overscroll-behavior-x:contain}.prose table{min-width:640px;overflow-wrap:normal}.prose th,.prose td{min-width:160px;vertical-align:top;hyphens:auto}

@@ -45,8 +45,9 @@
     $('readPercent').textContent = st.total ? pct + '%' : '—'; $('readingProgress').value = pct;
     $('readHint').textContent = !st.total ? 'Прогресс появится после добавления оглавления.' : book.outlineComplete ? 'Прочитано разделов по всей книге. Разделы различаются по объёму.' : 'Прогресс по добавленной части оглавления.';
     if (st.partialRead) $('readHint').textContent += ` Также прочитаны доступные части: ${st.partialRead}. Они не засчитываются как целые разделы.`;
-    $('translatedMetric').replaceChildren(document.createTextNode(st.translated + ' '), el('small', 'разделов'));
-    $('readMetric').replaceChildren(document.createTextNode(st.read + ' '), el('small', 'разделов'));
+    const sectionWord = n => n % 100 >= 11 && n % 100 <= 14 ? 'разделов' : n % 10 === 1 ? 'раздел' : n % 10 >= 2 && n % 10 <= 4 ? 'раздела' : 'разделов';
+    $('translatedMetric').replaceChildren(document.createTextNode(st.translated + ' '), el('small', sectionWord(st.translated)));
+    $('readMetric').replaceChildren(document.createTextNode(st.read + ' '), el('small', sectionWord(st.read)));
     $('notesMetric').replaceChildren(document.createTextNode(Object.values(state.notes).filter(n => n.trim()).length + ' '), el('small', 'записей'));
     $('coverageHint').textContent = st.total ? `${st.translated} из ${st.total} полностью${st.partial ? ` · частично: ${st.partial}` : ''} · ${book.outlineComplete ? 'полное оглавление' : 'оглавление добавляется'}` : 'Перевод ещё не добавлен';
     $('continueButton').textContent = sections.some(M.readable) ? (state.lastSection ? 'Продолжить чтение →' : 'Начать с начала →') : sections.length ? 'Открыть оглавление →' : 'Подготовить материалы ↗';
@@ -104,7 +105,7 @@
     if (b.type === 'list') { const list = el(b.ordered ? 'ol' : 'ul'); b.items.forEach(i => list.append(el('li', i))); return list; }
     if (b.type === 'box') { const box = el('aside', undefined, 'box'); box.append(el('h3', b.title), ...b.blocks.map(renderBlock)); return box; }
     if (b.type === 'table') {
-      const wrap = el('div', undefined, 'table-wrap'); const table = el('table'); const head = el('thead'), tr = el('tr'), body = el('tbody');
+      const wrap = el('div', undefined, 'table-wrap'); wrap.tabIndex = 0; wrap.setAttribute('role', 'region'); wrap.setAttribute('aria-label', b.caption + '. Таблица с горизонтальной прокруткой'); const table = el('table'); const head = el('thead'), tr = el('tr'), body = el('tbody');
       b.headers.forEach(h => { const th = el('th', h); th.scope = 'col'; tr.append(th); }); head.append(tr);
       b.rows.forEach(row => { const r = el('tr'); row.forEach(c => r.append(el('td', c))); body.append(r); });
       table.append(el('caption', b.caption), head, body); wrap.append(table); return wrap;

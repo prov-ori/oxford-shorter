@@ -33,7 +33,7 @@ try {
   const page=await context.newPage(); const errors=[]; page.on('pageerror',e=>errors.push(e.message));
   await page.goto(origin); await page.locator('#sourceTitle').waitFor();
   assert.equal(await page.locator('#toc details').count(),29);
-  assert.equal(await page.locator('#translatedMetric').innerText(),'27 разделов');
+  assert.equal(await page.locator('#translatedMetric').innerText(),'33 раздела');
   assert.match(await page.locator('#sourceTitle').innerText(),/26 глав/);
   await page.screenshot({path:path.join(output,'home-desktop.png'),fullPage:true});
   await page.click('#notesButton'); await page.fill('#personalNotes','Общая заметка: проверить источник.'); await page.click('[data-close="notesDialog"]');
@@ -82,7 +82,9 @@ try {
   await page.goto(origin+'/#section=ch03-s04');await page.locator('#sectionTitle').waitFor();assert.match(await page.locator('#article').innerText(),/кататон|Кататон/);
   await page.setViewportSize({width:1365,height:1000});await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:path.join(output,'mental-state-desktop.png')});
   await page.goto(origin+'/#section=ch03-s11');await page.locator('#sectionTitle').waitFor();assert.match(await page.locator('#sectionStatus').innerText(),/Сверено/);assert(!(await page.locator('#completeButton').isDisabled()));
-  await page.click('#nextButton');await page.waitForFunction(()=>location.hash==='#section=ch04-s01');assert(await page.locator('#completeButton').isDisabled());
+  await page.click('#nextButton');await page.waitForFunction(()=>location.hash==='#section=ch04-s01');assert(!(await page.locator('#completeButton').isDisabled()));
+  await page.goto(origin+'/#section=ch04-s04');await page.locator('table').waitFor();assert.equal(await page.locator('table tbody tr').count(),11);
+  await page.goto(origin+'/#section=ch04-s06');await page.locator('#sectionTitle').waitFor();await page.click('#nextButton');await page.waitForFunction(()=>location.hash==='#section=ch05-s01'&&document.getElementById('completeButton').disabled);assert(await page.locator('#completeButton').isDisabled());
   await page.goto(origin+'/#section=index-main');await page.locator('#sectionTitle').waitFor();assert(await page.locator('#nextButton').isDisabled());
   await page.goto(origin+'/#section=ch25-s09');await page.locator('#sectionTitle').waitFor();assert.equal(await page.locator('#sectionTitle').innerText(),'Антидепрессанты');assert(await page.locator('#completeButton').isDisabled());
   await context.close();

@@ -17,9 +17,9 @@ test('chapters and sections run in PDF reading order with separate page labels',
 });
 test('precise published boundary distinguishes complete, partial and pending material',()=>{
   const sections=StudyModel.flatten(book),done=sections.filter(StudyModel.ready);
-  assert.equal(done.length,27);
-  assert.deepEqual(done.map(s=>s.id),book.chapters.filter(c=>c.id==='front'||[1,2,3].includes(c.number)).flatMap(c=>c.sections.map(s=>s.id)));
-  assert.equal(done.at(-1).id,'ch03-s11');
+  assert.equal(done.length,33);
+  assert.deepEqual(done.map(s=>s.id),book.chapters.filter(c=>c.id==='front'||[1,2,3,4].includes(c.number)).flatMap(c=>c.sections.map(s=>s.id)));
+  assert.equal(done.at(-1).id,'ch04-s06');
   assert.deepEqual(sections.filter(s=>s.status==='partial'),[]);
   for(const s of sections.filter(s=>!StudyModel.readable(s))){assert.equal(s.status,'pending');assert.equal(s.blocks.length,0);}
   const completed=sections.find(s=>s.id==='ch01-s03');assert.equal(completed.revision,3);assert.equal(completed.coverage,undefined);assert.equal(completed.source.pdfEnd,29);
@@ -39,7 +39,7 @@ test('new translation preserves box hierarchy, citations, exceptions and editori
 
 test('all chapter 2–3 tables and numbered boxes survive with full text and reading lists',()=>{
   function collect(blocks){return blocks.flatMap(b=>[b,...(b.blocks?collect(b.blocks):[])]);}
-  for(const [chapter,boxCount,tableCount] of [[2,2,3],[3,12,2]]){
+  for(const [chapter,boxCount,tableCount] of [[2,2,3],[3,12,2],[4,5,1]]){
     const c=book.chapters.find(c=>c.number===chapter),blocks=c.sections.flatMap(s=>collect(s.blocks));
     const boxes=blocks.filter(b=>b.type==='box'),tables=blocks.filter(b=>b.type==='table');
     assert.equal(boxes.length,boxCount);assert.equal(tables.length,tableCount);
