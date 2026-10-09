@@ -1,0 +1,11 @@
+{
+  "name": "oxford-shorter-study-ru",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node tools/build-book.mjs",
+    "test": "node --test tests/model.test.mjs tests/content.test.mjs",
+    "start": "node tools/serve.mjs"
+  },
+  "engines": {"node": ">=20"}
+}

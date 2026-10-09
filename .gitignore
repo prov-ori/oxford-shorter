@@ -1,0 +1,9 @@
+node_modules/
+.sites-runtime/
+tmp/
+*.zip
+*.pdf
+test-results/
+dist/data/book.js
+dist/data/book.json
+.vercel/
