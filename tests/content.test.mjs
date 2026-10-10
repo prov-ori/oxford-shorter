@@ -17,9 +17,9 @@ test('chapters and sections run in PDF reading order with separate page labels',
 });
 test('precise published boundary distinguishes complete, partial and pending material',()=>{
   const sections=StudyModel.flatten(book),done=sections.filter(StudyModel.ready);
-  assert.equal(done.length,94);
-  assert.deepEqual(done.map(s=>s.id),book.chapters.filter(c=>c.id==='front'||[1,2,3,4,5,6,7,8,9,10].includes(c.number)).flatMap(c=>c.sections.map(s=>s.id)));
-  assert.equal(done.at(-1).id,'ch10-s13');
+  assert.equal(done.length,116);
+  assert.deepEqual(done.map(s=>s.id),book.chapters.filter(c=>c.id==='front'||[1,2,3,4,5,6,7,8,9,10,11,12].includes(c.number)).flatMap(c=>c.sections.map(s=>s.id)));
+  assert.equal(done.at(-1).id,'ch12-s10');
   assert.deepEqual(sections.filter(s=>s.status==='partial'),[]);
   for(const s of sections.filter(s=>!StudyModel.readable(s))){assert.equal(s.status,'pending');assert.equal(s.blocks.length,0);}
   const completed=sections.find(s=>s.id==='ch01-s03');assert.equal(completed.revision,3);assert.equal(completed.coverage,undefined);assert.equal(completed.source.pdfEnd,29);
@@ -66,7 +66,7 @@ test('chapters 7–8 preserve numbered boxes, tables and source boundaries',()=>
   for(let n=1;n<=count;n++)assert(boxes.some(b=>b.title.includes(number+'.'+n)));
  }
  const c=book.chapters.find(c=>c.number===8);assert.equal(c.sections.flatMap(s=>collect(s.blocks)).filter(b=>b.type==='table').length,2);
- assert.equal(c.sections[5].source.pdfStart,191);assert.equal(book.chapters.find(c=>c.number===11).sections[0].status,'pending');
+ assert.equal(c.sections[5].source.pdfStart,191);assert.equal(book.chapters.find(c=>c.number===13).sections[0].status,'pending');
  const panic=c.sections[4].blocks.map(StudyModel.blockText).join(' ');
  for(const value of ['2,7%','4,7%','40%','30 дней','5 мг','шести месяцев','12 недель'])assert(panic.includes(value),value);
 });
@@ -103,4 +103,18 @@ test('bipolar chapter preserves diagnostic, trial and monitoring data from the P
  const text=c.sections.map(s=>s.blocks.map(StudyModel.blockText).join('\n')).join('\n');for(const marker of ['20 мг/кг/сут','NNT), — 6,6','100 мг каждую неделю','HbA1c','младше 55 лет','31%','16%','59%','69%','54%'])assert(text.includes(marker),marker);
  const figures=bs.filter(b=>b.type==='figure');assert.equal(figures.length,1);const svg=await fs.readFile(new URL('../dist/'+figures[0].src,import.meta.url),'utf8');assert.equal((svg.match(/<circle /g)||[]).length,14);assert(!/<script|onload=/i.test(svg));
  assert.equal(c.sections.at(-1).blocks.length,3);assert(c.sections[3].editorNotes[0].includes('не обязательно'));
+});
+
+test('chapters 11–12 preserve source inserts, family risk and diagnostic distinctions',async()=>{
+ function all(bs){return bs.flatMap(b=>[b,...(b.blocks?all(b.blocks):[])]);}
+ for(const [number,sections,boxes,tables] of [[11,12,22,4],[12,10,4,1]]){
+  const c=book.chapters.find(c=>c.number===number),bs=c.sections.flatMap(s=>all(s.blocks));
+  assert.equal(c.sections.length,sections);assert(c.sections.every(StudyModel.ready));assert.equal(bs.filter(b=>b.type==='box').length,boxes);assert.equal(bs.filter(b=>b.type==='table').length,tables);
+  for(let n=1;n<=boxes;n++)assert(bs.some(b=>b.type==='box'&&new RegExp(number+'\\.'+n+'(?:[^0-9]|$)').test(b.title)),number+'.'+n);
+ }
+ const c=book.chapters.find(c=>c.number===11),bs=c.sections.flatMap(s=>all(s.blocks));const risk=bs.find(b=>b.type==='table'&&b.caption.includes('11.4'));assert.equal(risk.rows.length,8);assert.equal(risk.rows[0][1],'48%');assert.equal(risk.rows[5][1],'46%');
+ const figures=bs.filter(b=>b.type==='figure');assert.equal(figures.length,1);const svg=await fs.readFile(new URL('../dist/'+figures[0].src,import.meta.url),'utf8');assert(svg.includes('<svg'));assert(!/<script|onload=/i.test(svg));assert.equal(c.sections.at(-1).blocks.length,2);
+ const d=book.chapters.find(c=>c.number===12),dbs=d.sections.flatMap(s=>all(s.blocks));assert.equal(dbs.find(b=>b.type==='table').rows.length,6);assert.equal(d.sections.at(-1).blocks[0].items.length,3);
+ const text=d.sections.map(s=>s.blocks.map(StudyModel.blockText).join(' ')).join(' ');for(const value of ['трёх месяцев','одного месяца','0,18%','21%','43%','Более 90%','56%','отношением шансов 6'])assert(text.includes(value),value);
+ assert(d.sections[3].editorNotes[0].includes('12.3'));assert(d.sections[5].editorNotes[0].includes('не являются индивидуальной вероятностью'));
 });
