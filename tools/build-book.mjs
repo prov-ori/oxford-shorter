@@ -17,7 +17,8 @@ import * as chapter08a from '../content/translation-ch08a.mjs';
 import * as chapter08b from '../content/translation-ch08b.mjs';
 import * as chapter08c from '../content/translation-ch08c.mjs';
 import * as chapter08d from '../content/translation-ch08d.mjs';
-const batches=[batch001,batch003,chapter02,chapter03a,chapter03b,chapter04,chapter05a,chapter05b,chapter06a,chapter06b,chapter06c,chapter07,chapter08a,chapter08b,chapter08c,chapter08d];
+import * as chapter08e from '../content/translation-ch08e.mjs';
+const batches=[batch001,batch003,chapter02,chapter03a,chapter03b,chapter04,chapter05a,chapter05b,chapter06a,chapter06b,chapter06c,chapter07,chapter08a,chapter08b,chapter08c,chapter08d,chapter08e];
 const translations=Object.assign({},...batches.map(b=>b.translations));
 const glossary=[...new Map(batches.flatMap(b=>b.glossary||[]).map(g=>[g.en.toLowerCase(),g])).values()];
 import '../dist/model.js';
@@ -54,7 +55,7 @@ chapters.push({id:'index',kind:'backmatter',title:'Предметный указ
 // Accurate, visually verified extents for the completed material.
 Object.assign(chapters[1].sections[0].source,{pdfEnd:10,printedPages:'1'});
 Object.assign(chapters[1].sections[1].source,{pdfEnd:13,printedPages:'2–4'});
-const book={schemaVersion:1,id:'shorter-oxford-psychiatry-8-ru',revision:6,title:'Shorter Oxford Textbook of Psychiatry',titleRu:'Краткий Оксфордский учебник психиатрии',edition:'8-е издание · 2026',source:{filename:'v4o9kdwe8i3gfuy.pdf',sha256:'fab335843a3b7b270fea2fe8d110eba9cebb69f6a6305bf1baa9fb8471b5a14d',pageCount:881,bibliographicTitle:'Shorter Oxford Textbook of Psychiatry, 8th edition',authors:['Paul Harrison','Philip Cowen','Mina Fazel','Kamaldeep Bhui'],isbn:'9780192871053',publishedYear:2026},outlineComplete:true,outlineScope:'major-sections',outlineNote:'Все 26 глав, их основные разделы, рекомендуемая литература, список литературы и указатель. Вложенные заголовки сохраняются внутри переведённых разделов.',translationBoundary:'Предварительные материалы и первые семь глав переведены полностью. В главе 8 переведены первые шесть разделов, включая генерализованное тревожное расстройство, фобии, паническое расстройство и культурные различия. Последняя переведённая страница — печатная 182 (PDF 191). Далее — обсессивно-компульсивное расстройство.',chapters,glossary};
+const book={schemaVersion:1,id:'shorter-oxford-psychiatry-8-ru',revision:7,title:'Shorter Oxford Textbook of Psychiatry',titleRu:'Краткий Оксфордский учебник психиатрии',edition:'8-е издание · 2026',source:{filename:'v4o9kdwe8i3gfuy.pdf',sha256:'fab335843a3b7b270fea2fe8d110eba9cebb69f6a6305bf1baa9fb8471b5a14d',pageCount:881,bibliographicTitle:'Shorter Oxford Textbook of Psychiatry, 8th edition',authors:['Paul Harrison','Philip Cowen','Mina Fazel','Kamaldeep Bhui'],isbn:'9780192871053',publishedYear:2026},outlineComplete:true,outlineScope:'major-sections',outlineNote:'Все 26 глав, их основные разделы, рекомендуемая литература, список литературы и указатель. Вложенные заголовки сохраняются внутри переведённых разделов.',translationBoundary:'Предварительные материалы и первые семь глав переведены полностью. В главе 8 переведены первые семь разделов, включая обсессивно-компульсивное расстройство. Последний переведённый текст — печатная стр.188 (PDF197), перед разделом о связанных с ОКР расстройствах. Остались этот раздел и рекомендуемая литература главы8.',chapters,glossary};
 StudyModel.validateBook(book);
 const json=JSON.stringify(book,null,2);
 await fs.mkdir(path.join(root,'dist/data'),{recursive:true});
