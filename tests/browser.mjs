@@ -33,7 +33,7 @@ try {
   const page=await context.newPage(); const errors=[]; page.on('pageerror',e=>errors.push(e.message));
   await page.goto(origin); await page.locator('#sourceTitle').waitFor();
   assert.equal(await page.locator('#toc details').count(),29);
-  assert.equal(await page.locator('#translatedMetric').innerText(),'81 раздел');
+  assert.equal(await page.locator('#translatedMetric').innerText(),'94 раздела');
   assert.match(await page.locator('#sourceTitle').innerText(),/26 глав/);
   await page.screenshot({path:path.join(output,'home-desktop.png'),fullPage:true});
   await page.click('#notesButton'); await page.fill('#personalNotes','Общая заметка: проверить источник.'); await page.click('[data-close="notesDialog"]');
@@ -84,8 +84,11 @@ try {
   await page.goto(origin+'/#section=ch03-s11');await page.locator('#sectionTitle').waitFor();assert.match(await page.locator('#sectionStatus').innerText(),/Сверено/);assert(!(await page.locator('#completeButton').isDisabled()));
   await page.click('#nextButton');await page.waitForFunction(()=>location.hash==='#section=ch04-s01');assert(!(await page.locator('#completeButton').isDisabled()));
   await page.goto(origin+'/#section=ch04-s04');await page.locator('table').waitFor();assert.equal(await page.locator('table tbody tr').count(),11);
-  await page.goto(origin+'/#section=ch09-s13');await page.locator('#sectionTitle').waitFor();await page.click('#nextButton');await page.waitForFunction(()=>location.hash==='#section=ch10-s01'&&document.getElementById('completeButton').disabled);assert(await page.locator('#completeButton').isDisabled());
+  await page.goto(origin+'/#section=ch10-s13');await page.locator('#sectionTitle').waitFor();await page.click('#nextButton');await page.waitForFunction(()=>location.hash==='#section=ch11-s01'&&document.getElementById('completeButton').disabled);assert(await page.locator('#completeButton').isDisabled());
   await page.goto(origin+'/#section=ch06-s03');await page.locator('#article img').first().waitFor({state:'attached'});assert.equal(await page.locator('#article img').count(),2);for(const img of await page.locator('#article img').all()){await img.locator('..').scrollIntoViewIfNeeded();await img.evaluate(i=>i.decode());assert(await img.evaluate(i=>i.naturalWidth>0));}
+  await page.goto(origin+'/#section=ch10-s10');await page.locator('table').waitFor();assert.equal(await page.locator('table tbody tr').count(),8);assert.match(await page.locator('#article').innerText(),/0,65–2,47/);
+  await page.goto(origin+'/#section=ch10-s12');await page.locator('#article img').waitFor({state:'attached'});assert.equal(await page.locator('#article .box').count(),4);await page.locator('#article img').scrollIntoViewIfNeeded();await page.locator('#article img').evaluate(i=>i.decode());await page.screenshot({path:path.join(output,'bipolar-figure-desktop.png')});
+  await page.setViewportSize({width:390,height:844});await page.locator('#article img').scrollIntoViewIfNeeded();assert(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));await page.screenshot({path:path.join(output,'bipolar-figure-mobile.png')});await page.click('#notesButton');assert.equal(await page.locator('#summary li').count(),4);await page.fill('#personalNotes','Глава 10: сверить ранние признаки рецидива.');await page.click('[data-close="notesDialog"]');await page.reload();await page.click('#notesButton');assert.equal(await page.inputValue('#personalNotes'),'Глава 10: сверить ранние признаки рецидива.');await page.click('[data-close="notesDialog"]');
   await page.goto(origin+'/#section=index-main');await page.locator('#sectionTitle').waitFor();assert(await page.locator('#nextButton').isDisabled());
   await page.goto(origin+'/#section=ch25-s09');await page.locator('#sectionTitle').waitFor();assert.equal(await page.locator('#sectionTitle').innerText(),'Антидепрессанты');assert(await page.locator('#completeButton').isDisabled());
   await context.close();
