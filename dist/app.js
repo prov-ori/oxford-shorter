@@ -113,7 +113,8 @@
     const figure = el('figure'), image = el('img'); image.src = b.src; image.alt = b.alt; image.loading = 'lazy'; figure.append(image, el('figcaption', b.caption)); return figure;
   }
   function renderRoute() {
-    recordPosition(); stopSpeech();
+    const continueReading = autoAdvance; autoAdvance = false;
+    recordPosition(); stopSpeech(continueReading ? 'keep' : undefined);
     let id = null; try { if (location.hash.startsWith('#section=')) id = decodeURIComponent(location.hash.slice(9)); } catch { /* Unknown route displays overview. */ }
     current = sections.find(s => s.id === id) || null;
     if (id && !current) toast('Этот раздел ещё не добавлен. Открыт обзор библиотеки.');
@@ -150,7 +151,11 @@
       $('previousButton').disabled = sections.indexOf(current) === 0;
       $('nextButton').disabled = sections.indexOf(current) === sections.length - 1;
       updateCompleteButton(); updateSpeechUI();
-    }
+      if (continueReading) {
+        if (current.blocks.length && voices.length) { window.scrollTo(0, 0); startReading(); }
+        else { stopBackground(); $('speechStatus').textContent = 'Чтение остановлено: перевод следующего раздела ещё не добавлен.'; }
+      }
+    } else if (continueReading) stopBackground();
     updateStats(); renderToc(); renderNotes(); save();
     const restoreId = current?.id; requestAnimationFrame(() => { if (current?.id === restoreId) window.scrollTo(0, restoreId ? state.positions[restoreId] || 0 : 0); });
   }
@@ -203,7 +208,9 @@
   }
   // Фоновое воспроизведение: беззвучный зацикленный звук заставляет браузер считать страницу медиа-плеером
   // (вкладку не усыпляют, появляются кнопки управления), а сторож возобновляет речь, если браузер её остановил.
-  let keepAlive = null, watchdog = null, stalled = 0;
+  let keepAlive = null, watchdog = null, stalled = 0, autoAdvance = false;
+  const AUTO_KEY = 'psychiatry-auto-next';
+  const autoNextOn = () => { try { return localStorage.getItem(AUTO_KEY) !== '0'; } catch { return true; } };
   function silenceUrl() {
     const rate = 8000, n = rate * 2, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
     const str = (o, t) => [...t].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
@@ -250,8 +257,8 @@
     clearInterval(watchdog); watchdog = null; stalled = 0; keepAlive?.pause();
     if ('mediaSession' in navigator) { try { navigator.mediaSession.playbackState = 'none'; navigator.mediaSession.metadata = null; } catch (e) {} }
   }
-  function stopSpeech() {
-    stopBackground();
+  function stopSpeech(mode) {
+    if (mode !== 'keep') stopBackground();
     speechToken++; speechMode = 'idle'; activeUtterance = null;
     if ('speechSynthesis' in window) speechSynthesis.cancel();
     document.querySelectorAll('.speaking').forEach(n => n.classList.remove('speaking'));
@@ -259,7 +266,10 @@
   }
   function sayNext(token) {
     if (token !== speechToken) return;
-    if (speechIndex >= speechQueue.length) { stopSpeech(); $('speechStatus').textContent = current?.status === 'partial' ? 'Доступная часть озвучена. Продолжение раздела ещё переводится.' : 'Раздел озвучен. Отметьте его прочитанным, когда будете готовы.'; return; }
+    if (speechIndex >= speechQueue.length) {
+      const next = sections[sections.indexOf(current) + 1];
+      if (autoNextOn() && next?.blocks.length) { autoAdvance = true; $('speechStatus').textContent = 'Переход к следующему разделу…'; route(next.id); return; }
+      stopSpeech(); $('speechStatus').textContent = current?.status === 'partial' ? 'Доступная часть озвучена. Продолжение раздела ещё переводится.' : (next && !next.blocks.length && autoNextOn() ? 'Раздел озвучен. Дальше перевод ещё не добавлен.' : 'Раздел озвучен. Отметьте его прочитанным, когда будете готовы.'); return; }
     const item = speechQueue[speechIndex]; document.querySelectorAll('.speaking').forEach(n => n.classList.remove('speaking'));
     $('article').querySelector(`[data-block="${item.block}"]`)?.classList.add('speaking');
     const utterance = new SpeechSynthesisUtterance(item.text); activeUtterance = utterance; utterance.lang = 'ru-RU'; utterance.rate = state.rate;
@@ -272,7 +282,10 @@
     if (!current?.blocks.length || !voices.length) return;
     if (speechMode === 'speaking') { speechSynthesis.pause(); speechMode = 'paused'; updateSpeechUI(); return; }
     if (speechMode === 'paused') { speechSynthesis.resume(); speechMode = 'speaking'; updateSpeechUI(); return; }
-    stopSpeech(); speechQueue = current.blocks.flatMap((b,i) => M.chunks(M.blockText(b)).map(text => ({text, block:i})));
+    stopSpeech(); startReading();
+  }
+  function startReading() {
+    speechQueue = current.blocks.flatMap((b,i) => M.chunks(M.blockText(b)).map(text => ({text, block:i})));
     speechIndex = 0; speechMode = 'speaking'; startBackground(); sayNext(speechToken);
   }
   function viewPdf(page = 1) { if (!pdf) return; if (pdfUrl) URL.revokeObjectURL(pdfUrl); pdfUrl = URL.createObjectURL(pdf.blob); window.open(pdfUrl + '#page=' + page, '_blank', 'noopener,noreferrer'); }
@@ -338,8 +351,10 @@
     } catch (e) { libraryMessage('Копия не восстановлена: ' + e.message); }
   };
   function applyPreferences() { document.documentElement.style.setProperty('--text-size', state.fontSize + 'px'); $('fontSize').value = String(state.fontSize); $('rateSelect').value = String(state.rate); fillVoices(); }
-  $('speakButton').onclick = speak; $('stopButton').onclick = stopSpeech;
+  $('speakButton').onclick = speak; $('stopButton').onclick = () => stopSpeech();
   $('speechSettingsButton').onclick = () => { fillVoices(); $('speechDialog').showModal(); };
+  $('autoNext').checked = autoNextOn();
+  $('autoNext').onchange = () => { try { localStorage.setItem(AUTO_KEY, $('autoNext').checked ? '1' : '0'); } catch { /* настройка не сохранится */ } };
   $('voiceSelect').onchange = () => { stopSpeech(); state.voice = $('voiceSelect').value; save(); };
   $('rateSelect').onchange = () => { stopSpeech(); state.rate = Number($('rateSelect').value); save(); };
   $('fontSize').onchange = () => { state.fontSize = Number($('fontSize').value); document.documentElement.style.setProperty('--text-size', state.fontSize + 'px'); save(); };

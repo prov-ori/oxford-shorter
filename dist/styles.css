@@ -10,3 +10,4 @@
 .prose .table-wrap{max-width:100%;overscroll-behavior-x:contain}.prose table{min-width:640px;overflow-wrap:normal}.prose th,.prose td{min-width:160px;vertical-align:top;hyphens:auto}
 .prose figure img{display:block;width:100%;aspect-ratio:auto 3 / 2;object-fit:contain}
 .nav-link{padding:10px 16px;border-radius:7px;color:var(--ink);text-decoration:none;line-height:1.4}.nav-link:hover{background:var(--tint)}@media(max-width:580px){.top-actions .nav-link{padding:9px;font-size:12px}}
+.field-check{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:14px;line-height:1.5}.field-check input{margin-top:4px;width:18px;height:18px;flex:none}
