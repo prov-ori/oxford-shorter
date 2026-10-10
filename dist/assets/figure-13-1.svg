@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-labelledby="title desc">
+<title id="title">Переходы между расстройствами пищевого поведения</title>
+<desc id="desc">Качественная перерисовка рисунка13.1. Между тремя категориями возможны переходы; внешние стрелки означают выздоровление. Ширина стрелок приблизительна, числовых вероятностей нет.</desc>
+<defs><marker id="tip" markerWidth="1.6" markerHeight="1.6" refX="1.2" refY="0.8" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L1.5,.8 L0,1.6 Z" fill="#eff7f0" stroke="#4c6557" stroke-width=".06"/></marker></defs>
+<rect width="800" height="600" fill="#fff"/>
+<g font-family="Arial,sans-serif" fill="#244e3e"><text x="400" y="35" text-anchor="middle" font-size="23">Переходы во времени</text>
+<path d="M390,305 L390,95 A210,210 0 0,1 554,174 Z" fill="#b2d6bf" stroke="#4c6557"/>
+<path d="M390,305 L554,174 A210,210 0 0,1 455,505 Z" fill="#d8e9dc" stroke="#4c6557"/>
+<path d="M390,305 L455,505 A210,210 0 1,1 390,95 Z" fill="#80bc9a" stroke="#4c6557"/>
+<g stroke="#4c6557" fill="none"><g stroke="#4c6557" stroke-width="26"><path d="M413,210 L325,210"/><path d="M450,250 L450,315"/><path d="M422,410 L333,410"/><path d="M190,305 L127,305"/></g>
+<g stroke="#eff7f0" stroke-width="23" marker-end="url(#tip)"><path d="M413,210 L325,210"/><path d="M450,250 L450,315"/><path d="M422,410 L333,410"/><path d="M190,305 L127,305"/></g>
+<g stroke="#4c6557" stroke-width="12"><path d="M337,170 L407,170"/><path d="M491,270 L491,218"/><path d="M340,450 L406,450"/><path d="M460,125 L460,75"/></g>
+<g stroke="#eff7f0" stroke-width="9" marker-end="url(#tip)"><path d="M337,170 L407,170"/><path d="M491,270 L491,218"/><path d="M340,450 L406,450"/><path d="M460,125 L460,75"/></g>
+<path d="M568,370 L628,370" stroke="#4c6557" stroke-width="17"/><path d="M568,370 L628,370" stroke="#eff7f0" stroke-width="14" marker-end="url(#tip)"/></g>
+<text x="485" y="87" font-size="19">Нервная анорексия</text><text x="592" y="422" font-size="19">Нервная булимия</text>
+<text x="60" y="453" font-size="19"><tspan x="60">Атипичные пищевые</tspan><tspan x="60" dy="25">расстройства</tspan></text>
+<text x="400" y="550" text-anchor="middle" font-size="16">Стрелки за пределы круга — выздоровление.</text>
+<text x="400" y="575" text-anchor="middle" font-size="14">Качественная схема: ширина стрелок приблизительна, проценты не заданы.</text></g></svg>

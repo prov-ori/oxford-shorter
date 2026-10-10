@@ -33,7 +33,7 @@ try {
   const page=await context.newPage(); const errors=[]; page.on('pageerror',e=>errors.push(e.message));
   await page.goto(origin); await page.locator('#sourceTitle').waitFor();
   assert.equal(await page.locator('#toc details').count(),29);
-  assert.equal(await page.locator('#translatedMetric').innerText(),'116 разделов');
+  assert.equal(await page.locator('#translatedMetric').innerText(),'151 раздел');
   assert.match(await page.locator('#sourceTitle').innerText(),/26 глав/);
   await page.screenshot({path:path.join(output,'home-desktop.png'),fullPage:true});
   await page.click('#notesButton'); await page.fill('#personalNotes','Общая заметка: проверить источник.'); await page.click('[data-close="notesDialog"]');
@@ -84,7 +84,7 @@ try {
   await page.goto(origin+'/#section=ch03-s11');await page.locator('#sectionTitle').waitFor();assert.match(await page.locator('#sectionStatus').innerText(),/Сверено/);assert(!(await page.locator('#completeButton').isDisabled()));
   await page.click('#nextButton');await page.waitForFunction(()=>location.hash==='#section=ch04-s01');assert(!(await page.locator('#completeButton').isDisabled()));
   await page.goto(origin+'/#section=ch04-s04');await page.locator('table').waitFor();assert.equal(await page.locator('table tbody tr').count(),11);
-  await page.goto(origin+'/#section=ch12-s10');await page.locator('#sectionTitle').waitFor();await page.click('#nextButton');await page.waitForFunction(()=>location.hash==='#section=ch13-s01'&&document.getElementById('completeButton').disabled);assert(await page.locator('#completeButton').isDisabled());
+  await page.goto(origin+'/#section=ch15-s15');await page.locator('#sectionTitle').waitFor();await page.click('#nextButton');await page.waitForFunction(()=>location.hash==='#section=ch16-s01'&&document.getElementById('completeButton').disabled);assert(await page.locator('#completeButton').isDisabled());
   await page.goto(origin+'/#section=ch06-s03');await page.locator('#article img').first().waitFor({state:'attached'});assert.equal(await page.locator('#article img').count(),2);for(const img of await page.locator('#article img').all()){await img.locator('..').scrollIntoViewIfNeeded();await img.evaluate(i=>i.decode());assert(await img.evaluate(i=>i.naturalWidth>0));}
   await page.goto(origin+'/#section=ch10-s10');await page.locator('table').waitFor();assert.equal(await page.locator('table tbody tr').count(),8);assert.match(await page.locator('#article').innerText(),/0,65–2,47/);
   await page.goto(origin+'/#section=ch10-s12');await page.locator('#article img').waitFor({state:'attached'});assert.equal(await page.locator('#article .box').count(),4);await page.locator('#article img').scrollIntoViewIfNeeded();await page.locator('#article img').evaluate(i=>i.decode());await page.screenshot({path:path.join(output,'bipolar-figure-desktop.png')});
@@ -92,11 +92,16 @@ try {
   await page.goto(origin+'/#section=ch11-s05');await page.locator('#article img').waitFor({state:'attached'});await page.locator('#article img').scrollIntoViewIfNeeded();await page.locator('#article img').evaluate(i=>i.decode());assert(await page.locator('#article img').evaluate(i=>i.naturalWidth>0));await page.screenshot({path:path.join(output,'schizophrenia-figure-mobile.png')});
   await page.goto(origin+'/#section=ch12-s04');await page.locator('table').waitFor();assert.equal(await page.locator('table tbody tr').count(),6);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));await page.screenshot({path:path.join(output,'delusional-types-mobile.png')});
   await page.goto(origin+'/#section=ch12-s06');await page.locator('#sectionTitle').waitFor();assert.match(await page.locator('#article').innerText(),/Интерметаморфоз/);await page.click('#notesButton');assert.equal(await page.locator('#summary li').count(),5);await page.fill('#personalNotes','Глава 12: отличать бред от сверхценной идеи.');await page.click('[data-close="notesDialog"]');await page.reload();await page.click('#notesButton');assert.equal(await page.inputValue('#personalNotes'),'Глава 12: отличать бред от сверхценной идеи.');await page.click('[data-close="notesDialog"]');
+  await page.goto(origin+'/#section=ch13-s02');await page.locator('#article img').waitFor({state:'attached'});await page.locator('#article img').scrollIntoViewIfNeeded();await page.locator('#article img').evaluate(i=>i.decode());assert(await page.locator('#article img').evaluate(i=>i.naturalWidth>0));
+  await page.goto(origin+'/#section=ch14-s07');await page.locator('table').first().waitFor();assert.equal(await page.locator('#article .box').count(),14);assert.equal(await page.locator('table').count(),3);
+  await page.goto(origin+'/#section=ch15-s07');await page.locator('table').waitFor();assert.equal(await page.locator('#article .box').count(),8);assert.equal(await page.locator('table tbody tr').count(),11);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));await page.locator('table').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,'personality-criteria-mobile.png')});
+  await page.goto(origin+'/#section=ch15-s13');await page.locator('#sectionTitle').waitFor();assert.equal(await page.locator('#article .box').count(),2);await page.click('#notesButton');assert.equal(await page.locator('#summary li').count(),6);await page.fill('#personalNotes','Глава 15: различать симптоматические и функциональные исходы.');await page.click('[data-close="notesDialog"]');await page.reload();await page.click('#notesButton');assert.equal(await page.inputValue('#personalNotes'),'Глава 15: различать симптоматические и функциональные исходы.');await page.click('[data-close="notesDialog"]');
   await page.goto(origin+'/#section=index-main');await page.locator('#sectionTitle').waitFor();assert(await page.locator('#nextButton').isDisabled());
   await page.goto(origin+'/#section=ch25-s09');await page.locator('#sectionTitle').waitFor();assert.equal(await page.locator('#sectionTitle').innerText(),'Антидепрессанты');assert(await page.locator('#completeButton').isDisabled());
   await context.close();
   const ctx=await browser.newContext({viewport:{width:1365,height:1000},acceptDownloads:true});
   await ctx.addInitScript(()=>{
+    localStorage.setItem('psychiatry-auto-next','0');
     let active; const voice={name:'Тестовый русский голос',lang:'ru-RU',voiceURI:'test-ru',localService:true};
     window.fakeSpeech={cancelled:0,paused:0,resumed:0,spoken:[],getVoices:()=>[voice],addEventListener:()=>{},cancel(){this.cancelled++;active=null;},pause(){this.paused++;},resume(){this.resumed++;},speak(u){active=u;this.spoken.push(u.text);},finish(){active?.onend?.();}};
     Object.defineProperty(window,'speechSynthesis',{value:window.fakeSpeech,configurable:true});
@@ -134,4 +139,5 @@ try {
   await p.click('[data-close="libraryDialog"]');await p.setViewportSize({width:390,height:844});assert(await p.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));
   await p.screenshot({path:path.join(output,'reader-mobile-test-only.png'),fullPage:true});
   assert.deepEqual(errors,[]);console.log('PASS: actual PDF-linked content, partial reading boundaries and progress, responsive layouts, notes persistence, safe rendering, speech controls/cancel, source validation, exports, backup restore and package update.');
-} finally {await browser?.close();await new Promise(resolve=>server.close(resolve));}
+} catch(error) {console.error(error);throw error;} finally {await browser?.close();server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
+
