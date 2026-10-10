@@ -17,10 +17,10 @@ test('chapters and sections run in PDF reading order with separate page labels',
 });
 test('precise published boundary distinguishes complete, partial and pending material',()=>{
   const sections=StudyModel.flatten(book),done=sections.filter(StudyModel.ready);
-  assert.equal(done.length,74);
-  assert.deepEqual(done.map(s=>s.id),book.chapters.filter(c=>c.id==='front'||[1,2,3,4,5,6,7,8,9].includes(c.number)).flatMap(c=>(c.number===9?c.sections.slice(0,6):c.sections).map(s=>s.id)));
-  assert.equal(done.at(-1).id,'ch09-s06');
-  assert.deepEqual(sections.filter(s=>s.status==='partial').map(s=>s.id),['ch09-s07']);
+  assert.equal(done.length,81);
+  assert.deepEqual(done.map(s=>s.id),book.chapters.filter(c=>c.id==='front'||[1,2,3,4,5,6,7,8,9].includes(c.number)).flatMap(c=>c.sections.map(s=>s.id)));
+  assert.equal(done.at(-1).id,'ch09-s13');
+  assert.deepEqual(sections.filter(s=>s.status==='partial'),[]);
   for(const s of sections.filter(s=>!StudyModel.readable(s))){assert.equal(s.status,'pending');assert.equal(s.blocks.length,0);}
   const completed=sections.find(s=>s.id==='ch01-s03');assert.equal(completed.revision,3);assert.equal(completed.coverage,undefined);assert.equal(completed.source.pdfEnd,29);
   assert(sections.every(s=>/[а-яё]/i.test(s.title)));
@@ -66,7 +66,7 @@ test('chapters 7–8 preserve numbered boxes, tables and source boundaries',()=>
   for(let n=1;n<=count;n++)assert(boxes.some(b=>b.title.includes(number+'.'+n)));
  }
  const c=book.chapters.find(c=>c.number===8);assert.equal(c.sections.flatMap(s=>collect(s.blocks)).filter(b=>b.type==='table').length,2);
- assert.equal(c.sections[5].source.pdfStart,191);assert.equal(book.chapters.find(c=>c.number===9).sections[7].status,'pending');
+ assert.equal(c.sections[5].source.pdfStart,191);assert.equal(book.chapters.find(c=>c.number===10).sections[0].status,'pending');
  const panic=c.sections[4].blocks.map(StudyModel.blockText).join(' ');
  for(const value of ['2,7%','4,7%','40%','30 дней','5 мг','шести месяцев','12 недель'])assert(panic.includes(value),value);
 });
@@ -75,11 +75,21 @@ test('chapter 9 keeps complete clinical and classification source material',()=>
  const c=book.chapters.find(c=>c.number===9);
  function collect(blocks){return blocks.flatMap(b=>[b,...(b.blocks?collect(b.blocks):[])]);}
  const blocks=c.sections.flatMap(s=>collect(s.blocks));
- assert.equal(blocks.filter(b=>b.type==='box').length,4);assert.equal(blocks.filter(b=>b.type==='table').length,4);
+ assert.equal(blocks.filter(b=>b.type==='box').length,12);assert.equal(blocks.filter(b=>b.type==='table').length,6);
  for(let n=1;n<=3;n++)assert(blocks.some(b=>b.type==='box'&&b.title.includes('9.'+n)));
  for(let n=1;n<=3;n++)assert(blocks.some(b=>b.type==='table'&&b.caption.includes('9.'+n)));
  const criteria=blocks.find(b=>b.type==='box'&&b.title.includes('9.1'));assert.equal(collect(criteria.blocks).filter(b=>b.type==='list').flatMap(b=>b.items).length,10);
  const classification=c.sections[3];assert.equal(classification.editorNotes.length,3);
  const epidemiology=c.sections[5].blocks.map(StudyModel.blockText).join(' ');for(const value of ['2–5%','4–30%','10–20%','27 лет','18–44','1–6%','8%'])assert(epidemiology.includes(value),value);
- assert.equal(c.sections[5].source.pdfEnd,213);assert.equal(c.sections[6].status,'partial');assert.equal(c.sections[6].coverage.pdfEnd,215);assert.equal(c.sections[7].status,'pending');
+ assert.equal(c.sections[5].source.pdfEnd,213);assert.equal(c.sections[6].status,'translated');assert.equal(c.sections[6].coverage,undefined);assert.equal(c.sections[6].revision,3);assert.equal(c.sections[12].status,'translated');
+});
+
+test('complete depression chapter retains all numbered boxes and treatment source data',async()=>{
+ const c=book.chapters.find(c=>c.number===9);function collect(bs){return bs.flatMap(b=>[b,...(b.blocks?collect(b.blocks):[])]);}
+ const bs=c.sections.flatMap(s=>collect(s.blocks));
+ for(let n=1;n<=12;n++)assert(bs.some(b=>b.type==='box'&&new RegExp('9\\.'+n+'(?:[^0-9]|$)').test(b.title)),n);
+ const drug=bs.find(b=>b.type==='table'&&/9\.4/.test(b.caption));assert.equal(drug.rows.length,10);assert.equal(drug.headers.length,6);assert.deepEqual(drug.rows[0],['Амитриптилин','+++','+++','+++','+','+++']);
+ const relapse=bs.find(b=>b.type==='table'&&b.caption.includes('Данные рисунка'));assert.equal(relapse.rows.length,6);assert.deepEqual(relapse.rows.at(-1),['Всего','32','465/2527 (18%)','1031/2505 (41%)','−245,7','205,4']);
+ const figures=bs.filter(b=>b.type==='figure');assert.equal(figures.length,2);for(const f of figures){const s=await fs.readFile(new URL('../dist/'+f.src,import.meta.url),'utf8');assert(s.includes('<svg'));assert(!/<script|onload=/i.test(s));}
+ assert(c.sections.every(s=>s.summary.length>0&&StudyModel.ready(s)));assert.equal(c.sections.at(-1).blocks.length,3);
 });

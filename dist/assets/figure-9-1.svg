@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600" role="img" aria-labelledby="title desc">
+<title id="title">Рисунок 9.1. Когнитивные процессы и депрессия</title><desc id="desc">Депрессия двусторонне связана с когнитивным контролем, когнитивными искажениями и когнитивной регуляцией эмоций. Контроль направлен к двум нижним процессам, которые также двусторонне связаны.</desc>
+<defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto-start-reverse"><path d="M0 0L8 4L0 8z" fill="#334155"/></marker></defs>
+<rect width="1000" height="600" fill="white"/>
+<g fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)">
+<path d="M500 130V205" marker-start="url(#a)"/><path d="M500 290L260 365"/><path d="M500 290L740 365"/>
+<path d="M450 435H550" marker-start="url(#a)"/><path d="M355 87H65V435H95" marker-start="url(#a)"/><path d="M645 87H935V435H905" marker-start="url(#a)"/>
+</g>
+<g fill="#f8fafc" stroke="#334155" stroke-width="2"><rect x="355" y="45" width="290" height="85"/><rect x="355" y="205" width="290" height="85"/><rect x="95" y="365" width="355" height="195"/><rect x="550" y="365" width="355" height="195"/></g>
+<g fill="#172b40" font-family="Arial, sans-serif" font-size="23" text-anchor="middle">
+<text x="500" y="95" font-weight="bold">Депрессия</text><text x="500" y="255" font-weight="bold">Когнитивный контроль</text>
+<text x="272" y="405" font-weight="bold">Когнитивные искажения</text><text x="272" y="442">Обработка информации о себе</text><text x="272" y="477">Внимание и интерпретация</text><text x="272" y="512">Память</text>
+<text x="727" y="400" font-weight="bold">Когнитивная регуляция</text><text x="727" y="430" font-weight="bold">эмоций</text><text x="727" y="465">↑ Руминации</text><text x="727" y="500">↓ Переоценка</text><text x="727" y="535">↓ Отвлечение</text></g></svg>
