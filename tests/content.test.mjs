@@ -17,9 +17,9 @@ test('chapters and sections run in PDF reading order with separate page labels',
 });
 test('precise published boundary distinguishes complete, partial and pending material',()=>{
   const sections=StudyModel.flatten(book),done=sections.filter(StudyModel.ready);
-  assert.equal(done.length,33);
-  assert.deepEqual(done.map(s=>s.id),book.chapters.filter(c=>c.id==='front'||[1,2,3,4].includes(c.number)).flatMap(c=>c.sections.map(s=>s.id)));
-  assert.equal(done.at(-1).id,'ch04-s06');
+  assert.equal(done.length,50);
+  assert.deepEqual(done.map(s=>s.id),book.chapters.filter(c=>c.id==='front'||[1,2,3,4,5,6].includes(c.number)).flatMap(c=>c.sections.map(s=>s.id)));
+  assert.equal(done.at(-1).id,'ch06-s10');
   assert.deepEqual(sections.filter(s=>s.status==='partial'),[]);
   for(const s of sections.filter(s=>!StudyModel.readable(s))){assert.equal(s.status,'pending');assert.equal(s.blocks.length,0);}
   const completed=sections.find(s=>s.id==='ch01-s03');assert.equal(completed.revision,3);assert.equal(completed.coverage,undefined);assert.equal(completed.source.pdfEnd,29);
@@ -39,12 +39,12 @@ test('new translation preserves box hierarchy, citations, exceptions and editori
 
 test('all chapter 2–3 tables and numbered boxes survive with full text and reading lists',()=>{
   function collect(blocks){return blocks.flatMap(b=>[b,...(b.blocks?collect(b.blocks):[])]);}
-  for(const [chapter,boxCount,tableCount] of [[2,2,3],[3,12,2],[4,5,1]]){
+  for(const [chapter,boxCount,tableCount] of [[2,2,3],[3,12,2],[4,5,1],[5,6,3],[6,3,4]]){
     const c=book.chapters.find(c=>c.number===chapter),blocks=c.sections.flatMap(s=>collect(s.blocks));
     const boxes=blocks.filter(b=>b.type==='box'),tables=blocks.filter(b=>b.type==='table');
     assert.equal(boxes.length,boxCount);assert.equal(tables.length,tableCount);
     for(let n=1;n<=boxCount;n++)assert(boxes.some(b=>b.title.includes(`${chapter}.${n}.`)||new RegExp(`${chapter}\\.${n}(?:\\s|$)`).test(b.title)),`Missing box ${chapter}.${n}`);
-    for(let n=1;n<=tableCount;n++)assert(tables.some(b=>b.caption.includes(`${chapter}.${n}`)),`Missing table ${chapter}.${n}`);
+    for(let n=1;n<=(chapter===6?2:tableCount);n++)assert(tables.some(b=>b.caption.includes(`${chapter}.${n}`)),`Missing table ${chapter}.${n}`);
     assert(c.sections.at(-1).blocks.length>0);assert(c.sections.every(s=>s.summary.length>0));
   }
 });
@@ -55,3 +55,5 @@ test('all general-issues subheadings, references and editor distinction are reta
   for(const citation of ['Berrios, 1996','Stanghellini and Broome, 2014','Oyebode, 2022','Jaspers, 1963','Jaspers (1968)','Fabrega, 2000'])assert(text.includes(citation));
   assert.equal(s.editorNotes.length,2);assert(!text.includes('Обе формулировки исходника сохранены'));
 });
+
+test('scientific figures are packaged',async()=>{const s=StudyModel.flatten(book).find(s=>s.id==='ch06-s03');const figures=s.blocks.filter(b=>b.type==='figure');assert.equal(figures.length,2);for(const f of figures){const svg=await fs.readFile(new URL('../dist/'+f.src,import.meta.url),'utf8');assert(svg.includes('<svg'));assert(!/<script|onload=/i.test(svg));}});

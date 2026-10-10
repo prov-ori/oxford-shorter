@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-12 -8 1792 1086" role="img" aria-labelledby="title description">
+<title id="title">Рисунок 6.2. Сеть сравнений методов лечения острой мании</title>
+<desc id="description">Четырнадцать узлов и тридцать три прямых сравнения, воспроизведённые по рисунку 6.2 предоставленного учебника. Узлы: азенапин, карбамазепин, рисперидон, кветиапин, вальпроат, топирамат, зипрасидон, оланзапин, галоперидол, ламотриджин, литий, габапентин, плацебо и арипипразол. Положение и относительные размеры узлов, а также относительная толщина линий измерены по исходному растру. В оригинале толщина линий пропорциональна числу испытаний для каждой пары методов лечения, размер узлов — числу рандомизированных участников. Численные значения этих показателей в рисунке не приведены.</desc>
+<metadata>Source: v4o9kdwe8i3gfuy.pdf, PDF page 136, printed page 127, Figure 6.2; native embedded raster 1748 by 1061 pixels. Coordinates and radii measured from the source, 33 edges verified against all 91 node pairs. Russian labels replace English labels. Geometric tracing; not a recovery of trial counts or participant counts.</metadata>
+<rect x="-12" y="-8" width="1792" height="1086" fill="#ffffff"/>
+<g id="comparisons" fill="none" stroke="#000000" stroke-linecap="butt">
+<line data-pair="asenapine olanzapine" x1="837.0" y1="51.5" x2="73.5" y2="635.5" stroke-width="1.863"/>
+<line data-pair="asenapine placebo" x1="837.0" y1="51.5" x2="1175.0" y2="958.0" stroke-width="1.836"/>
+<line data-pair="carbamazepine valproate" x1="498.5" y1="97.0" x2="1447.0" y2="230.0" stroke-width="1.092"/>
+<line data-pair="carbamazepine haloperidol" x1="498.5" y1="97.0" x2="1599.5" y2="635.0" stroke-width="1.831"/>
+<line data-pair="carbamazepine lithium" x1="498.5" y1="97.0" x2="1447.5" y2="826.0" stroke-width="1.873"/>
+<line data-pair="carbamazepine placebo" x1="498.5" y1="97.0" x2="1175.0" y2="958.0" stroke-width="1.116"/>
+<line data-pair="risperidone quetiapine" x1="1174.5" y1="97.5" x2="224.5" y2="230.0" stroke-width="1.091"/>
+<line data-pair="risperidone olanzapine" x1="1174.5" y1="97.5" x2="73.5" y2="635.5" stroke-width="1.116"/>
+<line data-pair="risperidone haloperidol" x1="1174.5" y1="97.5" x2="1599.5" y2="635.0" stroke-width="1.859"/>
+<line data-pair="risperidone lithium" x1="1174.5" y1="97.5" x2="1447.5" y2="826.0" stroke-width="1.111"/>
+<line data-pair="risperidone placebo" x1="1174.5" y1="97.5" x2="1175.0" y2="958.0" stroke-width="3.87"/>
+<line data-pair="quetiapine haloperidol" x1="224.5" y1="230.0" x2="1599.5" y2="635.0" stroke-width="1.096"/>
+<line data-pair="quetiapine lithium" x1="224.5" y1="230.0" x2="1447.5" y2="826.0" stroke-width="1.83"/>
+<line data-pair="quetiapine placebo" x1="224.5" y1="230.0" x2="1175.0" y2="958.0" stroke-width="4.101"/>
+<line data-pair="valproate olanzapine" x1="1447.0" y1="230.0" x2="73.5" y2="635.5" stroke-width="1.822"/>
+<line data-pair="valproate lithium" x1="1447.0" y1="230.0" x2="1447.5" y2="826.0" stroke-width="1.149"/>
+<line data-pair="valproate placebo" x1="1447.0" y1="230.0" x2="1175.0" y2="958.0" stroke-width="1.823"/>
+<line data-pair="topiramate lithium" x1="74.0" y1="422.0" x2="1447.5" y2="826.0" stroke-width="1.853"/>
+<line data-pair="topiramate placebo" x1="74.0" y1="422.0" x2="1175.0" y2="958.0" stroke-width="4.076"/>
+<line data-pair="ziprasidone haloperidol" x1="1599.0" y1="421.5" x2="1599.5" y2="635.0" stroke-width="0.871"/>
+<line data-pair="ziprasidone placebo" x1="1599.0" y1="421.5" x2="1175.0" y2="958.0" stroke-width="4.135"/>
+<line data-pair="olanzapine haloperidol" x1="73.5" y1="635.5" x2="1599.5" y2="635.0" stroke-width="1.647"/>
+<line data-pair="olanzapine lithium" x1="73.5" y1="635.5" x2="1447.5" y2="826.0" stroke-width="1.787"/>
+<line data-pair="olanzapine placebo" x1="73.5" y1="635.5" x2="1175.0" y2="958.0" stroke-width="4.047"/>
+<line data-pair="haloperidol lithium" x1="1599.5" y1="635.0" x2="1447.5" y2="826.0" stroke-width="1.102"/>
+<line data-pair="haloperidol placebo" x1="1599.5" y1="635.0" x2="1175.0" y2="958.0" stroke-width="4.141"/>
+<line data-pair="haloperidol aripiprazole" x1="1599.5" y1="635.0" x2="836.5" y2="1005.5" stroke-width="1.911"/>
+<line data-pair="lamotrigine lithium" x1="225.0" y1="826.0" x2="1447.5" y2="826.0" stroke-width="2.003"/>
+<line data-pair="lamotrigine placebo" x1="225.0" y1="826.0" x2="1175.0" y2="958.0" stroke-width="1.767"/>
+<line data-pair="lithium placebo" x1="1447.5" y1="826.0" x2="1175.0" y2="958.0" stroke-width="4.058"/>
+<line data-pair="lithium aripiprazole" x1="1447.5" y1="826.0" x2="836.5" y2="1005.5" stroke-width="1.494"/>
+<line data-pair="gabapentin placebo" x1="498.0" y1="958.0" x2="1175.0" y2="958.0" stroke-width="0.889"/>
+<line data-pair="placebo aripiprazole" x1="1175.0" y1="958.0" x2="836.5" y2="1005.5" stroke-width="4.067"/>
+</g><g id="treatments" fill="#96cbad" stroke="#000000" stroke-width="1.8">
+<circle data-node="asenapine" cx="837.0" cy="51.5" r="7.75"/>
+<circle data-node="carbamazepine" cx="498.5" cy="97.0" r="7.00"/>
+<circle data-node="risperidone" cx="1174.5" cy="97.5" r="14.45"/>
+<circle data-node="quetiapine" cx="224.5" cy="230.0" r="11.50"/>
+<circle data-node="valproate" cx="1447.0" cy="230.0" r="11.10"/>
+<circle data-node="topiramate" cx="74.0" cy="422.0" r="9.05"/>
+<circle data-node="ziprasidone" cx="1599.0" cy="421.5" r="11.15"/>
+<circle data-node="olanzapine" cx="73.5" cy="635.5" r="20.35"/>
+<circle data-node="haloperidol" cx="1599.5" cy="635.0" r="14.20"/>
+<circle data-node="lamotrigine" cx="225.0" cy="826.0" r="5.90"/>
+<circle data-node="lithium" cx="1447.5" cy="826.0" r="11.90"/>
+<circle data-node="gabapentin" cx="498.0" cy="958.0" r="5.85"/>
+<circle data-node="placebo" cx="1175.0" cy="958.0" r="48.05"/>
+<circle data-node="aripiprazole" cx="836.5" cy="1005.5" r="14.45"/>
+</g><g id="labels" font-family="Arial, Helvetica, sans-serif" font-size="31" fill="#111111">
+<text data-label="asenapine" x="837" y="28" text-anchor="middle">Азенапин</text>
+<text data-label="carbamazepine" x="498.5" y="77" text-anchor="middle">Карбамазепин</text>
+<text data-label="risperidone" x="1174.5" y="73" text-anchor="middle">Рисперидон</text>
+<text data-label="quetiapine" x="224.5" y="204" text-anchor="middle">Кветиапин</text>
+<text data-label="valproate" x="1447" y="203" text-anchor="middle">Вальпроат</text>
+<text data-label="topiramate" x="0" y="397" text-anchor="start">Топирамат</text>
+<text data-label="ziprasidone" x="1599" y="393" text-anchor="middle">Зипрасидон</text>
+<text data-label="olanzapine" x="0" y="703" text-anchor="start">Оланзапин</text>
+<text data-label="haloperidol" x="1764" y="707" text-anchor="end">Галоперидол</text>
+<text data-label="lamotrigine" x="225" y="880" text-anchor="middle">Ламотриджин</text>
+<text data-label="lithium" x="1447.5" y="887" text-anchor="middle">Литий</text>
+<text data-label="gabapentin" x="498" y="1005" text-anchor="middle">Габапентин</text>
+<text data-label="placebo" x="1175" y="1051" text-anchor="middle">Плацебо</text>
+<text data-label="aripiprazole" x="836.5" y="1055" text-anchor="middle">Арипипразол</text>
+</g></svg>
