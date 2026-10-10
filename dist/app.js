@@ -201,10 +201,11 @@
   function updateSpeechUI() {
     $('speakButton').disabled = !current?.blocks.length || !voices.length;
     $('speakButton').textContent = speechMode === 'speaking' ? 'Ⅱ Пауза' : speechMode === 'paused' ? '▶ Продолжить' : '▶ Слушать';
-    $('stopButton').disabled = speechMode === 'idle';
+    $('stopButton').disabled = speechMode === 'idle'; $('prevParaButton').disabled = $('nextParaButton').disabled = speechMode === 'idle';
+    $('article').classList.toggle('can-seek', Boolean(current?.blocks.length && voices.length));
     if (speechMode !== 'idle' && 'mediaSession' in navigator) { try { navigator.mediaSession.playbackState = speechMode === 'paused' ? 'paused' : 'playing'; } catch (e) {} }
     if (speechMode !== 'idle') $('speechStatus').textContent = `${speechMode === 'paused' ? 'Пауза' : 'Чтение'} · фрагмент ${speechIndex + 1} из ${speechQueue.length}`;
-    else $('speechStatus').textContent = !('speechSynthesis' in window) ? 'Этот браузер не поддерживает Web Speech API.' : !voices.length ? 'Русский голос пока не доступен. Проверьте настройки голоса.' : 'Озвучивается текст открытого раздела.';
+    else $('speechStatus').textContent = !('speechSynthesis' in window) ? 'Этот браузер не поддерживает Web Speech API.' : !voices.length ? 'Русский голос пока не доступен. Проверьте настройки голоса.' : 'Озвучивается текст открытого раздела. Нажмите на абзац, чтобы слушать с него.';
   }
   // Фоновое воспроизведение: беззвучный зацикленный звук заставляет браузер считать страницу медиа-плеером
   // (вкладку не усыпляют, появляются кнопки управления), а сторож возобновляет речь, если браузер её остановил.
@@ -220,10 +221,29 @@
     for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, (i % 80) < 40 ? 16 : -16, true);
     return URL.createObjectURL(new Blob([buf], {type: 'audio/wav'}));
   }
-  function skipChunk(step) {
+  // Перемотка по абзацам (блокам). Очередь содержит фрагменты ≤220 символов, у каждого указан номер блока.
+  function revealBlock(block) {
+    const node = $('article').querySelector(`[data-block="${block}"]`); if (!node) return;
+    const r = node.getBoundingClientRect(); if (r.top < 80 || r.bottom > innerHeight) node.scrollIntoView({block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+  }
+  function seekTo(index) {
+    if (index < 0 || index >= speechQueue.length) return;
+    const wasPaused = speechMode === 'paused';
+    speechIndex = index; speechMode = 'speaking'; speechSynthesis.cancel(); if (wasPaused) speechSynthesis.resume();
+    sayNext(++speechToken); revealBlock(speechQueue[index].block);
+  }
+  function skipBlock(dir) {
     if (speechMode === 'idle' || !speechQueue.length) return;
-    speechIndex = Math.max(0, Math.min(speechQueue.length - 1, speechIndex + step));
-    speechMode = 'speaking'; speechSynthesis.cancel(); sayNext(++speechToken);
+    const cur = speechQueue[speechIndex].block, start = speechQueue.findIndex(q => q.block === cur);
+    if (dir > 0) { const i = speechQueue.findIndex(q => q.block > cur); if (i >= 0) seekTo(i); return; }
+    // «Назад»: сначала к началу текущего абзаца, повторное нажатие — к предыдущему.
+    if (speechIndex > start) return seekTo(start);
+    if (start > 0) seekTo(speechQueue.findIndex(q => q.block === speechQueue[start - 1].block));
+  }
+  function speakFromBlock(block) {
+    if (!current?.blocks.length || !voices.length) return;
+    if (speechMode === 'idle') { stopSpeech(); startReading(block); return; }
+    seekTo(speechQueue.findIndex(q => q.block >= block));
   }
   function setupMediaSession() {
     if (!('mediaSession' in navigator)) return;
@@ -233,8 +253,8 @@
       on('play', () => { if (speechMode === 'paused') speak(); });
       on('pause', () => { if (speechMode === 'speaking') speak(); });
       on('stop', stopSpeech);
-      on('previoustrack', () => skipChunk(-1));
-      on('nexttrack', () => skipChunk(1));
+      on('previoustrack', () => skipBlock(-1));
+      on('nexttrack', () => skipBlock(1));
     } catch (e) {}
   }
   function checkSpeech() {
@@ -284,9 +304,9 @@
     if (speechMode === 'paused') { speechSynthesis.resume(); speechMode = 'speaking'; updateSpeechUI(); return; }
     stopSpeech(); startReading();
   }
-  function startReading() {
+  function startReading(fromBlock = 0) {
     speechQueue = current.blocks.flatMap((b,i) => M.chunks(M.blockText(b)).map(text => ({text, block:i})));
-    speechIndex = 0; speechMode = 'speaking'; startBackground(); sayNext(speechToken);
+    speechIndex = Math.max(0, speechQueue.findIndex(q => q.block >= fromBlock)); speechMode = 'speaking'; startBackground(); sayNext(speechToken);
   }
   function viewPdf(page = 1) { if (!pdf) return; if (pdfUrl) URL.revokeObjectURL(pdfUrl); pdfUrl = URL.createObjectURL(pdf.blob); window.open(pdfUrl + '#page=' + page, '_blank', 'noopener,noreferrer'); }
   function showLibrary() { renderLibrary(); $('libraryDialog').showModal(); }
@@ -351,6 +371,11 @@
     } catch (e) { libraryMessage('Копия не восстановлена: ' + e.message); }
   };
   function applyPreferences() { document.documentElement.style.setProperty('--text-size', state.fontSize + 'px'); $('fontSize').value = String(state.fontSize); $('rateSelect').value = String(state.rate); fillVoices(); }
+  $('prevParaButton').onclick = () => skipBlock(-1); $('nextParaButton').onclick = () => skipBlock(1);
+  $('article').addEventListener('click', e => {
+    if (e.target.closest('a, button, summary, input, textarea, select') || String(getSelection()).trim()) return; // ссылки и выделение текста не трогаем
+    const node = e.target.closest('[data-block]'); if (node && $('article').contains(node)) speakFromBlock(Number(node.dataset.block));
+  });
   $('speakButton').onclick = speak; $('stopButton').onclick = () => stopSpeech();
   $('speechSettingsButton').onclick = () => { fillVoices(); $('speechDialog').showModal(); };
   $('autoNext').checked = autoNextOn();

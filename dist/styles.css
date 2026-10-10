@@ -11,3 +11,4 @@
 .prose figure img{display:block;width:100%;aspect-ratio:auto 3 / 2;object-fit:contain}
 .nav-link{padding:10px 16px;border-radius:7px;color:var(--ink);text-decoration:none;line-height:1.4}.nav-link:hover{background:var(--tint)}@media(max-width:580px){.top-actions .nav-link{padding:9px;font-size:12px}}
 .field-check{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:14px;line-height:1.5}.field-check input{margin-top:4px;width:18px;height:18px;flex:none}
+.prose.can-seek [data-block]{cursor:pointer}.prose.can-seek [data-block]:hover:not(.speaking){background:rgba(237,241,231,.7);border-radius:4px}
