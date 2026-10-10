@@ -1,60 +1,95 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Интерактивный гайд по личной библиотеке: оглавление, зачем нужна каждая книга и что она даёт.">
-<title>Полная библиотека — Гайд</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Личная библиотека: что читать сейчас, что позже и зачем нужна каждая книга.">
+<meta name="theme-color" content="#233e36"><title>Книги · Учебная библиотека</title>
+<link rel="stylesheet" href="styles.css">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',Tahoma,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:15px;color:#333}
-.wrap{max-width:1100px;margin:0 auto;background:#fff;border-radius:12px;overflow:clip;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:30px 20px;text-align:center;position:relative}
-header h1{font-size:1.8em;margin-bottom:8px}
-.back{position:absolute;left:16px;top:12px;color:#fff;font-size:.85em;text-decoration:none;opacity:.9}
-.back:hover{text-decoration:underline}
-.search-row{padding:15px 20px 0}
-.search{width:100%;padding:12px;border:2px solid #667eea;border-radius:8px;font-size:1em}
-.filters{display:flex;flex-wrap:wrap;gap:8px;padding:20px;background:#f8f9fa;justify-content:center;border-bottom:2px solid #e9ecef;position:sticky;top:0;z-index:10;margin-top:15px}
-.filter-btn{padding:8px 16px;border:2px solid #667eea;background:#fff;color:#667eea;border-radius:20px;cursor:pointer;font-size:.9em;font-weight:600}
-.filter-btn.active{background:#667eea;color:#fff}
-.list{padding:20px}
-.empty{text-align:center;color:#666;padding:20px}
-.card{background:#f8f9fa;border-left:5px solid #667eea;border-radius:8px;margin-bottom:15px;padding:18px;cursor:pointer;transition:.2s}
-.card:hover{transform:translateX(3px);box-shadow:0 4px 12px rgba(102,126,234,.2)}
-.card:focus-visible{outline:3px solid #764ba2;outline-offset:2px}
-.card h3{color:#333;font-size:1.15em;margin-bottom:4px}
-.card .author{color:#764ba2;font-size:.9em;font-style:italic;margin-bottom:8px}
-.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:600;margin-right:6px;margin-bottom:6px}
-.b-now{background:#d4edda;color:#155724}
-.b-later{background:#fff3cd;color:#856404}
-.b-skip{background:#f8d7da;color:#721c24}
-.b-track{background:#d1ecf1;color:#0c5460}
-.details{display:none;margin-top:15px;padding-top:15px;border-top:1px solid #ddd;line-height:1.7}
-.details.open{display:block}
-.details h4{color:#764ba2;margin:12px 0 6px;font-size:1em}
-.toc{background:#fff;padding:10px 15px;border-radius:6px;margin:8px 0;font-size:.92em}
-.toc a{color:#764ba2}
-footer{text-align:center;padding:20px;color:#666;background:#f8f9fa}
-@media(max-width:580px){body{padding:0}.wrap{border-radius:0}header{padding:40px 16px 24px}header h1{font-size:1.4em}.search-row{padding:15px 16px 0}.filters{padding:10px 16px;gap:6px;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;scrollbar-width:none}.filter-btn{padding:6px 12px;font-size:.8em;flex:none;white-space:nowrap}.list{padding:16px}}
-@media(prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+.nav-link[aria-current=page]{background:var(--tint)}
+.lib{max-width:920px;margin:0 auto;padding:44px 40px 0}
+.lib h1{font-size:44px}
+.lib h1 em{color:#6e8a6c}
+.lib-lede{max-width:600px;color:var(--muted);font-size:15px}
+.lib-status{display:grid;grid-template-columns:repeat(4,1fr);margin:34px 0 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.lib-status button{background:none;border-radius:0;text-align:left;padding:18px 20px 16px;border-left:1px solid var(--line);color:var(--ink);position:relative}
+.lib-status button:first-child{border-left:0;padding-left:0}
+.lib-status strong{display:block;font:400 34px/1.1 Georgia,serif;margin-top:6px}
+.lib-status small{display:block;color:var(--muted);font-size:12px;margin-top:4px;line-height:1.4}
+.lib-status button[aria-pressed=true]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;background:var(--dot)}
+.lib-status button:first-child[aria-pressed=true]::after{left:0}
+.lib-status button:hover{filter:none;background:var(--tint)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--dot);margin-right:7px;vertical-align:1px}
+.s-now{--dot:#3d7a5c}.s-later{--dot:#c4924f}.s-caution{--dot:#b25b3e}.s-skip{--dot:#a3aaa3}
+.lib-tools{position:sticky;top:0;z-index:5;background:var(--paper);padding:18px 0 14px;border-bottom:1px solid var(--line);display:grid;gap:12px}
+.lib-tools .search{background:var(--surface)}
+.lib-tools .search input{font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12px;color:var(--ink)}
+.chips button span{color:var(--muted);margin-left:3px}
+.chips button[aria-pressed=true]{background:var(--green);border-color:var(--green);color:#fff}
+.chips button[aria-pressed=true] span{color:#cfe0d6}
+.lib-count{font-size:12px;color:var(--muted);margin:18px 0 4px;display:flex;justify-content:space-between;gap:12px}
+.lib-count button{background:none;padding:0;color:var(--green);font-weight:600;font-size:12px}
+.books{list-style:none;padding:0;margin:0}
+.book{border-bottom:1px solid var(--line)}
+.book-head{display:grid;grid-template-columns:1fr auto;gap:6px 18px;align-items:start;width:100%;background:none;border-radius:0;text-align:left;color:var(--ink);padding:20px 0}
+.book-head:hover{filter:none}
+.book-head:hover .book-title{color:var(--green)}
+.book-title{font:400 21px/1.3 Georgia,serif;display:block}
+.book-author{display:block;color:var(--muted);font-size:13px;margin-top:3px}
+.book-meta{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin-top:9px;font-size:12px}
+.book-meta .badge{background:none;padding:0;font-size:12px;white-space:normal;color:var(--ink)}
+.book-cat{color:var(--muted)}
+.chev{width:30px;height:30px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;color:var(--muted);transition:transform .2s;font-size:13px;margin-top:2px}
+.book-head[aria-expanded=true] .chev{transform:rotate(180deg);background:var(--tint)}
+.book-body{display:grid;grid-template-columns:1.35fr 1fr;gap:28px;padding:2px 0 28px}
+.book-body[hidden]{display:none}
+.book-body h3{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:10px}
+.book-body p{margin:0;font-size:14px;line-height:1.7}
+.book-why{display:grid;gap:22px;align-content:start}
+.book-why>div{border-left:2px solid var(--line);padding-left:16px}
+.toc{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 18px;font-size:13.5px;line-height:1.65}
+.toc ol{margin:0;padding-left:22px}
+.toc li{padding:2px 0}
+.toc p+p,.toc ol+p{margin-top:12px}
+.toc .toc-part{font-weight:600}
+.toc .toc-intro{color:var(--muted);margin-bottom:10px}
+.toc li::marker{color:var(--muted);font-size:12px}
+.toc a{font-weight:600}
+.lib-empty{padding:40px 0;text-align:center;color:var(--muted)}
+.lib footer{margin-top:40px}
+@media(max-width:850px){.lib{padding:30px 26px 0}.lib h1{font-size:36px}.book-body{grid-template-columns:1fr;gap:22px}}
+@media(max-width:580px){.lib{padding:22px 16px 0}.lib h1{font-size:30px;letter-spacing:-.8px}
+.lib-status{grid-template-columns:1fr 1fr}.lib-status button{padding:14px 12px 12px;border-left:1px solid var(--line)}.lib-status button:nth-child(odd){border-left:0;padding-left:0}.lib-status button:nth-child(-n+2){border-bottom:1px solid var(--line)}.lib-status strong{font-size:28px}
+.lib-tools{padding:12px 0 10px}.chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}.chips button{flex:none}
+.book-title{font-size:19px}}
+@media(prefers-reduced-motion:reduce){.chev{transition:none}}
 </style>
 </head>
 <body>
-<div class="wrap">
-<header>
-<a class="back" href="./">← К учебнику</a>
-<h1>📚 Полная библиотека — интерактивный гайд</h1>
-<p id="subtitle">Книги: оглавление, зачем нужна, что даёт лично тебе</p>
+<a class="skip" href="#main">К списку книг</a>
+<header class="topbar">
+  <a class="brand" href="./" aria-label="Учебная библиотека, начало"><span class="brand-icon" aria-hidden="true">Ψ</span><span>Психиатрия<small>Личная учебная библиотека</small></span></a>
+  <nav class="top-actions" aria-label="Разделы сайта"><a class="nav-link" href="./">Учебник</a><a class="nav-link" href="library.html" aria-current="page">Книги</a></nav>
 </header>
+<main id="main" class="lib" tabindex="-1">
+  <span class="eyebrow">Личная библиотека</span>
+  <h1>Что читать —<br><em>и в каком порядке.</em></h1>
+  <p class="lib-lede" id="lede">Книги с оглавлением, объяснением, зачем каждая нужна, и тем, что она даёт лично тебе.</p>
 
-<div class="search-row"><input class="search" id="search" type="search" placeholder="🔍 Поиск по названию или автору..." aria-label="Поиск по названию или автору"></div>
+  <div class="lib-status" id="status" role="group" aria-label="Фильтр по очерёдности"></div>
 
-<div class="filters" id="filters" role="toolbar" aria-label="Категории"></div>
-<div class="list" id="list"></div>
+  <div class="lib-tools">
+    <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Название или автор" aria-label="Поиск по названию или автору"></label>
+    <div class="chips" id="chips" role="group" aria-label="Фильтр по теме"></div>
+  </div>
 
-<footer>Нажми на карточку, чтобы раскрыть детали</footer>
-</div>
+  <p class="lib-count" role="status"><span id="count"></span><button id="reset" hidden>Сбросить фильтры</button></p>
+  <ul class="books" id="list"></ul>
+
+  <footer>Оглавления, отмеченные «сверь в издании», составлены по памяти и требуют проверки по своему экземпляру.<br><span>Оглавление Oxford сверено с PDF.</span></footer>
+</main>
 
 <script>
 const DATA = [
@@ -264,73 +299,110 @@ psy:"Психиатрия", neuro:"Неврология/нейронаука", "
 popsci:"Научпоп", psychotherapy:"Психотерапия (школы)", nonfiction:"Клинич. нон-фикшн",
 fiction:"Худож. проза", anatomy:"Анатомия", medbase:"Медицинская база"
 };
-const STATUS_LABELS = {now:"b-now", later:"b-later", skip:"b-skip", caution:"b-skip", track:"b-track"};
+const STATUS = {
+  now:{label:"Сейчас",hint:"Можно читать без подготовки"},
+  later:{label:"Позже",hint:"Нужна база или свой этап"},
+  caution:{label:"С осторожностью",hint:"Рано или тяжело по теме"},
+  skip:{label:"Не приоритет",hint:"Дублирует другие книги"}
+};
 
-let activeCat = 'all';
-let query = '';
+const state = {status:null, cat:'all', q:''};
+const $ = id => document.getElementById(id);
 
-function plural(n){const m10=n%10,m100=n%100;return m10===1&&m100!==11?'книга':m10>=2&&m10<=4&&(m100<12||m100>14)?'книги':'книг';}
+function plural(n,[one,few,many]){const m10=n%10,m100=n%100;return m10===1&&m100!==11?one:m10>=2&&m10<=4&&(m100<12||m100>14)?few:many;}
+const books = n => n+' '+plural(n,['книга','книги','книг']);
 
-function render(){
-  const list = DATA.filter(b=>(activeCat==='all'||b.cat===activeCat) && (!query || b.t.toLowerCase().includes(query) || b.a.toLowerCase().includes(query)));
-  const el = document.getElementById('list');
-  if(!list.length){el.innerHTML='<p class="empty">Ничего не найдено.</p>';return;}
-  el.innerHTML = list.map((b,i)=>`
-    <div class="card" role="button" tabindex="0" aria-expanded="false" aria-controls="d${i}" data-i="${i}">
-      <span class="badge ${STATUS_LABELS[b.status]||'b-later'}">${b.badge}</span>
-      <h3>${b.t}</h3>
-      <div class="author">${b.a}</div>
-      <div class="details" id="d${i}">
-        <h4>📑 Оглавление / основные темы</h4>
-        <div class="toc">${b.toc}</div>
-        <h4>❓ Зачем эта книга</h4>
-        <div>${b.why}</div>
-        <h4>🎯 Что она даёт лично тебе</h4>
-        <div>${b.give}</div>
+// Нумерованное оглавление («1. … 2. …») показываем списком; вводный текст и «Часть N:» —
+// отдельными строками. Если нумерация не идёт подряд, оставляем абзац как есть.
+function numbered(t){
+  const m = t.match(/(?<!Часть)(?:^|\s)(\d{1,2})\.\s/);
+  if(!m) return null;
+  const at = m.index + (m[0].length - m[0].trimStart().length);
+  const items = t.slice(at).split(/(?<!Часть)\s(?=\d{1,2}\.\s)/);
+  const nums = items.map(s=>+s.match(/^\d+/)[0]);
+  if(items.length<3 || nums.some((n,k)=>n!==nums[0]+k)) return null;
+  return {intro:t.slice(0,at).trim(), start:nums[0], items:items.map(s=>s.replace(/^\d{1,2}\.\s/,''))};
+}
+function tocHtml(t){
+  return t.split(/\s(?=Часть \d+:\s)/).map(g=>{
+    const part = g.match(/^Часть \d+:\s/);
+    const n = numbered(part ? g.slice(part[0].length) : g);
+    if(!n) return `<p>${g}</p>`;
+    return (part?`<p class="toc-part">${part[0].replace(/:\s$/,'')}</p>`:'')
+      + (n.intro?`<p class="toc-intro">${n.intro.replace(/:$/,'')}</p>`:'')
+      + `<ol start="${n.start}">${n.items.map(i=>`<li>${i}</li>`).join('')}</ol>`;
+  }).join('');
+}
+
+function matches(b, ignore){
+  return (ignore==='status'||!state.status||b.status===state.status)
+    && (ignore==='cat'||state.cat==='all'||b.cat===state.cat)
+    && (!state.q||b.t.toLowerCase().includes(state.q)||b.a.toLowerCase().includes(state.q));
+}
+
+function renderStatus(){
+  $('status').innerHTML = Object.entries(STATUS).map(([k,s])=>{
+    const n = DATA.filter(b=>b.status===k && matches(b,'status')).length;
+    return `<button class="s-${k}" data-status="${k}" aria-pressed="${state.status===k}"><span class="eyebrow"><span class="dot"></span>${s.label}</span><strong>${n}</strong><small>${s.hint}</small></button>`;
+  }).join('');
+}
+
+function renderChips(){
+  const all = DATA.filter(b=>matches(b,'cat')).length;
+  let html = `<button data-cat="all" aria-pressed="${state.cat==='all'}">Все темы<span>${all}</span></button>`;
+  for(const [c,label] of Object.entries(CATS)){
+    const n = DATA.filter(b=>b.cat===c && matches(b,'cat')).length;
+    html += `<button data-cat="${c}" aria-pressed="${state.cat===c}">${label}<span>${n}</span></button>`;
+  }
+  $('chips').innerHTML = html;
+}
+
+function renderList(){
+  const list = DATA.map((b,i)=>[b,i]).filter(([b])=>matches(b));
+  $('count').textContent = list.length===DATA.length ? `Все ${books(DATA.length)}` : `Показано: ${books(list.length)} из ${DATA.length}`;
+  $('reset').hidden = !(state.status||state.cat!=='all'||state.q);
+  if(!list.length){$('list').innerHTML = '<li class="lib-empty">Ничего не найдено. Попробуй сбросить фильтры.</li>';return;}
+  $('list').innerHTML = list.map(([b,i])=>`
+    <li class="book s-${b.status}">
+      <button class="book-head" aria-expanded="false" aria-controls="b${i}">
+        <span>
+          <span class="book-title">${b.t}</span>
+          <span class="book-author">${b.a}</span>
+          <span class="book-meta"><span class="badge"><span class="dot"></span>${b.badge}</span><span class="book-cat">${CATS[b.cat]}</span></span>
+        </span>
+        <span class="chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="book-body" id="b${i}" hidden>
+        <div><h3>Оглавление / основные темы</h3><div class="toc">${tocHtml(b.toc)}</div></div>
+        <div class="book-why">
+          <div><h3>Зачем эта книга</h3><p>${b.why}</p></div>
+          <div><h3>Что она даёт лично тебе</h3><p>${b.give}</p></div>
+        </div>
       </div>
-    </div>`).join('');
+    </li>`).join('');
 }
 
-function toggle(card){
-  const open = document.getElementById('d'+card.dataset.i).classList.toggle('open');
-  card.setAttribute('aria-expanded', open);
-}
+function render(){renderStatus();renderChips();renderList();}
 
-const listEl = document.getElementById('list');
-listEl.addEventListener('click', e=>{
-  if(e.target.closest('a')) return;
-  const card = e.target.closest('.card');
-  if(card) toggle(card);
-});
-listEl.addEventListener('keydown', e=>{
-  if((e.key==='Enter'||e.key===' ') && e.target.classList.contains('card')){e.preventDefault();toggle(e.target);}
-});
-
-function makeFilters(){
-  const el = document.getElementById('filters');
-  let html = `<button class="filter-btn active" data-cat="all" aria-pressed="true">Все (${DATA.length})</button>`;
-  Object.keys(CATS).forEach(c=>{
-    const n = DATA.filter(b=>b.cat===c).length;
-    html += `<button class="filter-btn" data-cat="${c}" aria-pressed="false">${CATS[c]} (${n})</button>`;
-  });
-  el.innerHTML = html;
-  el.addEventListener('click', e=>{
-    const btn = e.target.closest('.filter-btn');
-    if(!btn) return;
-    el.querySelectorAll('.filter-btn').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-pressed','false');});
-    btn.classList.add('active');btn.setAttribute('aria-pressed','true');
-    activeCat = btn.dataset.cat;
-    render();
-  });
-}
-
-document.getElementById('search').addEventListener('input', e=>{
-  query = e.target.value.trim().toLowerCase();
+$('status').addEventListener('click', e=>{
+  const btn = e.target.closest('button'); if(!btn) return;
+  state.status = state.status===btn.dataset.status ? null : btn.dataset.status;
   render();
 });
+$('chips').addEventListener('click', e=>{
+  const btn = e.target.closest('button'); if(!btn) return;
+  state.cat = btn.dataset.cat; render();
+});
+$('search').addEventListener('input', e=>{state.q = e.target.value.trim().toLowerCase(); render();});
+$('reset').addEventListener('click', ()=>{state.status=null;state.cat='all';state.q='';$('search').value='';render();});
+$('list').addEventListener('click', e=>{
+  const head = e.target.closest('.book-head'); if(!head) return;
+  const open = head.getAttribute('aria-expanded')!=='true';
+  head.setAttribute('aria-expanded', open);
+  $(head.getAttribute('aria-controls')).hidden = !open;
+});
 
-document.getElementById('subtitle').textContent = `${DATA.length} ${plural(DATA.length)}: оглавление, зачем нужна, что даёт лично тебе`;
-makeFilters();
+$('lede').textContent = `${books(DATA.length)} с оглавлением, объяснением, зачем каждая нужна, и тем, что она даёт лично тебе.`;
 render();
 </script>
 </body>
