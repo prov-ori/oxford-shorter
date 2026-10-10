@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Интерактивная лаборатория будущего психиатра: модель синапса и действия антидепрессантов, окно занятости D2, рецепторные профили, токсидромы, PHQ-9 и клинические случаи.">
+<meta name="theme-color" content="#233e36"><title>Лаборатория · Учебная библиотека</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+:root{--serotonin:#2f8f6b;--ne:#d0762f;--bad:#b4533f;--blue:#5f7f9f;--violet:#7a6aa8;--soft:#f3f4ee}
+body{overflow-x:hidden}
+.topbar{height:72px;padding:0 24px}
+.nav-link{display:inline-block;padding:10px 14px;text-decoration:none;border-radius:7px;color:var(--ink)}
+.nav-link[aria-current=page]{background:var(--tint)}
+.lab{max-width:1080px;margin:0 auto;padding:40px 24px 80px}
+.lab h1{font-size:44px}.lab h1 em{color:#6e8a6c}
+.lede{max-width:680px;color:var(--muted);font-size:16px}
+.disclaimer{margin-top:20px;padding:12px 16px;border-left:3px solid var(--accent);background:#f6efe5;font-size:13px;max-width:760px}
+.tabs{display:flex;gap:4px;margin:34px 0 0;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:thin;position:sticky;top:0;background:var(--paper);z-index:6;padding-top:6px}
+.tabs button{background:none;border-radius:7px 7px 0 0;padding:12px 16px;white-space:nowrap;color:var(--muted);font-size:14px;border-bottom:3px solid transparent;flex:none}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--green);font-weight:600;background:var(--tint)}
+.panel{padding-top:28px}.panel[hidden]{display:none}
+.panel h2{font-size:28px}.panel .sub{color:var(--muted);max-width:700px}
+.grid2{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:28px;margin-top:24px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.card h3{margin-bottom:6px}
+.field{display:grid;gap:6px;margin-top:14px}
+.field label,.field .lbl{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+.field output{font-weight:600;color:var(--ink);text-transform:none;letter-spacing:0;float:right}
+select,input[type=range]{width:100%}
+select{padding:10px 12px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink)}
+input[type=range]{accent-color:var(--green);height:28px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{background:var(--green);color:#fff}.btn.alt{background:var(--tint);color:var(--ink)}
+.sim-wrap{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+canvas{display:block;width:100%;height:auto;aspect-ratio:760/400}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;padding:10px 16px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);background:var(--soft)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.meters{display:grid;gap:10px;margin-top:16px}
+.meter{font-size:13px}.meter .bar{height:8px;background:#e4e8dc;border-radius:5px;overflow:hidden;margin-top:4px}
+.meter .bar b{display:block;height:100%;width:0;border-radius:5px;transition:width .3s}
+.meter span{display:flex;justify-content:space-between}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:12px;padding:4px 10px;border-radius:20px;background:#f3e3df;color:#7e3a2c;border:1px solid #e6c4bb}
+.chip.ok{background:#e3efe7;color:#1f5a41;border-color:#bfd9c9}
+.drugcard h3{font-size:19px;font-family:Georgia,serif;font-weight:400}
+.drugcard p{font-size:14px}
+.drugcard ul{margin:10px 0 0;padding-left:18px;font-size:13px}
+.chart-card{margin-top:24px}
+.chart-card svg{width:100%;height:auto;display:block}
+.series-toggles{display:flex;flex-wrap:wrap;gap:8px 16px;margin:8px 0 4px;font-size:13px}
+.series-toggles label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.series-toggles i{width:22px;height:0;border-top:3px solid;display:inline-block}
+.readout{font-size:13px;color:var(--muted);margin-top:6px;min-height:40px}
+.stage-note{padding:10px 14px;background:var(--soft);border-radius:8px;font-size:13px;margin-top:10px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+table.heat{border-collapse:collapse;width:100%;font-size:13px}
+.heat th,.heat td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--line)}
+.heat th:first-child,.heat td:first-child{text-align:left;padding-left:2px}
+.heat thead th{font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);vertical-align:bottom}
+.heat thead button{background:none;padding:4px 2px;color:inherit;font-size:inherit;text-transform:inherit;letter-spacing:inherit;font-weight:700;border-radius:4px}
+.heat thead button[aria-pressed=true]{background:var(--tint);color:var(--ink)}
+.heat tbody tr.sel td{outline:2px solid var(--green);outline-offset:-2px}
+.heat td.c{font-weight:700;color:#173d2f}
+.heat td.l0{background:transparent;color:#aab3a8}.heat td.l1{background:#e9f0e1}.heat td.l2{background:#c9ddbf}.heat td.l3{background:#8fbf9d;color:#0f2f22}
+.heat.eff td.l1{background:#f6ead6}.heat.eff td.l2{background:#efcfa0}.heat.eff td.l3{background:#e0a477;color:#4a230f}
+.heat tbody th{font-weight:600}
+.heat tbody button{background:none;padding:6px 2px;text-align:left;color:var(--ink);font-weight:600}
+.scroll-x{overflow-x:auto}
+.d2bar{position:relative;height:64px;border-radius:8px;overflow:hidden;display:flex;border:1px solid var(--line)}
+.d2bar div{display:grid;place-items:center;font-size:11px;text-align:center;padding:0 4px;line-height:1.25}
+.d2marks{position:relative;height:42px;font-size:11px;color:var(--muted)}
+.d2marks span{position:absolute;transform:translateX(-50%);text-align:center;white-space:nowrap}
+.d2marks span::before{content:"";display:block;width:1px;height:8px;background:var(--muted);margin:0 auto 2px}
+.d2knob{position:absolute;top:-6px;bottom:-6px;width:4px;background:var(--ink);border-radius:2px;box-shadow:0 0 0 2px #fff;transition:left .15s}
+.verdict{font-size:15px;padding:14px 16px;border-radius:8px;margin-top:16px;background:var(--soft);border-left:4px solid var(--green)}
+.verdict.warn{border-left-color:var(--accent);background:#f6efe5}.verdict.bad{border-left-color:var(--bad);background:#f6e4df}
+.checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 20px;margin-top:8px}
+.checks label{display:flex;gap:10px;align-items:flex-start;font-size:14px;padding:7px 8px;border-radius:6px;cursor:pointer}
+.checks label:hover{background:var(--tint)}.checks input{margin-top:4px;accent-color:var(--green);flex:none;width:17px;height:17px}
+.checks h4{grid-column:1/-1;margin:14px 0 2px;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted)}
+.tox{display:grid;gap:14px}
+.tox-row{display:grid;grid-template-columns:150px 1fr 42px;gap:12px;align-items:center;font-size:14px}
+.tox-row .bar{height:14px;background:#e4e8dc;border-radius:7px;overflow:hidden}.tox-row .bar b{display:block;height:100%;width:0;transition:width .3s}
+.tox-row.lead strong{color:var(--ink)}.tox-row strong{font-weight:600}
+.cmp{font-size:13px;margin-top:20px}.cmp th{background:var(--soft);font-size:12px}.cmp td,.cmp th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.phq{display:grid;gap:0}
+.phq fieldset{border:0;border-bottom:1px solid var(--line);padding:14px 0;margin:0}
+.phq legend{font-size:15px;padding:0;float:left;width:100%;margin-bottom:8px}
+.phq .opts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;clear:both}
+.phq .opts label{border:1px solid var(--line);border-radius:7px;padding:8px 6px;font-size:12px;text-align:center;cursor:pointer;background:#fff;line-height:1.3}
+.phq .opts input{position:absolute;opacity:0}
+.phq .opts label:has(input:checked){background:var(--green);color:#fff;border-color:var(--green)}
+.phq .opts label:has(input:focus-visible){outline:3px solid #bb8351;outline-offset:2px}
+.score{font:400 64px/1 Georgia,serif;letter-spacing:-2px}
+.case-q{font-size:17px;line-height:1.55}
+.case-meta{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.case-opts{display:grid;gap:8px;margin-top:14px}
+.case-opts button{text-align:left;background:#fff;border:1px solid var(--line);padding:12px 14px;color:var(--ink);border-radius:8px}
+.case-opts button.right{background:#e3efe7;border-color:#7fb592}.case-opts button.wrong{background:#f6e4df;border-color:#d9a89b}
+.case-opts button .why{display:block;font-size:13px;color:var(--muted);margin-top:6px}
+.small-actions{margin-top:16px}
+@media (max-width:860px){
+ .grid2{grid-template-columns:1fr}.lab h1{font-size:34px}.checks{grid-template-columns:1fr}.tox-row{grid-template-columns:104px 1fr 34px}
+ .topbar{padding:0 14px}.top-actions .edition{display:none}
+}
+@media (max-width:520px){.lab{padding:28px 16px 60px}.phq .opts{grid-template-columns:repeat(2,1fr)}.brand small{display:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">К содержимому</a>
+<header class="topbar">
+  <a class="brand" href="./" aria-label="Учебная библиотека, начало"><span class="brand-icon" aria-hidden="true">Ψ</span><span>Психиатрия<small>Личная учебная библиотека</small></span></a>
+  <div class="top-actions"><a class="nav-link" href="./">Учебник</a><a class="nav-link" href="library.html">Книги</a><a class="nav-link" href="lab.html" aria-current="page">Лаборатория</a></div>
+</header>
+
+<main class="lab" id="main">
+  <span class="eyebrow">Интерактивные макеты</span>
+  <h1>Лаборатория <em>психиатра</em></h1>
+  <p class="lede">Крутите ручки, а не заучивайте таблицы: что происходит в синапсе на антидепрессанте, почему эффект приходит через недели, где проходит «окно» блокады D2 и как отличить серотониновый синдром от ЗНС.</p>
+  <p class="disclaimer"><strong>Учебные модели, не клинический инструмент.</strong> Кривые и анимации — качественные схемы механизмов, а не количественные данные. Дозировки здесь намеренно не приводятся; решения о лечении принимаются по актуальным руководствам и с учётом пациента.</p>
+
+  <div class="tabs" role="tablist" aria-label="Разделы лаборатории">
+    <button role="tab" id="t-synapse" aria-controls="p-synapse" aria-selected="true">① Синапс и время</button>
+    <button role="tab" id="t-receptors" aria-controls="p-receptors" aria-selected="false" tabindex="-1">② Рецепторный профиль</button>
+    <button role="tab" id="t-d2" aria-controls="p-d2" aria-selected="false" tabindex="-1">③ Окно D2</button>
+    <button role="tab" id="t-tox" aria-controls="p-tox" aria-selected="false" tabindex="-1">④ Токсидромы</button>
+    <button role="tab" id="t-phq" aria-controls="p-phq" aria-selected="false" tabindex="-1">⑤ PHQ-9</button>
+    <button role="tab" id="t-cases" aria-controls="p-cases" aria-selected="false" tabindex="-1">⑥ Случаи</button>
+  </div>
+
+  <!-- 1. SYNAPSE -->
+  <section class="panel" id="p-synapse" role="tabpanel" aria-labelledby="t-synapse">
+    <h2>Что делает антидепрессант в синапсе — и почему эффект запаздывает</h2>
+    <p class="sub">Выберите препарат, задайте степень блокады мишени и подвигайте «неделю лечения»: сверху видна нейрохимия, снизу — схематичный временной ход ответа.</p>
+    <div class="grid2">
+      <div>
+        <div class="sim-wrap">
+          <canvas id="sim" width="760" height="400" role="img" aria-label="Анимация синаптической щели: частицы серотонина и норадреналина, транспортёры обратного захвата и постсинаптические рецепторы"></canvas>
+          <div class="legend">
+            <span><i style="background:var(--serotonin)"></i>серотонин (5-HT)</span>
+            <span><i style="background:var(--ne)"></i>норадреналин</span>
+            <span>▮ зелёные ворота — SERT</span><span>▮ оранжевые — NET</span><span>✕ — блокада</span>
+          </div>
+        </div>
+        <div class="row small-actions">
+          <button class="btn" id="simPlay">⏸ Пауза</button>
+          <button class="btn alt" id="simReset">↺ Сброс</button>
+        </div>
+        <div class="vh" id="simLive" aria-live="polite"></div>
+        <div class="card drugcard" style="margin-top:16px" id="drugCard"></div>
+      </div>
+      <aside>
+        <div class="card">
+          <div class="field"><label for="drug">Препарат (класс)</label>
+            <select id="drug">
+              <option value="none">Без препарата (исходная модель)</option>
+              <option value="ssri" selected>СИОЗС (сертралин, эсциталопрам…)</option>
+              <option value="snri">СИОЗСН (венлафаксин, дулоксетин)</option>
+              <option value="tca">Трициклик (амитриптилин)</option>
+              <option value="maoi">ИМАО (необратимые)</option>
+              <option value="mirt">Миртазапин (α2-антагонист)</option>
+              <option value="bup">Бупропион (ингибитор захвата НА/ДА)</option>
+            </select></div>
+          <div class="field"><label for="dose">Блокада мишени <output id="doseOut">80%</output></label>
+            <input type="range" id="dose" min="0" max="100" value="80"></div>
+          <div class="field"><label for="week">Неделя лечения <output id="weekOut">0</output></label>
+            <input type="range" id="week" min="0" max="8" step="0.25" value="0"></div>
+          <div class="row" style="margin-top:12px"><button class="btn alt" id="weekPlay">▶ Прокрутить 0→8 недель</button></div>
+          <div class="meters">
+            <div class="meter"><span><b>Серотонин в щели</b><em id="m5t" style="font-style:normal">100%</em></span><div class="bar"><b id="m5" style="background:var(--serotonin)"></b></div></div>
+            <div class="meter"><span><b>Норадреналин в щели</b><em id="mnt" style="font-style:normal">100%</em></span><div class="bar"><b id="mn" style="background:var(--ne)"></b></div></div>
+            <div class="meter"><span><b>Сигнал на рецепторах</b><em id="mst" style="font-style:normal">100%</em></span><div class="bar"><b id="ms" style="background:var(--blue)"></b></div></div>
+          </div>
+          <p class="fine" style="margin-top:10px">Значения — в % от исходной модели (без препарата), усреднены за несколько секунд.</p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="card chart-card">
+      <h3>Временной ход (схема)</h3>
+      <div class="series-toggles" id="seriesToggles"></div>
+      <svg id="chart" viewBox="0 0 760 320" role="img" aria-label="Схематичные кривые: активность серотониновых нейронов, серотонин в синапсе, нейропластичность, улучшение симптомов и ранние побочные эффекты по неделям лечения"></svg>
+      <div class="readout" id="chartRead"></div>
+      <div class="stage-note" id="stageNote"></div>
+    </div>
+  </section>
+
+  <!-- 2. RECEPTORS -->
+  <section class="panel" id="p-receptors" role="tabpanel" aria-labelledby="t-receptors" hidden>
+    <h2>Рецепторный профиль → побочные эффекты</h2>
+    <p class="sub">Побочные эффекты — это «чужие» мишени. Выберите препарат, чтобы увидеть, какие рецепторы он задевает, а в таблице эффектов нажмите на столбец — препараты отсортируются от наименее к наиболее вероятному.</p>
+    <div class="card" style="margin-top:22px"><h3>Аффинность к мишеням</h3>
+      <div class="scroll-x"><table class="heat" id="recTable"></table></div>
+      <p class="fine" style="margin-top:8px">0 — клинически незначимо · + слабо · ++ умеренно · +++ выражено. Качественные ориентиры по общепринятым фармакологическим обзорам, а не точные значения Ki; у разных доз и пациентов картина отличается. SERT/NET/DAT — ингибирование захвата; H1, M1, α1, 5-HT2A/2C — блокада; α2 — блокада ауторецепторов.</p></div>
+    <div class="card" style="margin-top:20px"><h3>Ожидаемые эффекты (выводятся из профиля)</h3>
+      <div class="scroll-x"><table class="heat eff" id="effTable"></table></div>
+      <div class="verdict" id="recVerdict" style="margin-top:14px"></div></div>
+  </section>
+
+  <!-- 3. D2 -->
+  <section class="panel" id="p-d2" role="tabpanel" aria-labelledby="t-d2" hidden>
+    <h2>Окно занятости D2-рецепторов</h2>
+    <p class="sub">По данным ПЭТ (Kapur и соавт., 2000), клинический ответ на антипсихотик связан с занятостью D2 около 65% и выше, гиперпролактинемия — выше ~72%, экстрапирамидные симптомы — выше ~78%. Двигайте ползунок.</p>
+    <div class="card" style="margin-top:22px">
+      <div class="field"><label for="d2">Занятость D2 в полосатом теле <output id="d2Out">70%</output></label>
+        <input type="range" id="d2" min="0" max="100" value="70"></div>
+      <div style="position:relative;margin-top:14px">
+        <div class="d2bar" id="d2bar">
+          <div style="width:65%;background:#e9e4d6;color:#6a5f3e">ответ маловероятен</div>
+          <div style="width:7%;background:#c9ddbf;color:#173d2f">окно</div>
+          <div style="width:6%;background:#f0d6a5;color:#5f4410"title="пролактин ↑">PRL↑</div>
+          <div style="width:22%;background:#e4a99a;color:#5a1f12">риск ЭПС ↑↑</div>
+        </div>
+        <div class="d2knob" id="d2knob"></div>
+      </div>
+      <div class="d2marks"><span style="left:0">0</span><span style="left:65%">65</span><span style="left:72%;top:0;margin-top:20px">72</span><span style="left:78%">78</span><span style="left:100%">100%</span></div>
+      <div class="verdict" id="d2Verdict"></div>
+      <div class="row" style="margin-top:16px" id="d2Presets"></div>
+    </div>
+    <div class="card" style="margin-top:20px"><h3 id="d2PresetTitle">Выберите препарат</h3><p id="d2PresetText" class="muted">Пресеты показывают типичную занятость на средних терапевтических дозах — ориентир, не гарантия.</p></div>
+  </section>
+
+  <!-- 4. TOXIDROMES -->
+  <section class="panel" id="p-tox" role="tabpanel" aria-labelledby="t-tox" hidden>
+    <h2>Серотониновый синдром, ЗНС или антихолинергическая интоксикация?</h2>
+    <p class="sub">Три «горячих» состояния с похожими вызовами на дежурстве. Отмечайте находки — модель покажет, какой синдром подходит лучше. Ключ к диагнозу — приём препарата, скорость развития, тонус/рефлексы, кожа и перистальтика.</p>
+    <div class="grid2">
+      <div class="card"><div class="checks" id="toxChecks"></div>
+        <div class="row small-actions"><button class="btn alt" id="toxReset">Сбросить</button></div></div>
+      <div>
+        <div class="card"><h3>Соответствие картины</h3><div class="tox" id="toxBars" style="margin-top:14px"></div>
+          <div class="verdict" id="toxVerdict" style="margin-top:18px">Отметьте находки слева.</div>
+          <p class="fine" style="margin-top:12px">Образовательная эвристика с весами по классическим описаниям, а не диагностический алгоритм (для серотонинового синдрома клинически используют критерии Hunter). Все три состояния — неотложные: нужны отмена вызвавшего агента и срочная медицинская помощь.</p></div>
+      </div>
+    </div>
+    <div class="card scroll-x" style="margin-top:20px"><table class="cmp" style="width:100%;border-collapse:collapse">
+      <thead><tr><th></th><th>Серотониновый синдром</th><th>ЗНС</th><th>Антихолинергический</th></tr></thead>
+      <tbody>
+        <tr><th>Начало</th><td>Часы</td><td>Дни–недели</td><td>Часы</td></tr>
+        <tr><th>Триггер</th><td>Серотонинергические агенты и их сочетания (в т.ч. ИМАО, трамадол, линезолид)</td><td>Антагонисты D2, резкая отмена дофаминергических</td><td>Антихолинергики, трициклики, антигистаминные, антипаркинсонические</td></tr>
+        <tr><th>Мышцы</th><td>Клонус, гиперрефлексия, тремор</td><td>Ригидность «свинцовая труба», брадикинезия</td><td>Тонус и рефлексы обычно нормальны</td></tr>
+        <tr><th>Кожа</th><td>Влажная</td><td>Влажная</td><td>Сухая, горячая, красная</td></tr>
+        <tr><th>Кишечник</th><td>Диарея, гиперперистальтика</td><td>Обычно норма</td><td>Запор, ↓ перистальтика, задержка мочи</td></tr>
+        <tr><th>Зрачки</th><td>Расширены</td><td>Обычно норма</td><td>Расширены</td></tr>
+        <tr><th>Лаборатория</th><td>Может быть ↑ КФК</td><td>Часто выраженно ↑ КФК</td><td>Без характерных изменений</td></tr>
+      </tbody></table></div>
+  </section>
+
+  <!-- 5. PHQ-9 -->
+  <section class="panel" id="p-phq" role="tabpanel" aria-labelledby="t-phq" hidden>
+    <h2>Скрининг PHQ-9</h2>
+    <p class="sub">За последние 2 недели: как часто вас беспокоили следующие проблемы? Ответы никуда не отправляются и не сохраняются.</p>
+    <div class="grid2">
+      <form class="phq card" id="phqForm" onsubmit="return false"></form>
+      <aside style="position:sticky;top:76px">
+        <div class="card"><span class="eyebrow">Сумма баллов</span><div class="score" id="phqScore">0</div>
+          <h3 id="phqLevel" style="margin-top:8px">Минимальные симптомы</h3>
+          <progress id="phqBar" value="0" max="27" style="margin-top:14px"></progress>
+          <div class="verdict" id="phqCrit" style="margin-top:16px"></div>
+          <div class="verdict bad" id="phqSui" style="margin-top:12px" hidden><strong>Пункт 9 положителен.</strong> Любой ответ выше «Совсем нет» требует клинической оценки суицидального риска (ресурсы, план, намерение, доступ к средствам) в тот же день — независимо от суммы баллов.</div>
+          <p class="fine" style="margin-top:12px">PHQ-9 — инструмент скрининга и мониторинга динамики, не диагноз. Порог ≥10 в оригинальном исследовании (Kroenke и соавт., 2001) давал чувствительность и специфичность около 88% для большой депрессии; диагноз ставится клинически.</p></div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 6. CASES -->
+  <section class="panel" id="p-cases" role="tabpanel" aria-labelledby="t-cases" hidden>
+    <h2>Клинические случаи: подберите логику лечения</h2>
+    <p class="sub">Выбор антидепрессанта — это сопоставление профиля препарата с профилем пациента. Это учебные упрощённые вариации; на практике решают руководства, взаимодействия и предпочтения пациента.</p>
+    <div class="card" style="margin-top:22px" id="caseCard"></div>
+  </section>
+</main>
+
+<script>
+(()=>{
+'use strict';
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Tabs ---------- */
+const tabs=$$('[role=tab]');
+function showTab(id,focus){
+  tabs.forEach(t=>{const on=t.id==='t-'+id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;$('#'+t.getAttribute('aria-controls')).hidden=!on;if(on&&focus)t.focus()});
+  try{history.replaceState(null,'','#'+id)}catch{}
+  if(id==='synapse'){resizeCanvas();drawChart()}
+}
+tabs.forEach((t,i)=>{
+  t.addEventListener('click',()=>showTab(t.id.slice(2)));
+  t.addEventListener('keydown',e=>{
+    const k={ArrowRight:1,ArrowLeft:-1}[e.key];
+    if(k){e.preventDefault();showTab(tabs[(i+k+tabs.length)%tabs.length].id.slice(2),true)}
+    if(e.key==='Home'){e.preventDefault();showTab(tabs[0].id.slice(2),true)}
+    if(e.key==='End'){e.preventDefault();showTab(tabs.at(-1).id.slice(2),true)}
+  });
+});
+
+/* ---------- Drug model ---------- */
+const DRUGS={
+  none:{n:'Без препарата',sert:0,net:0,mao:0,a2:0,rec:0,
+    t:'Исходная модель',d:'Нейрон высвобождает серотонин и норадреналин; они кратко действуют на постсинаптические рецепторы и быстро убираются транспортёрами SERT и NET. Часть захваченного медиатора разрушается моноаминоксидазой (МАО).',
+    li:['Это точка отсчёта: все проценты справа — относительно неё.'],fx:[]},
+  ssri:{n:'СИОЗС',sert:1,net:0,mao:0,a2:0,rec:0,
+    t:'СИОЗС — селективная блокада SERT',d:'Блокируют транспортёр обратного захвата серотонина; при обычных дозах по данным ПЭТ занимают около 80% SERT. Серотонина в щели становится больше почти сразу, но улучшение настроения приходит через недели.',
+    li:['Первые дни: серотонин ↑ в соме нейрона активирует ауторецепторы 5-HT1A и временно снижает импульсацию нейронов.','Через 2–4 нед ауторецепторы десенситизируются — активность и высвобождение восстанавливаются, запускаются пластические изменения.','Типично: тошнота, сексуальная дисфункция, ранняя тревога/«джиттери»; гипонатриемия у пожилых; синдром отмены (особенно с короткоживущими).'],
+    fx:['тошнота / ЖКТ','сексуальная дисфункция','ранняя тревога, бессонница']},
+  snri:{n:'СИОЗСН',sert:.9,net:.8,mao:0,a2:0,rec:0,
+    t:'СИОЗСН — блокада SERT и NET',d:'Блокируют захват серотонина и норадреналина (венлафаксин — в основном серотонинергический при низких дозах, NET добавляется при повышении). Норадреналин поддерживает энергию и участвует в обезболивающем эффекте.',
+    li:['Дулоксетин применяют и при невропатической боли.','Дозозависимое повышение АД и пульса — контроль давления.','Выраженный синдром отмены у венлафаксина.'],
+    fx:['тошнота / ЖКТ','сексуальная дисфункция','потливость, тремор','повышение АД, тахикардия']},
+  tca:{n:'Трициклик',sert:.7,net:.8,mao:0,a2:0,rec:0,
+    t:'Трициклики — захват + «грязный» профиль',d:'Блокируют SERT и NET, но заодно H1, M1, α1 и натриевые каналы миокарда. Эффективны, однако из-за побочных эффектов и токсичности при передозировке — не первая линия.',
+    li:['H1 → седация, прибавка веса; M1 → сухость, запор, задержка мочи, спутанность; α1 → ортостатическая гипотензия.','Блокада натриевых каналов: расширение QRS, аритмии и судороги при передозировке — опасны у суицидальных пациентов.','Осторожно у пожилых, при глаукоме, ГПЖ, болезнях сердца.'],
+    fx:['седация / вес (H1)','сухость, запор, задержка мочи (M1)','ортостаз (α1)','кардиотоксичность при передозировке']},
+  maoi:{n:'ИМАО',sert:0,net:0,mao:1,a2:0,rec:0,
+    t:'ИМАО — меньше разрушения в нейроне',d:'Необратимо ингибируют МАО-А/В: запас моноаминов в нейроне растёт, высвобождается больше. Применяют в основном при резистентной и атипичной депрессии под строгим контролем.',
+    li:['Тирамин-содержащая пища (выдержанные сыры и т.д.) → гипертонический криз.','Сочетание с серотонинергическими средствами → серотониновый синдром; между отменой СИОЗС и началом ИМАО нужен «отмывочный» период: 2 нед (для флуоксетина — около 5 нед).','Ортостаз, бессонница, прибавка веса.'],
+    fx:['гипертонический криз (тирамин)','серотониновый синдром при комбинациях','ортостаз, бессонница']},
+  mirt:{n:'Миртазапин',sert:0,net:0,mao:0,a2:1,rec:1,
+    t:'Миртазапин — α2-антагонист',d:'Блокирует пресинаптические α2-ауто- и гетерорецепторы, снимая «тормоз» с высвобождения норадреналина и серотонина. Блокирует 5-HT2A/2C/3 (тошнота, сексуальные эффекты и бессонница не типичны) и H1.',
+    li:['На модели: больше выброс обоих медиаторов, часть постсинаптических рецепторов (5-HT2A/2C/3) закрыта — «чистый» сигнал идёт через 5-HT1A.','Седация и повышение аппетита — полезно при бессоннице и потере веса, нежелательно при ожирении.','Нет SERT-блокады → нет классического раннего «провала» ауторецепторов.'],
+    fx:['седация (H1)','прибавка веса, аппетит ↑']},
+  bup:{n:'Бупропион',sert:0,net:.9,mao:0,a2:0,rec:0,
+    t:'Бупропион — ингибитор захвата НА/ДА',d:'Блокирует NET и DAT (дофамин на модели не показан), не действует на серотонин. Стимулирующий профиль, нет типичной сексуальной дисфункции и прибавки веса.',
+    li:['Снижает порог судорожной готовности: противопоказан при эпилепсии, булимии, анорексии, резкой отмене алкоголя/седативных.','Бессонница, тревога, тремор; ↑АД.','Применяют и для отказа от курения.'],
+    fx:['бессонница, тревога','тремор','снижение порога судорог']}
+};
+const el={drug:$('#drug'),dose:$('#dose'),week:$('#week')};
+function params(){
+  const D=DRUGS[el.drug.value],dose=el.dose.value/100,w=+el.week.value;
+  const sert=clamp(D.sert*dose,0,.95),net=clamp(D.net*dose,0,.95),mao=D.mao*dose,a2=D.a2*dose;
+  const S5=Math.min(1,sert+.6*mao);                      // serotonergic drive acting on 5-HT1A autoreceptors
+  const A=Math.exp(-w/1.4);                              // somatodendritic autoreceptor sensitivity
+  const F=1-.45*S5*A;                                    // neuron firing, relative
+  const R=1+.3*S5*(1-A);                                 // terminal release gain (5-HT1B desensitisation)
+  const P=Math.min(1,sert+.85*net+.8*a2+.9*mao);         // antidepressant potential
+  return {sert,net,mao,a2,rec:D.rec*dose>.3,S5,A,F,R,P,w};
+}
+
+/* ---------- Synapse simulation ---------- */
+const cv=$('#sim'),cx=cv.getContext('2d');
+const W=760,H=400,MEM=150,POST=272;
+const tr=[0,1,2,3,4,5,6].map(i=>({x:60+i*106.67,kind:(i===1||i===4)?'net':'sert',flash:0}));
+const zones=[113,327,540];
+const NOISE=4,DAMP=.8,HITW=34,UPTAKE=1;
+const rec=Array.from({length:8},(_,i)=>({x:48+i*95.4,glow:0,blocked:false}));
+let P=[],store=1,ema5=0,emaN=0,emaS=0,base5=1,baseN=1,baseS=1,sp=params(),binds=0,running=!reduced,frame=0;
+function tick(){
+  const p=sp;
+  const target=1+.6*p.mao; store+=(target-store)*.003;
+  const rel=.022*p.F*p.R*store*(1+.5*p.a2);
+  for(const zx of zones) if(Math.random()<rel&&P.length<420) P.push({x:zx+(Math.random()-.5)*18,y:MEM+6,vx:0,vy:1.2,t:Math.random()<.6?0:1});
+  for(let i=P.length-1;i>=0;i--){
+    const a=P[i];
+    a.vx=(a.vx+(Math.random()-.5)*NOISE)*DAMP;a.vy=(a.vy+(Math.random()-.5)*NOISE)*DAMP;a.x+=a.vx;a.y+=a.vy;
+    if(a.x<6||a.x>W-6){if(Math.random()<.06){P.splice(i,1);continue}a.x=a.x<6?6:W-6;a.vx=-a.vx}
+    if(a.y<MEM+5){
+      let took=false;
+      for(const t of tr){
+        if(Math.abs(a.x-t.x)<HITW&&((t.kind==='sert'&&a.t===0)||(t.kind==='net'&&a.t===1))){
+          if(Math.random()<UPTAKE*(1-(t.kind==='sert'?p.sert:p.net))){took=true;t.flash=10;break}
+        }
+      }
+      if(took){P.splice(i,1);continue}
+      a.y=MEM+5;a.vy=Math.abs(a.vy);
+    }else if(a.y>POST-5){
+      for(const r of rec) if(!r.blocked&&Math.abs(a.x-r.x)<14&&Math.random()<.3){r.glow=14;binds++}
+      a.y=POST-5;a.vy=-Math.abs(a.vy);
+    }
+  }
+  let n5=0,nN=0;for(const a of P) a.t===0?n5++:nN++;
+  ema5+=(n5-ema5)*.015;emaN+=(nN-emaN)*.015;emaS+=(binds-emaS)*.015;binds=0;
+  rec.forEach((r,i)=>{r.blocked=sp.rec&&(i===1||i===3||i===5);if(r.glow>0)r.glow--});
+  tr.forEach(t=>{if(t.flash>0)t.flash--});
+}
+function calibrate(){
+  const keep=sp;sp={sert:0,net:0,mao:0,a2:0,rec:false,S5:0,A:1,F:1,R:1,P:0,w:0};
+  P=[];store=1;ema5=emaN=emaS=0;
+  for(let i=0;i<6000;i++)tick();
+  let s5=0,sN=0,sS=0;const N=8000;
+  for(let i=0;i<N;i++){tick();s5+=ema5;sN+=emaN;sS+=emaS}
+  base5=Math.max(1,s5/N);baseN=Math.max(1,sN/N);baseS=Math.max(.001,sS/N);
+  sp=keep;store=1;ema5=base5;emaN=baseN;emaS=baseS;
+}
+function resizeCanvas(){
+  const r=cv.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);
+  if(!r.width)return;cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.width*H/W*dpr);cx.setTransform(cv.width/W,0,0,cv.height/H,0,0);
+}
+function rr(x,y,w,h,r){cx.beginPath();cx.moveTo(x+r,y);cx.arcTo(x+w,y,x+w,y+h,r);cx.arcTo(x+w,y+h,x,y+h,r);cx.arcTo(x,y+h,x,y,r);cx.arcTo(x,y,x+w,y,r);cx.closePath()}
+function draw(){
+  cx.clearRect(0,0,W,H);
+  // cleft
+  cx.fillStyle='#f8faf4';cx.fillRect(0,0,W,H);
+  cx.fillStyle='#e8efdc';rr(-20,-20,W+40,MEM+20,26);cx.fill();
+  cx.fillStyle='#dfe7ec';cx.fillRect(0,POST,W,H-POST);
+  cx.strokeStyle='#b8c4ad';cx.lineWidth=2;cx.beginPath();cx.moveTo(0,MEM);cx.lineTo(W,MEM);cx.stroke();
+  cx.strokeStyle='#9fb2c1';cx.beginPath();cx.moveTo(0,POST);cx.lineTo(W,POST);cx.stroke();
+  cx.fillStyle='#6a746d';cx.font='600 11px Segoe UI,Arial,sans-serif';
+  cx.fillText('ПРЕСИНАПТИЧЕСКИЙ НЕЙРОН',14,22);cx.fillText('СИНАПТИЧЕСКАЯ ЩЕЛЬ',14,MEM+22);cx.fillText('ПОСТСИНАПТИЧЕСКИЙ НЕЙРОН',14,POST+24);
+  // vesicles
+  zones.forEach(zx=>{
+    const n=Math.round(clamp(store,.5,1.7)*4);
+    for(let i=0;i<n;i++){cx.fillStyle=i%2?'#cfe0d2':'#e6d3bd';cx.strokeStyle='#97a894';cx.lineWidth=1;cx.beginPath();cx.arc(zx-22+i*11+(i%2)*3,MEM-18-(i%3)*10,6,0,7);cx.fill();cx.stroke()}
+  });
+  // MAO
+  const mo=sp.mao>.3;cx.fillStyle=mo?'#f0d9d3':'#fff';cx.strokeStyle=mo?'#b4533f':'#97a894';cx.lineWidth=1.5;rr(626,52,98,34,6);cx.fill();cx.stroke();
+  cx.fillStyle=mo?'#8a3322':'#3d5a4c';cx.font='700 12px Segoe UI,Arial';cx.fillText('МАО'+(mo?'  ✕':''),648,74);
+  cx.font='10px Segoe UI,Arial';cx.fillStyle='#6a746d';cx.fillText('разрушает медиатор',628,100);
+  // transporters
+  tr.forEach(t=>{
+    const net=t.kind==='net',blk=net?sp.net:sp.sert,col=net?'#d0762f':'#2f8f6b';
+    cx.globalAlpha=1;cx.fillStyle=t.flash?'#fff':col;cx.strokeStyle=col;cx.lineWidth=2;rr(t.x-11,MEM-12,22,24,5);cx.fill();cx.stroke();
+    cx.fillStyle=t.flash?col:'#fff';cx.font='700 8px Segoe UI,Arial';cx.textAlign='center';cx.fillText(net?'NET':'SERT',t.x,MEM+2);cx.textAlign='left';
+    if(blk>.1){cx.strokeStyle='#b4533f';cx.lineWidth=2+blk*2;cx.globalAlpha=.35+blk*.6;cx.beginPath();cx.moveTo(t.x-14,MEM+16);cx.lineTo(t.x+14,MEM+16);cx.stroke();cx.beginPath();cx.moveTo(t.x-9,MEM+8);cx.lineTo(t.x+9,MEM+24);cx.moveTo(t.x+9,MEM+8);cx.lineTo(t.x-9,MEM+24);cx.stroke();cx.globalAlpha=1}
+  });
+  // receptors
+  rec.forEach(r=>{
+    cx.strokeStyle=r.blocked?'#9aa3a8':'#4d6f8f';cx.fillStyle=r.glow?'#ffd36b':(r.blocked?'#e1e5e7':'#fff');cx.lineWidth=2.5;
+    cx.beginPath();cx.moveTo(r.x-12,POST+1);cx.quadraticCurveTo(r.x-12,POST-18,r.x,POST-18);cx.quadraticCurveTo(r.x+12,POST-18,r.x+12,POST+1);cx.closePath();cx.fill();cx.stroke();
+    if(r.blocked){cx.strokeStyle='#b4533f';cx.lineWidth=2;cx.beginPath();cx.moveTo(r.x-6,POST-12);cx.lineTo(r.x+6,POST-3);cx.moveTo(r.x+6,POST-12);cx.lineTo(r.x-6,POST-3);cx.stroke()}
+    if(r.glow){cx.strokeStyle='rgba(255,190,60,'+r.glow/14+')';cx.lineWidth=3;cx.beginPath();cx.arc(r.x,POST-10,18-r.glow/2,0,7);cx.stroke()}
+  });
+  // particles
+  for(const a of P){cx.fillStyle=a.t?'#d0762f':'#2f8f6b';cx.beginPath();cx.arc(a.x,a.y,4.2,0,7);cx.fill();cx.strokeStyle='rgba(255,255,255,.85)';cx.lineWidth=1;cx.stroke()}
+}
+function meters(){
+  const p5=Math.round(100*ema5/base5),pn=Math.round(100*emaN/baseN),ps=Math.round(100*emaS/baseS);
+  [['5',p5],['n',pn],['s',ps]].forEach(([k,v])=>{$('#m'+k+'t').textContent=v+'%';$('#m'+k).style.width=clamp(v/3.5,0,100)+'%'});
+  return {p5,pn,ps};
+}
+let lastLive=0;
+function loop(t){
+  requestAnimationFrame(loop);
+  if(document.hidden||$('#p-synapse').hidden)return;
+  if(running){tick();tick();tick()}
+  draw();
+  if(++frame%6===0){const m=meters();if(t-lastLive>3000){lastLive=t;$('#simLive').textContent=`Серотонин ${m.p5}% от исходной модели, норадреналин ${m.pn}%, сигнал на рецепторах ${m.ps}%.`}}
+}
+$('#simPlay').onclick=e=>{running=!running;e.target.textContent=running?'⏸ Пауза':'▶ Запустить'};
+$('#simReset').onclick=()=>{P=[];store=1;for(let i=0;i<2500;i++)tick();ema5=emaN=emaS=0;for(let i=0;i<300;i++)tick()};
+
+/* ---------- Drug card / chart ---------- */
+const SERIES=[
+ {k:'firing',n:'Активность 5-HT нейронов',c:'#5f7f9f',dash:'6 4',f:(p,w)=>1-.45*p.S5*Math.exp(-w/1.4)},
+ {k:'ht',n:'5-HT в синапсе',c:'#2f8f6b',dash:'',f:(p,w)=>{const A=Math.exp(-w/1.4),F=1-.45*p.S5*A,R=1+.3*p.S5*(1-A);const s=Math.min(.95,p.sert),c=F*R*(1+.5*p.a2)*(1+.6*p.mao)/(1-.85*s);return clamp(c/5.5,0,1)}},
+ {k:'plast',n:'Нейропластичность (BDNF и др.)',c:'#7a6aa8',dash:'2 3',f:(p,w)=>p.P/(1+Math.exp(-(w-3)/.8))},
+ {k:'mood',n:'Улучшение симптомов',c:'#be8051',dash:'',f:(p,w)=>.85*p.P/(1+Math.exp(-(w-3.5)/1))},
+ {k:'se',n:'Ранние побочные эффекты',c:'#b4533f',dash:'8 3 2 3',f:(p,w)=>{const Ep=Math.min(1,p.S5*.9+p.net*.5+p.a2*.4+p.mao*.4);return Ep*Math.exp(-w/2.2)*(1-Math.exp(-w/.25))}}
+];
+const shown=Object.fromEntries(SERIES.map(s=>[s.k,true]));
+$('#seriesToggles').innerHTML=SERIES.map(s=>`<label><input type="checkbox" data-k="${s.k}" checked><i style="border-color:${s.c};border-top-style:${s.dash?'dashed':'solid'}"></i>${s.n}</label>`).join('');
+$('#seriesToggles').addEventListener('change',e=>{shown[e.target.dataset.k]=e.target.checked;drawChart()});
+function drawChart(){
+  const p=sp,svg=$('#chart'),L=52,Rr=24,T=18,B=40,CW=760-L-Rr,CH=320-T-B;
+  const X=w=>L+w/8*CW,Y=v=>T+(1-v)*CH;
+  let s='';
+  s+=`<rect x="${X(0)}" y="${T}" width="${X(4)-X(0)}" height="${CH}" fill="#f6efe5"/><text x="${X(0)+8}" y="${T-5}" font-size="11" fill="#8a6a40">первые недели: наблюдать особенно внимательно</text>`;
+  for(let i=0;i<=4;i++){const v=i/4;s+=`<line x1="${L}" x2="${L+CW}" y1="${Y(v)}" y2="${Y(v)}" stroke="#e1e4d9"/><text x="${L-8}" y="${Y(v)+4}" font-size="11" fill="#6a746d" text-anchor="end">${v}</text>`}
+  for(let w=0;w<=8;w++)s+=`<text x="${X(w)}" y="${T+CH+18}" font-size="11" fill="#6a746d" text-anchor="middle">${w}</text>`;
+  s+=`<text x="${L+CW/2}" y="${T+CH+34}" font-size="11" fill="#6a746d" text-anchor="middle">недели лечения</text><text transform="rotate(-90)" x="${-(T+CH/2)}" y="14" font-size="11" fill="#6a746d" text-anchor="middle">относительные единицы (схема)</text>`;
+  const bl=clamp((1)/5.5,0,1);
+  s+=`<line x1="${L}" x2="${L+CW}" y1="${Y(bl)}" y2="${Y(bl)}" stroke="#2f8f6b" stroke-dasharray="1 4" opacity=".6"/><text x="${L+CW-2}" y="${Y(bl)-4}" font-size="10" fill="#2f8f6b" text-anchor="end">исходный 5-HT</text>`;
+  SERIES.filter(x=>shown[x.k]).forEach(x=>{
+    let d='';for(let i=0;i<=160;i++){const w=i/20;d+=(i?'L':'M')+X(w).toFixed(1)+' '+Y(clamp(x.f(p,w),0,1)).toFixed(1)}
+    s+=`<path d="${d}" fill="none" stroke="${x.c}" stroke-width="3" ${x.dash?`stroke-dasharray="${x.dash}"`:''} stroke-linecap="round"/>`;
+  });
+  const cw=+el.week.value;
+  s+=`<line x1="${X(cw)}" x2="${X(cw)}" y1="${T}" y2="${T+CH}" stroke="#263f37" stroke-width="2"/>`;
+  SERIES.filter(x=>shown[x.k]).forEach(x=>{s+=`<circle cx="${X(cw)}" cy="${Y(clamp(x.f(p,cw),0,1))}" r="5" fill="${x.c}" stroke="#fff" stroke-width="2"/>`});
+  svg.innerHTML=s;
+  const vals=SERIES.filter(x=>shown[x.k]).map(x=>`<span style="color:${x.c}">●</span> ${x.n}: <b>${Math.round(100*clamp(x.f(p,cw),0,1))}</b>`).join(' &nbsp; ');
+  $('#chartRead').innerHTML=`Неделя ${cw}: `+vals;
+  const D=DRUGS[el.drug.value];
+  let note;
+  if(el.drug.value==='none')note='Без препарата кривые плоские: выберите класс препарата.';
+  else if(p.S5>.2)note=cw<1.5?'Ранняя фаза: серотонин в щели уже выше, но нейроны «тормозятся» ауторецепторами 5-HT1A (пунктир падает), побочные эффекты максимальны, а настроение ещё не улучшилось.':cw<4?'Ауторецепторы десенситизируются, активность нейронов восстанавливается, пластичность нарастает. Ответ формируется; раннее улучшение к 2 неделям — хороший прогностический признак.':'Устойчивая фаза: нейроны работают в новом режиме, симптомы улучшаются. Если ответа нет к 4–6 неделям при адекватной дозе — пересматривают стратегию.';
+  else if(el.drug.value==='mirt')note='Нет SERT-блокады: нет и раннего «провала» активности нейронов. Эффект тоже не мгновенный — идёт через пластичность.';
+  else note='Ранний эффект лечения идёт через иные мишени; улучшение симптомов всё равно развивается постепенно, а не сразу.';
+  $('#stageNote').textContent=note;
+}
+function renderCard(){
+  const D=DRUGS[el.drug.value];
+  $('#drugCard').innerHTML=`<span class="eyebrow">${D.n}</span><h3 style="margin-top:6px">${D.t}</h3><p>${D.d}</p><ul>${D.li.map(x=>`<li>${x}</li>`).join('')}</ul>${D.fx.length?`<div class="chips">${D.fx.map(x=>`<span class="chip">${x}</span>`).join('')}</div>`:''}`;
+}
+function sync(){
+  sp=params();$('#doseOut').textContent=el.dose.value+'%';$('#weekOut').textContent=(+el.week.value).toString().replace('.',',');
+  drawChart();
+}
+el.drug.onchange=()=>{renderCard();sync()};el.dose.oninput=sync;el.week.oninput=sync;
+let wt=null;
+$('#weekPlay').onclick=e=>{
+  if(wt){clearInterval(wt);wt=null;e.target.textContent='▶ Прокрутить 0→8 недель';return}
+  if(+el.week.value>=8)el.week.value=0;
+  e.target.textContent='⏸ Остановить';
+  wt=setInterval(()=>{el.week.value=Math.min(8,+el.week.value+.05);sync();if(+el.week.value>=8){clearInterval(wt);wt=null;e.target.textContent='▶ Прокрутить 0→8 недель'}},60);
+};
+
+/* ---------- Receptors ---------- */
+const TARGETS=['SERT','NET','DAT','H1','M1','α1','5-HT2A','5-HT2C','α2'];
+const PROFILE=[
+ ['Сертралин',[3,0,1,0,0,0,0,0,0]],
+ ['Флуоксетин',[3,1,0,0,0,0,0,1,0]],
+ ['Пароксетин',[3,1,0,0,2,0,0,0,0]],
+ ['Эсциталопрам',[3,0,0,0,0,0,0,0,0]],
+ ['Венлафаксин',[3,2,0,0,0,0,0,0,0]],
+ ['Дулоксетин',[3,3,1,0,0,0,0,0,0]],
+ ['Амитриптилин',[2,2,0,3,3,3,2,1,0]],
+ ['Миртазапин',[0,0,0,3,0,1,2,2,3]],
+ ['Бупропион',[0,2,2,0,0,0,0,0,0]],
+ ['Тразодон',[1,0,0,2,0,2,3,2,0]]
+];
+const EFFECTS=[
+ ['Седация',v=>v[3]],
+ ['Прибавка веса',v=>Math.max(v[3],v[7])],
+ ['Антихолинергические',v=>v[4]],
+ ['Ортостаз',v=>v[5]],
+ ['Тошнота, ЖКТ',v=>v[0]],
+ ['Сексуальная дисфункция',v=>Math.max(0,v[0]-(v[6]>=2?1:0))],
+ ['Тахикардия, ↑АД, тремор',v=>v[1]],
+ ['Активация, бессонница',v=>Math.max(v[1],v[2])]
+];
+const SYM=['0','+','++','+++'];
+let selDrug=null,sortBy=null;
+function renderRec(){
+  $('#recTable').innerHTML=`<thead><tr><th></th>${TARGETS.map(t=>`<th scope="col">${t}</th>`).join('')}</tr></thead><tbody>${PROFILE.map(([n,v],i)=>`<tr class="${i===selDrug?'sel':''}"><th scope="row"><button data-i="${i}" aria-pressed="${i===selDrug}">${n}</button></th>${v.map(x=>`<td class="c l${x}">${SYM[x]}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  const rows=PROFILE.map(([n,v],i)=>({n,i,e:EFFECTS.map(([,f])=>f(v))}));
+  if(sortBy!==null)rows.sort((a,b)=>a.e[sortBy]-b.e[sortBy]||a.i-b.i);
+  $('#effTable').innerHTML=`<thead><tr><th></th>${EFFECTS.map(([n],j)=>`<th scope="col"><button data-j="${j}" aria-pressed="${sortBy===j}" title="Сортировать от наименее вероятного">${n}${sortBy===j?' ↑':''}</button></th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr class="${r.i===selDrug?'sel':''}"><th scope="row">${r.n}</th>${r.e.map(x=>`<td class="c l${x}">${SYM[x]}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  const v=$('#recVerdict');
+  if(selDrug===null){v.textContent=sortBy===null?'Выберите препарат в верхней таблице или нажмите на название эффекта, чтобы найти препараты с наименьшим риском.':`Отсортировано по возрастанию: «${EFFECTS[sortBy][0]}». Вверху — препараты, у которых этот эффект по профилю наименее вероятен.`;return}
+  const [n,vals]=PROFILE[selDrug],top=EFFECTS.map(([e,f])=>[e,f(vals)]).filter(x=>x[1]>=2).map(x=>x[0]);
+  v.innerHTML=`<strong>${n}.</strong> `+(top.length?`Ожидаемые умеренные/выраженные эффекты: ${top.join(', ')}.`:'Выраженных «внецелевых» эффектов по профилю не прогнозируется; остаются индивидуальные и дозозависимые.');
+}
+$('#recTable').addEventListener('click',e=>{const b=e.target.closest('button[data-i]');if(b){selDrug=selDrug===+b.dataset.i?null:+b.dataset.i;renderRec()}});
+$('#effTable').addEventListener('click',e=>{const b=e.target.closest('button[data-j]');if(b){sortBy=sortBy===+b.dataset.j?null:+b.dataset.j;renderRec()}});
+
+/* ---------- D2 ---------- */
+const D2P=[
+ ['Галоперидол',[65,80],'Типичный антипсихотик с высокой аффинностью: легко «перескакивает» порог ЭПС — окно узкое. Поэтому его титруют аккуратно.'],
+ ['Рисперидон',[70,85],'Занятость D2 быстро растёт с дозой; пролактин и ЭПС — доза-зависимы, что подтверждается клинически.'],
+ ['Оланзапин',[60,80],'Умеренная D2-блокада при метаболических рисках, обусловленных другими рецепторами (H1, 5-HT2C).'],
+ ['Клозапин',[20,67],'Эффективен при низкой занятости D2 (быстрая диссоциация, широкий рецепторный профиль) — поэтому почти нет ЭПС и пролактинового эффекта. Исключение, подтверждающее правило.'],
+ ['Арипипразол',[85,95],'Частичный агонист: даже при высокой занятости D2 сохраняет собственную активность рецептора, поэтому «правило 78%» к нему не применимо. Возможна акатизия.']
+];
+$('#d2Presets').innerHTML=D2P.map(([n],i)=>`<button class="btn alt" data-i="${i}">${n}</button>`).join('');
+function d2(){
+  const v=+$('#d2').value;$('#d2Out').textContent=v+'%';$('#d2knob').style.left=`calc(${v}% - 2px)`;
+  const e=$('#d2Verdict');e.className='verdict';
+  if(v<65)e.innerHTML='<strong>Ниже порога ответа.</strong> Вероятность антипсихотического эффекта по данным ПЭТ низка — но у клозапина и других препаратов с быстрой диссоциацией это правило работает иначе.';
+  else if(v<=72)e.innerHTML='<strong>Терапевтическое окно.</strong> Ответ вероятен; пролактин и ЭПС пока маловероятны. К этой зоне и стремятся при подборе дозы.';
+  else if(v<=78){e.className='verdict warn';e.innerHTML='<strong>Риск гиперпролактинемии растёт.</strong> Эффект есть, но возможны галакторея, нарушения цикла, сексуальная дисфункция; ЭПС ещё не доминируют.'}
+  else{e.className='verdict bad';e.innerHTML='<strong>Зона высокого риска ЭПС.</strong> Паркинсонизм, акатизия, острая дистония вероятнее; дополнительной пользы для ответа обычно нет (кроме партиальных агонистов).'}
+}
+$('#d2').oninput=d2;
+$('#d2Presets').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const [n,[a,z],t]=D2P[+b.dataset.i];$('#d2').value=Math.round((a+z)/2);d2();$('#d2PresetTitle').textContent=`${n}: типичная занятость D2 ≈ ${a}–${z}%`;$('#d2PresetText').textContent=t});
+
+/* ---------- Toxidromes ---------- */
+const TOX_NAMES=['Серотониновый синдром','ЗНС','Антихолинергический'],TOX_COL=['#2f8f6b','#be8051','#7a6aa8'];
+const TOX_ITEMS=[
+ ['Приём / отмена',null],
+ ['Приём серотонинергического агента (СИОЗС, ИМАО, трамадол, линезолид и т.п.) или повышение его дозы',[3,0,0]],
+ ['Антагонист D2 (антипсихотик, метоклопрамид) или отмена дофаминергического препарата',[0,3,0]],
+ ['Антихолинергический агент (трициклик, антигистаминный, бензтропин, атропин)',[0,0,3]],
+ ['Развитие',null],
+ ['Развилось за часы',[2,-1,1]],
+ ['Развивалось днями–неделями',[-1,2,0]],
+ ['Нервно-мышечные',null],
+ ['Клонус (спонтанный, индуцируемый, глазной)',[3,0,-1]],
+ ['Гиперрефлексия',[2,-1,0]],
+ ['Ригидность «свинцовая труба»',[0,3,-1]],
+ ['Брадикинезия, мутизм',[-1,2,0]],
+ ['Тремор',[1,1,0]],
+ ['Вегетативные / общие',null],
+ ['Влажная кожа, потливость',[2,2,-3]],
+ ['Сухая, горячая, красная кожа',[-2,-1,3]],
+ ['Мидриаз',[2,0,2]],
+ ['Диарея, гиперперистальтика',[2,0,-2]],
+ ['Запор, ↓ перистальтика, задержка мочи',[-1,0,2]],
+ ['Гипертермия > 38,5 °C',[1,2,1]],
+ ['Лабильность АД и пульса',[1,2,0]],
+ ['Ажитация',[2,0,2]],
+ ['Делирий, зрительные галлюцинации',[1,1,2]],
+ ['Резкий рост КФК, миоглобинурия',[1,3,0]]
+];
+$('#toxChecks').innerHTML=TOX_ITEMS.map(([t,w],i)=>w?`<label><input type="checkbox" data-i="${i}">${t}</label>`:`<h4>${t}</h4>`).join('');
+function tox(){
+  const sc=[0,0,0];let n=0;
+  $$('#toxChecks input:checked').forEach(c=>{n++;TOX_ITEMS[+c.dataset.i][1].forEach((w,k)=>sc[k]+=w)});
+  const mx=Math.max(6,...sc),lead=sc.indexOf(Math.max(...sc));
+  $('#toxBars').innerHTML=sc.map((s,k)=>`<div class="tox-row ${n&&k===lead?'lead':''}"><strong>${TOX_NAMES[k]}</strong><div class="bar"><b style="width:${clamp(s/mx*100,0,100)}%;background:${TOX_COL[k]}"></b></div><span>${s}</span></div>`).join('');
+  const v=$('#toxVerdict');v.className='verdict';
+  if(!n){v.textContent='Отметьте находки слева.';return}
+  const sorted=[...sc].sort((a,b)=>b-a);
+  if(sorted[0]<4){v.className='verdict warn';v.textContent='Пока недостаточно признаков: ни один синдром не набирает убедительно. Уточните препараты, скорость развития, тонус/рефлексы, кожу и перистальтику.';return}
+  if(sorted[0]-sorted[1]<2){v.className='verdict warn';v.innerHTML=`Перекрытие: <b>${TOX_NAMES[lead]}</b> лидирует незначительно. Это как раз ситуация, когда решают приём препарата, скорость развития и дифференцирующие находки (клонус vs ригидность, влажная vs сухая кожа).`;return}
+  v.className='verdict bad';v.innerHTML=`Лучше всего подходит: <b>${TOX_NAMES[lead]}</b>. Состояние неотложное: отмена вызвавшего агента, мониторинг витальных функций, срочная медицинская помощь.`;
+}
+$('#toxChecks').addEventListener('change',tox);
+$('#toxReset').onclick=()=>{$$('#toxChecks input').forEach(c=>c.checked=false);tox()};
+
+/* ---------- PHQ-9 ---------- */
+const PHQ=['Малая заинтересованность или удовольствие от дел','Подавленное настроение, тоска или чувство безнадёжности','Трудности с засыпанием, прерывистый сон или избыточный сон','Усталость или упадок сил','Плохой аппетит или переедание','Низкая самооценка, чувство вины или ощущение, что вы неудачник и подвели близких','Трудности с концентрацией (например, при чтении или просмотре телевизора)','Заторможенность, заметная окружающим, или, наоборот, суетливость и беспокойство','Мысли о том, что лучше было бы умереть, или о причинении себе вреда'];
+const PHQ_OPT=['Совсем нет','Несколько дней','Более половины дней','Почти каждый день'];
+$('#phqForm').innerHTML=PHQ.map((q,i)=>`<fieldset><legend>${i+1}. ${q}</legend><div class="opts">${PHQ_OPT.map((o,v)=>`<label><input type="radio" name="q${i}" value="${v}"${v===0?' checked':''}>${o}</label>`).join('')}</div></fieldset>`).join('');
+function phq(){
+  const a=PHQ.map((_,i)=>+(document.querySelector(`input[name=q${i}]:checked`)||{value:0}).value);
+  const s=a.reduce((x,y)=>x+y,0);
+  $('#phqScore').textContent=s;$('#phqBar').value=s;
+  const lv=s<5?'Минимальные симптомы':s<10?'Лёгкая выраженность':s<15?'Умеренная выраженность':s<20?'Умеренно тяжёлая':'Тяжёлая выраженность';
+  $('#phqLevel').textContent=lv;
+  const cnt=a.filter((v,i)=>i===8?v>=1:v>=2).length,core=a[0]>=2||a[1]>=2;
+  const c=$('#phqCrit');c.className='verdict';
+  if(cnt>=5&&core)c.innerHTML=`<strong>Паттерн соответствует большому депрессивному эпизоду (предварительно):</strong> ${cnt} симптомов на уровне «более половины дней» и ключевой симптом (пункт 1 или 2). Требуется клиническое интервью, исключение биполярности, соматических и лекарственных причин.`;
+  else{c.classList.add('warn');c.innerHTML=`Алгоритмический паттерн большого депрессивного эпизода не набран (${cnt} из 5 нужных симптомов${core?'':', ключевые пункты 1–2 не достигают порога'}). Сумма баллов при этом может быть значимой — ориентируйтесь на клиническую картину.`}
+  $('#phqSui').hidden=a[8]<1;
+}
+$('#phqForm').addEventListener('change',phq);
+
+/* ---------- Cases ---------- */
+const CASES=[
+ {q:'Женщина, 34 года. Депрессия 2 месяца, выраженная бессонница, потеря аппетита и 6 кг веса, тревога. Нет сопутствующих заболеваний.',tags:['бессонница','потеря веса','тревога'],
+  o:[['Миртазапин','Седативный (H1) и аппетит-повышающий профиль, не вызывает тошноты и сексуальной дисфункции — совпадает с картиной бессонницы и похудения.',1],['Бупропион','Стимулирующий, снижает аппетит и ухудшает сон и тревогу — профиль противоположен потребностям пациентки.',0],['Флуоксетин','Может усиливать активацию и бессонницу в начале лечения и не решает проблему сна и аппетита.',0]]},
+ {q:'Мужчина, 41 год. Депрессия с гиперсомнией и ожирением (ИМТ 34). На сертралине ремиссия не достигнута, нарушена эрекция, нарастает вес.',tags:['ожирение','гиперсомния','сексуальная дисфункция'],
+  o:[['Миртазапин','Ещё больше седации и прибавки веса — усугубит проблему.',0],['Бупропион (замена или добавление)','Стимулирующий, обычно без прибавки веса и сексуальной дисфункции; логично при гиперсомнии. Нет судорог/расстройства пищевого поведения в анамнезе — иначе противопоказан.',1],['Повышение дозы сертралина','Усилит сексуальную дисфункцию и не отвечает на проблему веса.',0]]},
+ {q:'Женщина, 78 лет. Депрессия, ортостатические падения в анамнезе, сердечная недостаточность, хронические запоры и закрытоугольная глаукома. Нужен антидепрессант.',tags:['пожилая','ортостаз','глаукома','сердце'],
+  o:[['Амитриптилин','M1-, α1-, H1-блокада и кардиотоксичность: запор, острая глаукома, падения, аритмии — противопоказан.',0],['Пароксетин','Самый антихолинергический из СИОЗС (M1: 2+) — нежелателен при глаукоме, запорах, у пожилых.',0],['Сертралин','Нет значимой M1/α1-блокады; чаще выбирают при сердечных заболеваниях. Контроль натрия (гипонатриемия у пожилых) и риска кровотечений.',1]]},
+ {q:'Мужчина, 52 года. Депрессия и мучительная диабетическая невропатия стоп, плохо сплю из-за боли. Безопасное сердце, нормальное АД.',tags:['невропатическая боль','СД'],
+  o:[['Эсциталопрам','Эффективен при депрессии, но на невропатическую боль почти не влияет.',0],['Бупропион','Противодействует депрессии, но не обезболивает.',0],['Дулоксетин (СИОЗСН)','Усиление нисходящих норадренергических/серотонинергических путей подавления боли — единый препарат закрывает обе проблемы. Контроль АД.',1]]}
+];
+let ci=0,score=0,answered=false;
+function renderCase(){
+  const c=CASES[ci];answered=false;
+  $('#caseCard').innerHTML=`<span class="eyebrow">Случай ${ci+1} из ${CASES.length} · верных: ${score}</span><p class="case-q" style="margin-top:10px">${c.q}</p><div class="case-meta">${c.tags.map(t=>`<span class="chip ok">${t}</span>`).join('')}</div><h3>Какой антидепрессант логичнее?</h3><div class="case-opts">${c.o.map((o,i)=>`<button data-i="${i}">${o[0]}</button>`).join('')}</div><div class="small-actions" id="caseNext"></div>`;
+}
+$('#caseCard').addEventListener('click',e=>{
+  const b=e.target.closest('.case-opts button');
+  if(b&&!answered){
+    answered=true;const c=CASES[ci];
+    $$('.case-opts button').forEach((x,i)=>{const o=c.o[i];x.classList.add(o[2]?'right':'wrong');x.innerHTML=`${o[0]}${o[2]?' ✓':''}<span class="why">${o[1]}</span>`;x.disabled=true;x.style.opacity=1});
+    if(c.o[+b.dataset.i][2])score++;
+    $('#caseNext').innerHTML=ci<CASES.length-1?'<button class="btn" id="nextCase">Следующий случай →</button>':`<div class="verdict">Результат: ${score} из ${CASES.length}. <button class="btn alt" id="restartCase" style="margin-left:8px">Пройти снова</button></div>`;
+    return;
+  }
+  if(e.target.id==='nextCase'){ci++;renderCase()}
+  if(e.target.id==='restartCase'){ci=0;score=0;renderCase()}
+});
+
+/* ---------- init ---------- */
+renderCard();sync();renderRec();d2();tox();phq();renderCase();
+calibrate();sync();
+requestAnimationFrame(loop);
+addEventListener('resize',()=>{resizeCanvas()});
+const start=location.hash.slice(1);showTab(['synapse','receptors','d2','tox','phq','cases'].includes(start)?start:'synapse');
+if(reduced)$('#simPlay').textContent='▶ Запустить';
+})();
+</script>
+</body>
+</html>
