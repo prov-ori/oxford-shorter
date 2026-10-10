@@ -126,6 +126,10 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
     <button role="tab" id="t-tox" aria-controls="p-tox" aria-selected="false" tabindex="-1">④ Токсидромы</button>
     <button role="tab" id="t-phq" aria-controls="p-phq" aria-selected="false" tabindex="-1">⑤ PHQ-9</button>
     <button role="tab" id="t-cases" aria-controls="p-cases" aria-selected="false" tabindex="-1">⑥ Случаи</button>
+    <button role="tab" id="t-lithium" aria-controls="p-lithium" aria-selected="false" tabindex="-1">⑦ Литий</button>
+    <button role="tab" id="t-washout" aria-controls="p-washout" aria-selected="false" tabindex="-1">⑧ Отмена и t½</button>
+    <button role="tab" id="t-ddd" aria-controls="p-ddd" aria-selected="false" tabindex="-1">⑨ Делирий / деменция / депрессия</button>
+    <button role="tab" id="t-mse" aria-controls="p-mse" aria-selected="false" tabindex="-1">⑩ Статус (MSE)</button>
   </div>
 
   <!-- 1. SYNAPSE -->
@@ -268,6 +272,79 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
     <h2>Клинические случаи: подберите логику лечения</h2>
     <p class="sub">Выбор антидепрессанта — это сопоставление профиля препарата с профилем пациента. Это учебные упрощённые вариации; на практике решают руководства, взаимодействия и предпочтения пациента.</p>
     <div class="card" style="margin-top:22px" id="caseCard"></div>
+  </section>
+
+  <!-- 7. LITHIUM -->
+  <section class="panel" id="p-lithium" role="tabpanel" aria-labelledby="t-lithium" hidden>
+    <h2>Литий: уровень в крови и токсичность</h2>
+    <p class="sub">Узкий терапевтический индекс — главная причина мониторинга. Двигайте уровень и отмечайте факторы, которые его повышают. Значения — общие ориентиры; целевой диапазон определяется руководством и ситуацией (профилактика или острый эпизод).</p>
+    <div class="grid2">
+      <div class="card">
+        <div class="field"><label for="li">Сывороточный литий, ммоль/л <output id="liOut">0,8</output></label>
+          <input type="range" id="li" min="0" max="40" value="8"></div>
+        <div style="position:relative;margin-top:14px">
+          <div class="d2bar" id="liBar">
+            <div style="width:10%;background:#e9e4d6;color:#6a5f3e">&lt;0,4</div>
+            <div style="width:5%;background:#efe9d2;color:#6a5f3e">0,4–0,6</div>
+            <div style="width:10%;background:#c9ddbf;color:#173d2f">0,6–1,0</div>
+            <div style="width:12.5%;background:#f0d6a5;color:#5f4410">1,0–1,5</div>
+            <div style="width:25%;background:#e8b4a6;color:#5a1f12">1,5–2,5</div>
+            <div style="width:37.5%;background:#d98a77;color:#4a1409">&gt;2,5</div>
+          </div>
+          <div class="d2knob" id="liKnob"></div>
+        </div>
+        <div class="d2marks"><span style="left:0">0</span><span style="left:25%">1,0</span><span style="left:50%">2,0</span><span style="left:75%">3,0</span><span style="left:100%">4,0</span></div>
+        <div class="verdict" id="liVerdict"></div>
+        <p class="fine" style="margin-top:12px">Кровь берут примерно через 12 часов после последней дозы, при стабильном режиме (около 5 дней после изменения дозы). Хронический приём может давать токсичность и при «умеренных» уровнях, особенно у пожилых.</p>
+      </div>
+      <div>
+        <div class="card"><h3>Что повышает уровень</h3>
+          <div class="checks" style="grid-template-columns:1fr" id="liFactors"></div>
+          <div class="verdict warn" id="liFactorNote" style="margin-top:12px">Отметьте фактор — увидите механизм.</div></div>
+        <div class="card" style="margin-top:16px"><h3>Контроль при длительном приёме</h3>
+          <div class="chips"><span class="chip ok">креатинин / СКФ</span><span class="chip ok">ТТГ</span><span class="chip ok">кальций</span><span class="chip ok">Na, гидратация</span><span class="chip ok">масса тела</span></div>
+          <ul style="font-size:13px;padding-left:18px;margin:10px 0 0"><li>Гипотиреоз, гиперпаратиреоз, снижение СКФ.</li><li>Нефрогенный несахарный диабет (полиурия, жажда).</li><li>Тремор, прибавка веса.</li><li>Тератогенность (сердечные пороки плода) — обсуждать при планировании беременности.</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. WASHOUT -->
+  <section class="panel" id="p-washout" role="tabpanel" aria-labelledby="t-washout" hidden>
+    <h2>Период полувыведения: накопление, отмена, «отмывка»</h2>
+    <p class="sub">Почему пароксетин и венлафаксин вызывают синдром отмены чаще, чем флуоксетин, и почему между флуоксетином и ИМАО нужно ждать недели. Значения t½ — приблизительные средние по активному веществу; индивидуально они варьируют.</p>
+    <div class="card" style="margin-top:22px">
+      <div class="row"><div class="field" style="flex:1;min-width:220px;margin:0"><span class="lbl">Режим</span>
+        <div class="row"><label style="font-size:14px"><input type="radio" name="wmode" value="out" checked> Отмена препарата</label><label style="font-size:14px"><input type="radio" name="wmode" value="in"> Начало приёма (накопление)</label></div></div></div>
+      <div class="series-toggles" id="wmToggles" style="margin-top:14px"></div>
+      <svg id="wmChart" viewBox="0 0 760 320" role="img" aria-label="Остаточная концентрация препарата по дням после отмены или накопление при начале приёма"></svg>
+      <div class="readout" id="wmRead"></div>
+      <div class="stage-note" id="wmNote"></div>
+    </div>
+  </section>
+
+  <!-- 9. DDD -->
+  <section class="panel" id="p-ddd" role="tabpanel" aria-labelledby="t-ddd" hidden>
+    <h2>Делирий, деменция или депрессия?</h2>
+    <p class="sub">Классическая тройка «дифференциальной диагностики пожилого пациента». Отмечайте находки: модель покажет, какой синдром подходит лучше. Состояния могут сочетаться, особенно делирий на фоне деменции.</p>
+    <div class="grid2">
+      <div class="card"><div class="checks" id="dddChecks"></div><div class="row small-actions"><button class="btn alt" id="dddReset">Сбросить</button></div></div>
+      <div class="card"><h3>Соответствие картины</h3><div class="tox" id="dddBars" style="margin-top:14px"></div>
+        <div class="verdict" id="dddVerdict" style="margin-top:18px">Отметьте находки слева.</div>
+        <p class="fine" style="margin-top:12px">Образовательная эвристика. Делирий — неотложное состояние: ищут и устраняют причину (инфекция, лекарства, метаболические нарушения, абстиненция), оценивают по CAM или аналогичному инструменту.</p></div>
+    </div>
+  </section>
+
+  <!-- 10. MSE -->
+  <section class="panel" id="p-mse" role="tabpanel" aria-labelledby="t-mse" hidden>
+    <h2>Конструктор статуса психического состояния</h2>
+    <p class="sub">Выберите находки по доменам — справа соберётся связный текст статуса. Тренирует структуру и терминологию; пустые домены отмечаются как «не оценивалось».</p>
+    <div class="grid2">
+      <div class="card" id="mseForm"></div>
+      <aside style="position:sticky;top:76px"><div class="card"><h3>Статус</h3>
+        <pre id="mseOut" style="white-space:pre-wrap;font:14px/1.7 'Segoe UI',Arial,sans-serif;margin:12px 0 0"></pre>
+        <div class="verdict bad" id="mseSui" hidden style="margin-top:12px"><strong>Отмечены суицидальные мысли.</strong> Нужна структурированная оценка риска: частота и интенсивность мыслей, план, намерение, доступ к средствам, прошлые попытки, защитные факторы.</div>
+        <div class="row small-actions"><button class="btn" id="mseCopy">Копировать</button><button class="btn alt" id="mseReset">Сбросить</button></div></div></aside>
+    </div>
   </section>
 </main>
 
@@ -554,8 +631,25 @@ function d2(){
 $('#d2').oninput=d2;
 $('#d2Presets').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const [n,[a,z],t]=D2P[+b.dataset.i];$('#d2').value=Math.round((a+z)/2);d2();$('#d2PresetTitle').textContent=`${n}: типичная занятость D2 ≈ ${a}–${z}%`;$('#d2PresetText').textContent=t});
 
-/* ---------- Toxidromes ---------- */
-const TOX_NAMES=['Серотониновый синдром','ЗНС','Антихолинергический'],TOX_COL=['#2f8f6b','#be8051','#7a6aa8'];
+/* ---------- Differential scorers (toxidromes, delirium/dementia/depression) ---------- */
+function ddx(o){
+  $(o.checks).innerHTML=o.items.map(([t,w],i)=>w?`<label><input type="checkbox" data-i="${i}">${t}</label>`:`<h4>${t}</h4>`).join('');
+  function run(){
+    const sc=o.names.map(()=>0);let n=0;
+    $$(o.checks+' input:checked').forEach(c=>{n++;o.items[+c.dataset.i][1].forEach((w,k)=>sc[k]+=w)});
+    const mx=Math.max(6,...sc),lead=sc.indexOf(Math.max(...sc));
+    $(o.bars).innerHTML=sc.map((s,k)=>`<div class="tox-row ${n&&k===lead?'lead':''}"><strong>${o.names[k]}</strong><div class="bar"><b style="width:${clamp(s/mx*100,0,100)}%;background:${o.cols[k]}"></b></div><span>${s}</span></div>`).join('');
+    const v=$(o.verdict);v.className='verdict';
+    if(!n){v.textContent='Отметьте находки слева.';return}
+    const sorted=[...sc].sort((a,b)=>b-a);
+    if(sorted[0]<4){v.className='verdict warn';v.textContent='Пока недостаточно признаков: ни один синдром не набирает убедительно. '+o.more;return}
+    if(sorted[0]-sorted[1]<2){v.className='verdict warn';v.innerHTML=`Перекрытие: <b>${o.names[lead]}</b> лидирует незначительно. ${o.overlap}`;return}
+    v.className='verdict bad';v.innerHTML=`Лучше всего подходит: <b>${o.names[lead]}</b>. ${o.act[lead]}`;
+  }
+  $(o.checks).addEventListener('change',run);
+  $(o.reset).onclick=()=>{$$(o.checks+' input').forEach(c=>c.checked=false);run()};
+  run();
+}
 const TOX_ITEMS=[
  ['Приём / отмена',null],
  ['Приём серотонинергического агента (СИОЗС, ИМАО, трамадол, линезолид и т.п.) или повышение его дозы',[3,0,0]],
@@ -582,21 +676,40 @@ const TOX_ITEMS=[
  ['Делирий, зрительные галлюцинации',[1,1,2]],
  ['Резкий рост КФК, миоглобинурия',[1,3,0]]
 ];
-$('#toxChecks').innerHTML=TOX_ITEMS.map(([t,w],i)=>w?`<label><input type="checkbox" data-i="${i}">${t}</label>`:`<h4>${t}</h4>`).join('');
-function tox(){
-  const sc=[0,0,0];let n=0;
-  $$('#toxChecks input:checked').forEach(c=>{n++;TOX_ITEMS[+c.dataset.i][1].forEach((w,k)=>sc[k]+=w)});
-  const mx=Math.max(6,...sc),lead=sc.indexOf(Math.max(...sc));
-  $('#toxBars').innerHTML=sc.map((s,k)=>`<div class="tox-row ${n&&k===lead?'lead':''}"><strong>${TOX_NAMES[k]}</strong><div class="bar"><b style="width:${clamp(s/mx*100,0,100)}%;background:${TOX_COL[k]}"></b></div><span>${s}</span></div>`).join('');
-  const v=$('#toxVerdict');v.className='verdict';
-  if(!n){v.textContent='Отметьте находки слева.';return}
-  const sorted=[...sc].sort((a,b)=>b-a);
-  if(sorted[0]<4){v.className='verdict warn';v.textContent='Пока недостаточно признаков: ни один синдром не набирает убедительно. Уточните препараты, скорость развития, тонус/рефлексы, кожу и перистальтику.';return}
-  if(sorted[0]-sorted[1]<2){v.className='verdict warn';v.innerHTML=`Перекрытие: <b>${TOX_NAMES[lead]}</b> лидирует незначительно. Это как раз ситуация, когда решают приём препарата, скорость развития и дифференцирующие находки (клонус vs ригидность, влажная vs сухая кожа).`;return}
-  v.className='verdict bad';v.innerHTML=`Лучше всего подходит: <b>${TOX_NAMES[lead]}</b>. Состояние неотложное: отмена вызвавшего агента, мониторинг витальных функций, срочная медицинская помощь.`;
-}
-$('#toxChecks').addEventListener('change',tox);
-$('#toxReset').onclick=()=>{$$('#toxChecks input').forEach(c=>c.checked=false);tox()};
+ddx({checks:'#toxChecks',bars:'#toxBars',verdict:'#toxVerdict',reset:'#toxReset',items:TOX_ITEMS,
+  names:['Серотониновый синдром','ЗНС','Антихолинергический'],cols:['#2f8f6b','#be8051','#7a6aa8'],
+  more:'Уточните препараты, скорость развития, тонус/рефлексы, кожу и перистальтику.',
+  overlap:'Это как раз ситуация, когда решают приём препарата, скорость развития и дифференцирующие находки (клонус vs ригидность, влажная vs сухая кожа).',
+  act:['Состояние неотложное: отмена вызвавшего агента, мониторинг витальных функций, срочная медицинская помощь.','Состояние неотложное: отмена вызвавшего агента, мониторинг, срочная медицинская помощь.','Состояние неотложное: отмена вызвавшего агента, мониторинг, срочная медицинская помощь.']});
+
+const DDD_ITEMS=[
+ ['Начало',null],
+ ['Острое (часы–дни)',[3,-2,-1]],
+ ['Подострое (недели–месяцы)',[-1,0,2]],
+ ['Исподволь (месяцы–годы)',[-2,3,-1]],
+ ['Течение',null],
+ ['Колебания в течение суток, «светлые промежутки»',[3,0,0]],
+ ['Инверсия сна и бодрствования, ухудшение к вечеру',[2,1,0]],
+ ['Внимание и сознание',null],
+ ['Резко нарушено внимание, легко отвлекается',[3,-1,0]],
+ ['Нарушено сознание (сонливость или гипербдительность)',[3,-2,-2]],
+ ['Когнитивные и речевые функции',null],
+ ['Выраженное снижение памяти на недавние события',[1,3,0]],
+ ['Афазия, апраксия, агнозия',[0,3,-2]],
+ ['Дезорганизованное мышление, бессвязная речь',[3,1,-1]],
+ ['Чаще отвечает «не знаю», слабая попытка выполнить задание',[-1,-1,3]],
+ ['Жалуется на проблемы с памятью и подчёркивает их',[0,-1,2]],
+ ['Настроение и восприятие',null],
+ ['Стойкое подавленное настроение, ангедония, вина',[-1,0,3]],
+ ['Зрительные галлюцинации, бред',[2,1,0]],
+ ['Причина',null],
+ ['Выявлен соматический триггер (инфекция, препарат, метаболическое нарушение, абстиненция)',[3,0,0]]
+];
+ddx({checks:'#dddChecks',bars:'#dddBars',verdict:'#dddVerdict',reset:'#dddReset',items:DDD_ITEMS,
+  names:['Делирий','Деменция','Депрессия'],cols:['#b4533f','#5f7f9f','#2f8f6b'],
+  more:'Уточните скорость начала, колебания, внимание и уровень сознания.',
+  overlap:'Состояния часто сочетаются (делирий на фоне деменции, депрессия при деменции). Решают скорость начала, внимание/сознание и наличие соматического триггера.',
+  act:['Делирий — неотложное состояние: искать и устранять причину, исключить лекарственные и инфекционные факторы, оценить безопасность.','Типичная картина деменции: нужны когнитивное тестирование, нейровизуализация и лабораторные исключения обратимых причин.','Картина депрессии (в том числе «псевдодеменции»): структурированная оценка депрессии и суицидального риска; когнитивные нарушения обратимы по мере лечения.']});
 
 /* ---------- PHQ-9 ---------- */
 const PHQ=['Малая заинтересованность или удовольствие от дел','Подавленное настроение, тоска или чувство безнадёжности','Трудности с засыпанием, прерывистый сон или избыточный сон','Усталость или упадок сил','Плохой аппетит или переедание','Низкая самооценка, чувство вины или ощущение, что вы неудачник и подвели близких','Трудности с концентрацией (например, при чтении или просмотре телевизора)','Заторможенность, заметная окружающим, или, наоборот, суетливость и беспокойство','Мысли о том, что лучше было бы умереть, или о причинении себе вреда'];
@@ -645,12 +758,79 @@ $('#caseCard').addEventListener('click',e=>{
   if(e.target.id==='restartCase'){ci=0;score=0;renderCase()}
 });
 
+/* ---------- Lithium ---------- */
+function li(){
+  const v=+$('#li').value/10;$('#liOut').textContent=v.toFixed(1).replace('.',',');$('#liKnob').style.left=`calc(${v/4*100}% - 2px)`;
+  const e=$('#liVerdict');e.className='verdict';
+  if(v<.4){e.classList.add('warn');e.innerHTML='<strong>Ниже терапевтического диапазона.</strong> Эффект профилактики маловероятен; проверьте приверженность, время забора крови, дозу.'}
+  else if(v<.6){e.classList.add('warn');e.innerHTML='<strong>Нижняя граница.</strong> У части пациентов (особенно пожилых) для профилактики этого достаточно; при остром эпизоде обычно мало.'}
+  else if(v<=1){e.innerHTML='<strong>Терапевтическая зона.</strong> Поддерживающая терапия обычно в нижней половине диапазона, при остром эпизоде — выше. Продолжайте плановый контроль.'}
+  else if(v<=1.5){e.classList.add('warn');e.innerHTML='<strong>Выше обычного диапазона.</strong> Нарастает риск побочных эффектов (тремор, ЖКТ, жажда). Проверьте провоцирующие факторы, пересмотрите дозу, повторите анализ.'}
+  else if(v<=2.5){e.classList.add('bad');e.innerHTML='<strong>Токсичность.</strong> Грубый тремор, атаксия, дизартрия, нистагм, рвота и диарея, спутанность. Прекратить приём, срочная оценка, гидратация и мониторинг ЭКГ и электролитов.'}
+  else{e.classList.add('bad');e.innerHTML='<strong>Тяжёлая интоксикация.</strong> Судороги, нарушение сознания вплоть до комы, аритмии. Неотложная помощь; при тяжёлой токсичности рассматривают гемодиализ.'}
+}
+$('#li').oninput=li;
+const LI_F=[['НПВС (ибупрофен и др.)','Снижают почечный клиренс лития: уровень растёт.'],['Ингибиторы АПФ и сартаны','Меняют гемодинамику почек и повышают реабсорбцию лития — уровень растёт.'],['Тиазидные диуретики','Усиливают реабсорбцию натрия и лития в проксимальных канальцах — один из наиболее значимых факторов.'],['Обезвоживание: рвота, диарея, жара','Снижается клубочковая фильтрация, усиливается реабсорбция — уровень растёт.'],['Низкое потребление натрия','Организм удерживает натрий и литий вместе — уровень растёт.'],['Почечная недостаточность, пожилой возраст','Литий выводится почками; снижение СКФ увеличивает период полувыведения.']];
+$('#liFactors').innerHTML=LI_F.map(([t],i)=>`<label><input type="checkbox" data-i="${i}">${t}</label>`).join('');
+$('#liFactors').addEventListener('change',()=>{
+  const on=$$('#liFactors input:checked').map(c=>LI_F[+c.dataset.i]);
+  $('#liFactorNote').innerHTML=on.length?on.map(([t,d])=>`<b>${t}.</b> ${d}`).join('<br>'):'Отметьте фактор — увидите механизм.';
+});
+
+/* ---------- Washout / half-life ---------- */
+const WM=[
+ ['Флуоксетин',168,'#2f8f6b',false],['Пароксетин',21,'#b4533f',true],['Сертралин',26,'#5f7f9f',true],['Эсциталопрам',30,'#7a6aa8',false],
+ ['Венлафаксин',11,'#be8051',true],['Дулоксетин',12,'#6e8a6c',false],['Миртазапин',30,'#9a6a8a',false]
+];
+const wmOn=new Set(['Флуоксетин','Пароксетин','Венлафаксин']);
+$('#wmToggles').innerHTML=WM.map(([n,h,c])=>`<label><input type="checkbox" data-n="${n}" ${wmOn.has(n)?'checked':''}><i style="border-color:${c}"></i>${n} (t½ ≈ ${h>=48?Math.round(h/24)+' сут':h+' ч'})</label>`).join('');
+function wm(){
+  const mode=document.querySelector('input[name=wmode]:checked').value,D=42,L=52,R=24,T=14,B=40,CW=760-L-R,CH=320-T-B;
+  const X=d=>L+d/D*CW,Y=v=>T+(1-v)*CH;
+  let s='';
+  for(let i=0;i<=4;i++){const v=i/4;s+=`<line x1="${L}" x2="${L+CW}" y1="${Y(v)}" y2="${Y(v)}" stroke="#e1e4d9"/><text x="${L-8}" y="${Y(v)+4}" font-size="11" fill="#6a746d" text-anchor="end">${v*100}%</text>`}
+  for(let d=0;d<=D;d+=7)s+=`<text x="${X(d)}" y="${T+CH+18}" font-size="11" fill="#6a746d" text-anchor="middle">${d}</text>`;
+  s+=`<text x="${L+CW/2}" y="${T+CH+34}" font-size="11" fill="#6a746d" text-anchor="middle">дни</text>`;
+  if(mode==='out')[[14,'ИМАО: ≥ 2 нед после СИОЗС'],[35,'флуоксетин → ИМАО: ≈ 5 нед']].forEach(([d,t])=>{s+=`<line x1="${X(d)}" x2="${X(d)}" y1="${T}" y2="${T+CH}" stroke="#8a6a40" stroke-dasharray="4 4"/><text x="${X(d)-4}" y="${T+12}" font-size="10" fill="#8a6a40" text-anchor="end">${t}</text>`});
+  const f=(h,d)=>mode==='out'?Math.pow(.5,d*24/h):1-Math.pow(.5,d*24/h);
+  const shown=WM.filter(w=>wmOn.has(w[0]));
+  shown.forEach(([n,h,c])=>{let d='';for(let i=0;i<=210;i++){const x=i/5;d+=(i?'L':'M')+X(x).toFixed(1)+' '+Y(f(h,x)).toFixed(1)}s+=`<path d="${d}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round"/>`});
+  $('#wmChart').innerHTML=s;
+  $('#wmRead').innerHTML=shown.map(([n,h,c])=>{const t=mode==='out'?`через 3 сут: <b>${Math.round(100*f(h,3))}%</b>`:`через 5 t½ (${Math.round(5*h/24*10)/10} сут): ≈ <b>97%</b> стационарного уровня`;return `<span style="color:${c}">●</span> ${n}: ${t}`}).join('<br>');
+  $('#wmNote').textContent=mode==='out'?'Чем короче t½, тем быстрее падает концентрация и тем вероятнее синдром отмены (головокружение, «электрические разряды», тошнота, тревога, бессонница; чаще при пароксетине и венлафаксине). Длинный «хвост» флуоксетина смягчает отмену, но удлиняет «отмывочный» период перед ИМАО.':'Стационарный уровень достигается примерно за 5 периодов полувыведения: у флуоксетина это недели, у короткоживущих препаратов — 1–3 суток. Поэтому оценивать эффект дозы и побочные явления следует с учётом этого времени.';
+}
+$('#wmToggles').addEventListener('change',e=>{e.target.checked?wmOn.add(e.target.dataset.n):wmOn.delete(e.target.dataset.n);wm()});
+$$('input[name=wmode]').forEach(r=>r.onchange=wm);
+
+/* ---------- MSE ---------- */
+const MSE=[
+ ['Внешний вид',['опрятный, соответствует возрасту','неопрятный','выглядит старше своих лет','одежда не соответствует ситуации','видимые признаки самоповреждений']],
+ ['Поведение и контакт',['спокоен, доступен контакту','настороженный, подозрительный','возбуждён, не может усидеть на месте','заторможен','избегает зрительного контакта','манерность, стереотипии']],
+ ['Речь',['обычного темпа и громкости','ускоренная, «давление речи»','замедленная, бедная','тихая, монотонная','дизартрия']],
+ ['Настроение (со слов)',['подавленное','приподнятое, эйфоричное','тревожное','раздражительное','«нормальное»']],
+ ['Аффект (объективно)',['эутимный','сниженный','сглаженный, обеднённый','лабильный','неадекватный содержанию']],
+ ['Мышление: форма',['упорядоченное','обстоятельное','скачка идей','разорванное, дезорганизованное','бедность речи, блокировки']],
+ ['Мышление: содержание',['бреда нет','бред отношения или преследования','бред величия','нигилистический бред, бред вины','навязчивые мысли','суицидальные мысли','мысли о причинении вреда другим']],
+ ['Восприятие',['обманов восприятия нет','слуховые галлюцинации','зрительные галлюцинации','деперсонализация, дереализация']],
+ ['Когнитивные функции',['ориентирован полностью','дезориентирован во времени','дезориентирован в месте','внимание снижено','память снижена']],
+ ['Критика к состоянию',['сохранена','частичная','отсутствует']]
+];
+$('#mseForm').innerHTML=MSE.map(([d,o],i)=>`<fieldset style="border:0;border-bottom:1px solid var(--line);padding:12px 0;margin:0"><legend class="lbl" style="font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:0">${d}</legend><div class="chips" style="margin-top:6px">${o.map((t,j)=>`<label class="chip ok" style="cursor:pointer;display:inline-flex;gap:6px;align-items:center"><input type="checkbox" data-d="${i}" data-o="${j}" style="accent-color:var(--green)">${t}</label>`).join('')}</div></fieldset>`).join('');
+function mse(){
+  const lines=MSE.map(([d,o],i)=>{const sel=$$(`#mseForm input[data-d="${i}"]:checked`).map(c=>o[+c.dataset.o]);return `${d}: ${sel.length?sel.join('; '):'не оценивалось'}.`});
+  $('#mseOut').textContent=lines.join('\n');
+  $('#mseSui').hidden=!$('#mseForm input[data-d="6"][data-o="5"]').checked;
+}
+$('#mseForm').addEventListener('change',mse);
+$('#mseReset').onclick=()=>{$$('#mseForm input').forEach(c=>c.checked=false);mse()};
+$('#mseCopy').onclick=async e=>{try{await navigator.clipboard.writeText($('#mseOut').textContent);e.target.textContent='Скопировано ✓'}catch{e.target.textContent='Выделите текст вручную'}setTimeout(()=>e.target.textContent='Копировать',1800)};
+
 /* ---------- init ---------- */
-renderCard();sync();renderRec();d2();tox();phq();renderCase();
+renderCard();sync();renderRec();d2();phq();renderCase();li();wm();mse();
 calibrate();sync();
 requestAnimationFrame(loop);
 addEventListener('resize',()=>{resizeCanvas()});
-const start=location.hash.slice(1);showTab(['synapse','receptors','d2','tox','phq','cases'].includes(start)?start:'synapse');
+const start=location.hash.slice(1);showTab(['synapse','receptors','d2','tox','phq','cases','lithium','washout','ddd','mse'].includes(start)?start:'synapse');
 if(reduced)$('#simPlay').textContent='▶ Запустить';
 })();
 </script>
