@@ -19,7 +19,10 @@
     else if (b.type === 'table') {
       text(b.caption, 'подпись таблицы'); strings(b.headers, 'заголовки таблицы');
       assert(b.headers.length > 0 && Array.isArray(b.rows), 'Пустая таблица');
-      b.rows.forEach(row => { strings(row, 'ячейки'); assert(row.length === b.headers.length, 'Число ячеек таблицы не совпадает'); });
+      b.rows.forEach(row => {
+        assert(Array.isArray(row) && row.length === b.headers.length, 'Число ячеек таблицы не совпадает');
+        row.forEach(cell => assert(typeof cell === 'string' && cell.length <= 100000, 'Некорректное поле: ячейки'));
+      });
     } else if (b.type === 'box') {
       text(b.title, 'заголовок вставки'); assert(Array.isArray(b.blocks), 'Нет содержимого вставки');
       b.blocks.forEach(x => validateBlock(x, depth + 1));
