@@ -9,3 +9,4 @@
 .prose h4,.prose h5,.prose h6{font-family:Georgia,"Times New Roman",serif;line-height:1.5;margin:1.4em 0 .6em;scroll-margin-top:24px}.prose h4{font-size:1.05em}.prose h5,.prose h6{font-size:1em}.prose .box h4,.prose .box h5{font-family:"Segoe UI",Arial,sans-serif;font-size:.85em}.prose .box ul{margin-top:.4em}#partialNotice{background:var(--tint);border-color:var(--line);color:var(--ink)}
 .prose .table-wrap{max-width:100%;overscroll-behavior-x:contain}.prose table{min-width:640px;overflow-wrap:normal}.prose th,.prose td{min-width:160px;vertical-align:top;hyphens:auto}
 .prose figure img{display:block;width:100%;aspect-ratio:auto 3 / 2;object-fit:contain}
+.nav-link{padding:10px 16px;border-radius:7px;color:var(--ink);text-decoration:none;line-height:1.4}.nav-link:hover{background:var(--tint)}@media(max-width:580px){.top-actions .nav-link{padding:9px;font-size:12px}}
