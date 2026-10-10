@@ -17,9 +17,9 @@ test('chapters and sections run in PDF reading order with separate page labels',
 });
 test('precise published boundary distinguishes complete, partial and pending material',()=>{
   const sections=StudyModel.flatten(book),done=sections.filter(StudyModel.ready);
-  assert.equal(done.length,66);
-  assert.deepEqual(done.map(s=>s.id),book.chapters.filter(c=>c.id==='front'||[1,2,3,4,5,6,7,8].includes(c.number)).flatMap(c=>(c.number===8?c.sections.slice(0,7):c.sections).map(s=>s.id)));
-  assert.equal(done.at(-1).id,'ch08-s07');
+  assert.equal(done.length,68);
+  assert.deepEqual(done.map(s=>s.id),book.chapters.filter(c=>c.id==='front'||[1,2,3,4,5,6,7,8].includes(c.number)).flatMap(c=>c.sections.map(s=>s.id)));
+  assert.equal(done.at(-1).id,'ch08-s09');
   assert.deepEqual(sections.filter(s=>s.status==='partial'),[]);
   for(const s of sections.filter(s=>!StudyModel.readable(s))){assert.equal(s.status,'pending');assert.equal(s.blocks.length,0);}
   const completed=sections.find(s=>s.id==='ch01-s03');assert.equal(completed.revision,3);assert.equal(completed.coverage,undefined);assert.equal(completed.source.pdfEnd,29);
@@ -66,7 +66,7 @@ test('chapters 7–8 preserve numbered boxes, tables and source boundaries',()=>
   for(let n=1;n<=count;n++)assert(boxes.some(b=>b.title.includes(number+'.'+n)));
  }
  const c=book.chapters.find(c=>c.number===8);assert.equal(c.sections.flatMap(s=>collect(s.blocks)).filter(b=>b.type==='table').length,2);
- assert.equal(c.sections[5].source.pdfStart,191);assert.equal(c.sections[7].status,'pending');
+ assert.equal(c.sections[5].source.pdfStart,191);assert.equal(book.chapters.find(c=>c.number===9).sections[0].status,'pending');
  const panic=c.sections[4].blocks.map(StudyModel.blockText).join(' ');
  for(const value of ['2,7%','4,7%','40%','30 дней','5 мг','шести месяцев','12 недель'])assert(panic.includes(value),value);
 });
