@@ -13,3 +13,4 @@
 .field-check{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:14px;line-height:1.5}.field-check input{margin-top:4px;width:18px;height:18px;flex:none}
 .prose.can-seek [data-block]{cursor:pointer}.prose.can-seek [data-block]:hover:not(.speaking){background:rgba(237,241,231,.7);border-radius:4px}
 #prevParaButton,#nextParaButton{font-size:17px;padding:8px 12px;line-height:1}
+@media(max-width:580px){.topbar{height:auto;min-height:76px;flex-wrap:wrap;gap:8px;padding:12px 14px}.top-actions{flex-wrap:wrap;max-width:100%}}

@@ -57,7 +57,14 @@ import * as ch15b from '../content/translation-ch15b.mjs';
 import * as ch15c from '../content/translation-ch15c.mjs';
 import * as ch15d from '../content/translation-ch15d.mjs';
 import * as ch15e from '../content/translation-ch15e.mjs';
-const batches=[batch001,batch003,chapter02,chapter03a,chapter03b,chapter04,chapter05a,chapter05b,chapter06a,chapter06b,chapter06c,chapter07,chapter08a,chapter08b,chapter08c,chapter08d,chapter08e,chapter08f,chapter09a,chapter09b,chapter09c,chapter09e,chapter09f,chapter09g,chapter10a,chapter10b,chapter10c,ch11a,ch11b,ch11c,ch11d,ch11e,ch11f,ch11g,ch11h,ch12a,ch12b,ch12c,ch12d,ch13a,ch13b,ch13c,ch13e,ch14a,ch14b,ch14c,ch14f,ch14g,ch14h,ch14i,ch14j,ch15a,ch15b,ch15c,ch15d,ch15e];
+import * as ch16a from '../content/translation-ch16a.mjs';
+import * as ch16b from '../content/translation-ch16b.mjs';
+import * as ch16c from '../content/translation-ch16c.mjs';
+import * as ch16d from '../content/translation-ch16d.mjs';
+import * as ch16e from '../content/translation-ch16e.mjs';
+import * as ch16r from '../content/translation-ch16r.mjs';
+import * as ch16s from '../content/translation-ch16s.mjs';
+const batches=[batch001,batch003,chapter02,chapter03a,chapter03b,chapter04,chapter05a,chapter05b,chapter06a,chapter06b,chapter06c,chapter07,chapter08a,chapter08b,chapter08c,chapter08d,chapter08e,chapter08f,chapter09a,chapter09b,chapter09c,chapter09e,chapter09f,chapter09g,chapter10a,chapter10b,chapter10c,ch11a,ch11b,ch11c,ch11d,ch11e,ch11f,ch11g,ch11h,ch12a,ch12b,ch12c,ch12d,ch13a,ch13b,ch13c,ch13e,ch14a,ch14b,ch14c,ch14f,ch14g,ch14h,ch14i,ch14j,ch15a,ch15b,ch15c,ch15d,ch15e,ch16a,ch16b,ch16c,ch16d,ch16e,ch16r,ch16s];
 const translations=Object.assign({},...batches.map(b=>b.translations));
 const glossary=[...new Map(batches.flatMap(b=>b.glossary||[]).map(g=>[g.en.toLowerCase(),g])).values()];
 import '../dist/model.js';
@@ -94,7 +101,7 @@ chapters.push({id:'index',kind:'backmatter',title:'Предметный указ
 // Accurate, visually verified extents for the completed material.
 Object.assign(chapters[1].sections[0].source,{pdfEnd:10,printedPages:'1'});
 Object.assign(chapters[1].sections[1].source,{pdfEnd:13,printedPages:'2–4'});
-const book={schemaVersion:1,id:'shorter-oxford-psychiatry-8-ru',revision:14,title:'Shorter Oxford Textbook of Psychiatry',titleRu:'Краткий Оксфордский учебник психиатрии',edition:'8-е издание · 2026',source:{filename:'v4o9kdwe8i3gfuy.pdf',sha256:'fab335843a3b7b270fea2fe8d110eba9cebb69f6a6305bf1baa9fb8471b5a14d',pageCount:881,bibliographicTitle:'Shorter Oxford Textbook of Psychiatry, 8th edition',authors:['Paul Harrison','Philip Cowen','Mina Fazel','Kamaldeep Bhui'],isbn:'9780192871053',publishedYear:2026},outlineComplete:true,outlineScope:'major-sections',outlineNote:'Все 26 глав, их основные разделы, рекомендуемая литература, список литературы и указатель. Вложенные заголовки сохраняются внутри переведённых разделов.',translationBoundary:'Предварительные материалы и первые пятнадцать глав переведены полностью, включая таблицы, вставки, рисунки и рекомендуемую литературу. Текст главы 15 заканчивается на печатной стр.401 (PDF410); PDF411 пустая. Следующая глава — детская и подростковая психиатрия, с PDF412.',chapters,glossary};
+const book={schemaVersion:1,id:'shorter-oxford-psychiatry-8-ru',revision:15,title:'Shorter Oxford Textbook of Psychiatry',titleRu:'Краткий Оксфордский учебник психиатрии',edition:'8-е издание · 2026',source:{filename:'v4o9kdwe8i3gfuy.pdf',sha256:'fab335843a3b7b270fea2fe8d110eba9cebb69f6a6305bf1baa9fb8471b5a14d',pageCount:881,bibliographicTitle:'Shorter Oxford Textbook of Psychiatry, 8th edition',authors:['Paul Harrison','Philip Cowen','Mina Fazel','Kamaldeep Bhui'],isbn:'9780192871053',publishedYear:2026},outlineComplete:true,outlineScope:'major-sections',outlineNote:'Все 26 глав, их основные разделы, рекомендуемая литература, список литературы и указатель. Вложенные заголовки сохраняются внутри переведённых разделов.',translationBoundary:'Предварительные материалы и первые шестнадцать глав переведены полностью. Глава 16: PDF412–475, включая 11 вставок, 4 таблицы, литературу и приложение. Следующая глава — судебная психиатрия, PDF476. Перевод сверён с предоставленным PDF; независимая клиническая рецензия не проводилась.',chapters,glossary};
 StudyModel.validateBook(book);
 const json=JSON.stringify(book,null,2);
 await fs.mkdir(path.join(root,'dist/data'),{recursive:true});
