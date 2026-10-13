@@ -1,0 +1,22 @@
+export const references={type:'list',items:[
+'Allé, M. C., Rubin, D. C., & Berntsen D. (2023) Autobiographical Memory and the Self on the Psychosis Continuum: Investigating Their Relationship with Positive- and Negative-Like Symptoms. Memory, 31, 518–29.',
+'American Psychiatric Association (2013) Diagnostic and Statistical Manual of Mental Disorders (5th ed.) (DSM-5). Washington, DC: American Psychiatric Association.',
+'Baron-Cohen, S., Tager-Flusberg, H., & Cohen, D. J. (1993) Understanding Other Minds: Perspectives from Autism. Oxford: Oxford University Press.',
+'Bentall, R. P. (2003) Madness Explained: Psychosis and Human Nature. London: Allen Lane.',
+'Bora, E., & Pantelis, C. (2013) Theory of Mind Impairments in First-Episode Psychosis, Individuals at Ultra-High Risk for Psychosis and in First-Degree Relatives of Schizophrenia: Systematic Review and Meta-Analysis. Schizophrenia Research, 144, 31–6.',
+'Freeman, C. P. L. (1996) Neurotic Disorders. In Companion to Psychiatric Studies (5th ed.) (eds. R. E. Kendell & A. K. Zealley). Edinburgh: Churchill Livingstone, pp.485–524.',
+'Frith, C. D. (1992) The Cognitive Neuropsychology of Schizophrenia. Hillsdale, NJ: Lawrence Erlbaum.',
+'Frith, C. D., & Corcoran, R. (1996) Exploring ‘Theory of Mind’ in People with Schizophrenia. Psychological Medicine, 26, 521–30.',
+'Harland, R., Morgan, C., & Hutchinson, G. (2004) Phenomenology, Science and the Anthropology of the Self: A New Model for the Aetiology of Psychosis. British Journal of Psychiatry, 185, 361–2.',
+'Jaspers, K. (1997) General Psychopathology (trans. J. Hoenig & M. W. Hamilton). Baltimore: Johns Hopkins University Press.',
+'Kaplan, H. I., & Saddock, B. J. (1996) Concise Textbook of Clinical Psychiatry (7th ed.). Baltimore: Williams & Wilkins.',
+'Langdon, R., Michie, P., Ward, P. B. et al. (1997) Defective Self and/or Other Mentalizing in Schizophrenia: A Cognitive Neuropsychological Approach. Cognitive Neuropsychiatry, 2, 167–93.',
+'McCabe, R., Leudar, I., & Antaki, C. (2004) Do People with Schizophrenia Display Theory of Mind Deficits in Clinical Interactions? Psychological Medicine, 34, 401–12.',
+'Oyebode, F. (2023) Sims’ Symptoms in the Mind: Textbook of Descriptive Psychopathology (7th ed.). Edinburgh: Elsevier.',
+'Sass, L. A., & Parnas, J. (2003) Schizophrenia, Consciousness and the Self. Schizophrenia Bulletin, 29, 427–44.',
+'Schiffman, J., Lam, C. W., Jiwatram, T. et al. (2004) Perspective-Taking Deficits in People with Schizophrenia Spectrum Disorders: A Prospective Investigation. Psychological Medicine, 34, 1581–6.',
+'Sierra, M., & David, A. S. (2011) Depersonalization: A Selective Impairment of Self-Awareness. Consciousness and Cognition, 20, 99–108.',
+'Weinreb, S., Li, F., & Kurtz, M. M. (2022) A Meta-Analysis of Social Cognitive Deficits in Schizophrenia: Does World Region Matter? Schizophrenia Research, 243, 206–13.',
+'World Health Organization (2019) ICD-11: International Classification of Diseases (11th ed.). Geneva: World Health Organization.',
+'Zheng, S., Song, N., Wang, S. et al. (2022) Potential Targets for Noninvasive Brain Stimulation on Depersonalization-Derealization Disorder. Brain Sciences, 12, 1112.'
+]};
