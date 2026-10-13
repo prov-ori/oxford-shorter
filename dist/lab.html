@@ -104,6 +104,8 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
  .topbar{padding:0 14px}.top-actions .edition{display:none}
 }
 @media (max-width:520px){.lab{padding:28px 16px 60px}.phq .opts{grid-template-columns:repeat(2,1fr)}.brand small{display:none}}
+
+@media(max-width:850px){.topbar{height:auto}.lab .scroll-x{overscroll-behavior-x:contain}.tabs button{font-size:14px;min-height:44px}.lab select{font-size:16px}}
 </style>
 </head>
 <body>
@@ -358,7 +360,8 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* ---------- Tabs ---------- */
 const tabs=$$('[role=tab]');
 function showTab(id,focus){
-  tabs.forEach(t=>{const on=t.id==='t-'+id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;$('#'+t.getAttribute('aria-controls')).hidden=!on;if(on&&focus)t.focus()});
+  if(!tabs.some(t=>t.id==='t-'+id)) id='synapse';
+  tabs.forEach(t=>{const on=t.id==='t-'+id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;$('#'+t.getAttribute('aria-controls')).hidden=!on;if(on){if(focus)t.focus({preventScroll:true});const parent=t.parentElement,r=t.getBoundingClientRect(),p=parent.getBoundingClientRect();if(r.left<p.left)parent.scrollLeft-=p.left-r.left;else if(r.right>p.right)parent.scrollLeft+=r.right-p.right}});
   try{history.replaceState(null,'','#'+id)}catch{}
   if(id==='synapse'){resizeCanvas();drawChart()}
 }
@@ -830,6 +833,7 @@ renderCard();sync();renderRec();d2();phq();renderCase();li();wm();mse();
 calibrate();sync();
 requestAnimationFrame(loop);
 addEventListener('resize',()=>{resizeCanvas()});
+window.addEventListener('hashchange',()=>showTab(location.hash.slice(1)));
 const start=location.hash.slice(1);showTab(['synapse','receptors','d2','tox','phq','cases','lithium','washout','ddd','mse'].includes(start)?start:'synapse');
 if(reduced)$('#simPlay').textContent='▶ Запустить';
 })();

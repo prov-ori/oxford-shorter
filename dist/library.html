@@ -72,6 +72,8 @@
 .lib-tools{padding:12px 0 10px}.chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}.chips button{flex:none}
 .book-title{font-size:19px}}
 @media(prefers-reduced-motion:reduce){.chev{transition:none}}
+
+@media(max-width:850px){.lib-tools input{font-size:16px!important}.chips button{min-height:44px;padding:8px 12px}.lib-count{align-items:flex-start;flex-wrap:wrap}.lib-count button{min-height:44px}.book-body,.book-head>span:first-child{min-width:0}.book-title,.toc,.book-body p{overflow-wrap:anywhere}.book-meta .badge{font-size:13px}}
 </style>
 </head>
 <body>
@@ -253,11 +255,11 @@ function render(){renderStatus();renderChips();renderList();}
 $('status').addEventListener('click', e=>{
   const btn = e.target.closest('button'); if(!btn) return;
   state.group = state.group===btn.dataset.group ? null : btn.dataset.group;
-  render();
+  render(); $('status').querySelector('[data-group="'+btn.dataset.group+'"]').focus({preventScroll:true});
 });
 $('chips').addEventListener('click', e=>{
   const btn = e.target.closest('button'); if(!btn) return;
-  state.cat = btn.dataset.cat; render();
+  state.cat = btn.dataset.cat; render(); $('chips').querySelector('[data-cat="'+state.cat+'"]').focus({preventScroll:true});
 });
 $('search').addEventListener('input', e=>{state.q = e.target.value.trim().toLowerCase(); render();});
 $('reset').addEventListener('click', ()=>{state.group=null;state.cat='all';state.q='';$('search').value='';render();});

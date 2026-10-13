@@ -9,12 +9,33 @@
   function el(tag, text, cls) { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (cls) n.className = cls; return n; }
   function toast(message) { $('toast').textContent = message; $('toast').hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { $('toast').hidden = true; }, 6000); }
   function libraryMessage(message) { $('libraryStatus').textContent = message; $('libraryStatus').hidden = false; }
-  function save() {
-    try { localStorage.setItem(KEY, JSON.stringify(state)); $('saveStatus').textContent = 'Сохранено в этом браузере.'; return true; }
+  let savedState = M.emptyState();
+  function save({replace = false} = {}) {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw && !replace) {
+        let latest;
+        try { latest = M.cleanState(JSON.parse(raw)); }
+        catch { localStorage.setItem(KEY + ':unreadable',raw); latest = structuredClone(state); }
+        for (const map of ['notes','completed','positions']) {
+          for (const key of new Set([...Object.keys(savedState[map]),...Object.keys(state[map])])) {
+            if (JSON.stringify(savedState[map][key]) === JSON.stringify(state[map][key])) continue;
+            if (Object.hasOwn(state[map],key)) latest[map][key] = state[map][key]; else delete latest[map][key];
+          }
+        }
+        for (const key of ['lastSection','rate','voice','fontSize']) if (state[key] !== savedState[key]) latest[key] = state[key];
+        state = latest;
+      }
+      localStorage.setItem(KEY, JSON.stringify(state)); savedState = structuredClone(state);
+      $('saveStatus').textContent = 'Сохранено в этом браузере.'; return true;
+    }
     catch { $('saveStatus').textContent = 'Не удалось сохранить. Скачайте резервную копию до закрытия страницы.'; toast('Хранилище недоступно или заполнено. Скачайте резервную копию.'); return false; }
   }
   try { const raw = localStorage.getItem(KEY); if (raw) state = M.cleanState(JSON.parse(raw)); }
   catch { toast('Не удалось прочитать локальные записи. Проверьте резервную копию.'); }
+  savedState = structuredClone(state);
+  const noteConflict = el('details',undefined,'note-conflict'); noteConflict.hidden = true;
+  $('saveStatus').after(noteConflict);
   async function database() {
     if (db) return db;
     db = await new Promise((resolve, reject) => {
@@ -45,21 +66,23 @@
     $('readPercent').textContent = st.total ? pct + '%' : '—'; $('readingProgress').value = pct;
     $('readHint').textContent = !st.total ? 'Прогресс появится после добавления оглавления.' : book.outlineComplete ? 'Прочитано разделов по всей книге. Разделы различаются по объёму.' : 'Прогресс по добавленной части оглавления.';
     if (st.partialRead) $('readHint').textContent += ` Также прочитаны доступные части: ${st.partialRead}. Они не засчитываются как целые разделы.`;
+    const noteWord = n => n % 100 >= 11 && n % 100 <= 14 ? 'записей' : n % 10 === 1 ? 'запись' : n % 10 >= 2 && n % 10 <= 4 ? 'записи' : 'записей';
     const sectionWord = n => n % 100 >= 11 && n % 100 <= 14 ? 'разделов' : n % 10 === 1 ? 'раздел' : n % 10 >= 2 && n % 10 <= 4 ? 'раздела' : 'разделов';
     $('translatedMetric').replaceChildren(document.createTextNode(st.translated + ' '), el('small', sectionWord(st.translated)));
     $('readMetric').replaceChildren(document.createTextNode(st.read + ' '), el('small', sectionWord(st.read)));
-    $('notesMetric').replaceChildren(document.createTextNode(Object.values(state.notes).filter(n => n.trim()).length + ' '), el('small', 'записей'));
+    $('notesMetric').replaceChildren(document.createTextNode(Object.values(state.notes).filter(n => n.trim()).length + ' '), el('small', noteWord(Object.values(state.notes).filter(n => n.trim()).length)));
     $('coverageHint').textContent = st.total ? `${st.translated} из ${st.total} полностью${st.partial ? ` · частично: ${st.partial}` : ''} · ${book.outlineComplete ? 'полное оглавление' : 'оглавление добавляется'}` : 'Перевод ещё не добавлен';
     $('continueButton').textContent = sections.some(M.readable) ? (state.lastSection ? 'Продолжить чтение →' : 'Начать с начала →') : sections.length ? 'Открыть оглавление →' : 'Подготовить материалы ↗';
   }
   function renderToc() {
-    const q = $('search').value.trim().toLocaleLowerCase('ru'); const toc = $('toc'); toc.replaceChildren();
+    const normalize = text => text.normalize('NFKC').toLocaleLowerCase('ru').replaceAll('ё','е');
+    const q = normalize($('search').value.trim()); const toc = $('toc'); toc.replaceChildren();
     if (!sections.length) {
       const p = el('p', 'Оглавление ожидает PDF', 'empty-toc'); p.append(el('span', 'Названия и порядок разделов будут перенесены из исходной книги.')); toc.append(p); return;
     }
     let found = 0;
     for (const chapter of book.chapters) {
-      const rows = chapter.sections.filter(s => !q || [chapter.title, chapter.originalTitle, s.title, s.originalTitle, ...s.blocks.map(M.blockText)].join(' ').toLocaleLowerCase('ru').includes(q));
+      const rows = chapter.sections.filter(s => !q || normalize([chapter.title, chapter.originalTitle, s.title, s.originalTitle, ...s.blocks.map(M.blockText)].join(' ')).includes(q));
       if (!rows.length) continue; found += rows.length;
       const group = el('details'); group.open = Boolean(q) || current?.chapter.id === chapter.id || book.chapters.length === 1;
       group.append(el('summary', chapter.title));
@@ -80,7 +103,7 @@
     if (book.source) {
       $('sourceTitle').textContent = book.outlineScope === 'chapters' ? `Оглавление: ${numberedChapters} глав` : book.outlineComplete ? `${numberedChapters} глав · от начала до конца` : 'Учебник пополняется поэтапно';
       $('sourceDescription').textContent = book.translationBoundary ? `Сейчас переведены: ${book.translationBoundary}` : `Источник: ${book.source.filename}. Переведено и сверено с PDF: ${st.translated} разделов. ${book.outlineComplete ? 'В навигации доступны главы и основные разделы.' : 'Оглавление пока неполное.'}`;
-      $('sourceFootnote').textContent = `${book.source.pageCount} страниц в PDF. Добавленный перевод сверен с оригиналом; независимая клиническая редактура не проводилась. Частично переведённые разделы показывают точную границу готового текста; пустые разделы ожидают перевода.`;
+      $('sourceFootnote').textContent = `${book.source.pageCount} страниц в PDF. Добавленный перевод сверен с оригиналом; независимая клиническая редактура не проводилась. ${st.translated === st.total ? 'Все разделы переведены.' : 'Частично переведённые разделы показывают точную границу готового текста; пустые разделы ожидают перевода.'}`;
       $('sourceButton').textContent = 'Открыть материалы →';
     } else if (pdf) {
       $('sourceTitle').textContent = 'Оригинал подключён';
@@ -105,18 +128,27 @@
     if (b.type === 'list') { const list = el(b.ordered ? 'ol' : 'ul'); b.items.forEach(i => list.append(el('li', i))); return list; }
     if (b.type === 'box') { const box = el('aside', undefined, 'box'); box.append(el('h3', b.title), ...b.blocks.map(renderBlock)); return box; }
     if (b.type === 'table') {
-      const wrap = el('div', undefined, 'table-wrap'); wrap.tabIndex = 0; wrap.setAttribute('role', 'region'); wrap.setAttribute('aria-label', b.caption + '. Таблица с горизонтальной прокруткой'); const table = el('table'); const head = el('thead'), tr = el('tr'), body = el('tbody');
+      const wrap = el('div', undefined, 'table-wrap'); wrap.tabIndex = 0; wrap.setAttribute('role', 'region'); wrap.setAttribute('aria-label', b.caption); const table = el('table'); table.setAttribute('role','table');
+      table.className = b.headers.length <= 3 ? 'compact-table' : 'wide-table';
+      if (b.headers.length === 2) table.classList.add('mobile-cards');
+      table.style.setProperty('--min-table-width',Math.max(640,b.headers.length * 120)+'px');
+      const hint = el('p','Таблицу можно прокрутить по горизонтали ↔','table-hint'); hint.hidden = true;
+      const head = el('thead'), tr = el('tr'), body = el('tbody'); head.setAttribute('role','rowgroup'); body.setAttribute('role','rowgroup'); tr.setAttribute('role','row');
       b.headers.forEach(h => { const th = el('th', h); th.scope = 'col'; tr.append(th); }); head.append(tr);
-      b.rows.forEach(row => { const r = el('tr'); row.forEach(c => r.append(el('td', c))); body.append(r); });
-      table.append(el('caption', b.caption), head, body); wrap.append(table); return wrap;
+      b.rows.forEach(row => { const r = el('tr'); r.setAttribute('role','row'); row.forEach((c,i) => { const td = el('td', c); td.dataset.label = b.headers[i]; td.setAttribute('role','cell'); r.append(td); }); body.append(r); });
+      table.append(el('caption', b.caption), head, body); wrap.append(hint,table); return wrap;
     }
     const figure = el('figure'), image = el('img'); image.src = b.src; image.alt = b.alt; image.loading = 'lazy'; figure.append(image, el('figcaption', b.caption)); return figure;
   }
-  function renderRoute() {
+  function updateTables() {
+    $('article').querySelectorAll('.table-wrap').forEach(w => { w.querySelector('.table-hint').hidden = w.scrollWidth <= w.clientWidth + 1; });
+  }
+  function renderRoute({skipPosition = false} = {}) {
     const continueReading = autoAdvance; autoAdvance = false;
-    recordPosition(); stopSpeech(continueReading ? 'keep' : undefined);
+    if (!skipPosition) recordPosition(); stopSpeech(continueReading ? 'keep' : undefined);
     let id = null; try { if (location.hash.startsWith('#section=')) id = decodeURIComponent(location.hash.slice(9)); } catch { /* Unknown route displays overview. */ }
     current = sections.find(s => s.id === id) || null;
+    document.body.classList.toggle('reader-active',Boolean(current));
     if (id && !current) toast('Этот раздел ещё не добавлен. Открыт обзор библиотеки.');
     $('home').hidden = Boolean(current); $('reader').hidden = !current;
     $('breadcrumb').textContent = current ? 'Учебник / ' + current.chapter.title : 'Библиотека / Обзор';
@@ -157,7 +189,7 @@
       }
     } else if (continueReading) stopBackground();
     updateStats(); renderToc(); renderNotes(); save();
-    const restoreId = current?.id; requestAnimationFrame(() => { if (current?.id === restoreId) window.scrollTo(0, restoreId ? state.positions[restoreId] || 0 : 0); });
+    const restoreId = current?.id; requestAnimationFrame(() => { if (current?.id === restoreId) { window.scrollTo(0, continueReading ? 0 : restoreId ? state.positions[restoreId] || 0 : 0); updateTables(); } });
   }
   function updateCompleteButton() {
     $('completeButton').disabled = !current || !M.readable(current);
@@ -166,6 +198,7 @@
   }
   function noteId() { return current?.id || 'general'; }
   function renderNotes() {
+    noteConflict.hidden = true; noteConflict.replaceChildren();
     $('notesContext').textContent = current ? current.chapter.title + ' / ' + current.title : 'Общие заметки к учебнику';
     $('summary').replaceChildren(); $('terms').replaceChildren();
     if (current?.status === 'partial') $('summary').append(el('p', `Тезисы только к переведённой части: печатные стр. ${current.coverage.printedPages}. ${current.coverage.through}`));
@@ -186,7 +219,8 @@
       if (current.status === 'partial') { const c = current.coverage; content += `Переведённая часть: PDF ${c.pdfStart}–${c.pdfEnd}, печатные стр. ${c.printedPages}. ${c.through}\nДалее: ${c.next}\n\n`; }
       content += '## Краткие тезисы\n\n' + current.summary.map(s => '- ' + s).join('\n') + '\n\n';
     }
-    content += '## Мои заметки\n\n' + (state.notes[noteId()] || 'Пока нет заметок.');
+    content += '## Мои заметки\n\n' + ($('notesDialog').open ? $('personalNotes').value : state.notes[noteId()] || 'Пока нет заметок.');
+    if (!noteConflict.hidden) content += '\n\n## Версия из другой вкладки\n\n' + (state.notes[noteId()] || '');
     download('konspekt-' + noteId() + '.md', content, 'text/markdown;charset=utf-8');
   }
   function fillVoices() {
@@ -288,7 +322,7 @@
     if (token !== speechToken) return;
     if (speechIndex >= speechQueue.length) {
       const next = sections[sections.indexOf(current) + 1];
-      if (autoNextOn() && next?.blocks.length) { autoAdvance = true; $('speechStatus').textContent = 'Переход к следующему разделу…'; route(next.id); return; }
+      if (current?.status !== 'partial' && autoNextOn() && next && M.readable(next) && next.blocks.length) { autoAdvance = true; $('speechStatus').textContent = 'Переход к следующему разделу…'; route(next.id); return; }
       stopSpeech(); $('speechStatus').textContent = current?.status === 'partial' ? 'Доступная часть озвучена. Продолжение раздела ещё переводится.' : (next && !next.blocks.length && autoNextOn() ? 'Раздел озвучен. Дальше перевод ещё не добавлен.' : 'Раздел озвучен. Отметьте его прочитанным, когда будете готовы.'); return; }
     const item = speechQueue[speechIndex]; document.querySelectorAll('.speaking').forEach(n => n.classList.remove('speaking'));
     $('article').querySelector(`[data-block="${item.block}"]`)?.classList.add('speaking');
@@ -300,8 +334,8 @@
   }
   function speak() {
     if (!current?.blocks.length || !voices.length) return;
-    if (speechMode === 'speaking') { speechSynthesis.pause(); speechMode = 'paused'; updateSpeechUI(); return; }
-    if (speechMode === 'paused') { speechSynthesis.resume(); speechMode = 'speaking'; updateSpeechUI(); return; }
+    if (speechMode === 'speaking') { speechSynthesis.pause(); keepAlive?.pause(); speechMode = 'paused'; updateSpeechUI(); return; }
+    if (speechMode === 'paused') { speechSynthesis.resume(); keepAlive?.play().catch(() => {}); speechMode = 'speaking'; updateSpeechUI(); return; }
     stopSpeech(); startReading();
   }
   function startReading(fromBlock = 0) {
@@ -310,15 +344,34 @@
   }
   function viewPdf(page = 1) { if (!pdf) return; if (pdfUrl) URL.revokeObjectURL(pdfUrl); pdfUrl = URL.createObjectURL(pdf.blob); window.open(pdfUrl + '#page=' + page, '_blank', 'noopener,noreferrer'); }
   function showLibrary() { renderLibrary(); $('libraryDialog').showModal(); }
-  function closeToc() { $('sidebar').classList.remove('open'); $('tocButton').setAttribute('aria-expanded', 'false'); }
+  const tocBackdrop = el('div',undefined,'toc-backdrop'); tocBackdrop.hidden = true; document.body.append(tocBackdrop);
+  function closeToc() {
+    const wasOpen = $('sidebar').classList.contains('open');
+    $('sidebar').classList.remove('open'); $('tocButton').setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('toc-open'); tocBackdrop.hidden = true;
+    $('sidebar').removeAttribute('role'); $('sidebar').removeAttribute('aria-modal');
+    $('main').inert = false; document.querySelector('.topbar').inert = false;
+    if (wasOpen) $('tocButton').focus({preventScroll:true});
+  }
   for (const b of document.querySelectorAll('[data-close]')) b.onclick = () => $(b.dataset.close).close();
   $('libraryButton').onclick = showLibrary; $('sourceButton').onclick = showLibrary;
   $('notesButton').onclick = () => { renderNotes(); $('notesDialog').showModal(); };
   $('homeButton').onclick = () => { route(null); closeToc(); };
   $('tocButton').setAttribute('aria-expanded', 'false'); $('tocButton').setAttribute('aria-controls', 'sidebar');
-  $('tocButton').onclick = () => { $('sidebar').classList.add('open'); $('tocButton').setAttribute('aria-expanded', 'true'); $('closeToc').focus(); };
+  $('tocButton').onclick = () => { $('sidebar').classList.add('open'); $('tocButton').setAttribute('aria-expanded', 'true'); document.body.classList.add('toc-open'); tocBackdrop.hidden = false; $('sidebar').setAttribute('role','dialog'); $('sidebar').setAttribute('aria-modal','true'); $('main').inert = true; document.querySelector('.topbar').inert = true; $('closeToc').focus(); };
+  tocBackdrop.onclick = closeToc;
   $('closeToc').onclick = () => { closeToc(); $('tocButton').focus(); };
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeToc(); });
+  document.addEventListener('keydown', e => {
+    if (!$('sidebar').classList.contains('open')) return;
+    if (e.key === 'Escape') { e.preventDefault(); closeToc(); }
+    if (e.key === 'Tab') {
+      const items = [...$('sidebar').querySelectorAll('button:not(:disabled),input,summary,a[href]')].filter(n=>n.getClientRects().length);
+      const first=items[0],last=items.at(-1);
+      if (e.shiftKey && document.activeElement===first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement===last) { e.preventDefault(); first.focus(); }
+    }
+  });
+  matchMedia('(min-width:851px)').addEventListener('change',e=>{if(e.matches)closeToc();});
   $('search').oninput = renderToc;
   $('continueButton').onclick = () => { const last = sections.find(s => s.id === state.lastSection); const next = last || sections.find(s => M.readable(s) && !M.isRead(s, state, book) && !M.isPartRead(s, state, book)) || sections[0]; if (next) route(next.id); else showLibrary(); };
   $('previousButton').onclick = () => route(sections[sections.indexOf(current) - 1]?.id);
@@ -329,7 +382,7 @@
     else state.completed[current.id] = {revision: current.revision, source: book.source.sha256};
     save(); updateStats(); updateCompleteButton(); renderToc();
   };
-  $('personalNotes').oninput = () => { state.notes[noteId()] = $('personalNotes').value; save(); updateStats(); };
+  $('personalNotes').oninput = () => { state.notes[noteId()] = $('personalNotes').value; save(); noteConflict.hidden = true; updateStats(); };
   $('exportNotes').onclick = exportNotes;
   ['backupButton','backupInNotes','exportBackup'].forEach(id => { $(id).onclick = exportBackup; });
   $('restoreBackup').onclick = () => $('backupInput').click();
@@ -367,13 +420,13 @@
       if (file.size > 20 * 1048576) throw new Error('Файл копии больше 20 МБ.');
       const restored = M.cleanState(JSON.parse(await file.text()));
       if ((Object.values(state.notes).some(n => n.trim()) || Object.keys(state.completed).length) && !window.confirm('Восстановление заменит текущие заметки и отметки прочитанного. Сохранили резервную копию и хотите продолжить?')) return;
-      state = restored; applyPreferences(); save(); renderRoute(); libraryMessage('Заметки и прогресс восстановлены.');
+      state = restored; applyPreferences(); save({replace:true}); renderRoute({skipPosition:true}); libraryMessage('Заметки и прогресс восстановлены.');
     } catch (e) { libraryMessage('Копия не восстановлена: ' + e.message); }
   };
   function applyPreferences() { document.documentElement.style.setProperty('--text-size', state.fontSize + 'px'); $('fontSize').value = String(state.fontSize); $('rateSelect').value = String(state.rate); fillVoices(); }
   $('prevParaButton').onclick = () => skipBlock(-1); $('nextParaButton').onclick = () => skipBlock(1);
   $('article').addEventListener('click', e => {
-    if (e.target.closest('a, button, summary, input, textarea, select') || String(getSelection()).trim()) return; // ссылки и выделение текста не трогаем
+    if (e.target.closest('a, button, summary, input, textarea, select, .table-wrap') || String(getSelection()).trim()) return; // ссылки, таблицы и выделение текста не запускают речь
     const node = e.target.closest('[data-block]'); if (node && $('article').contains(node)) speakFromBlock(Number(node.dataset.block));
   });
   $('speakButton').onclick = speak; $('stopButton').onclick = () => stopSpeech();
@@ -385,6 +438,25 @@
   $('fontSize').onchange = () => { state.fontSize = Number($('fontSize').value); document.documentElement.style.setProperty('--text-size', state.fontSize + 'px'); save(); };
   if ('speechSynthesis' in window) speechSynthesis.addEventListener('voiceschanged', fillVoices);
   window.addEventListener('hashchange', renderRoute);
+  window.addEventListener('storage',e=>{
+    if (e.key !== KEY || !e.newValue) return;
+    try {
+      const latest=M.cleanState(JSON.parse(e.newValue)),editing=document.activeElement===$('personalNotes'),value=$('personalNotes').value;
+      savedState=structuredClone(latest); state=latest;
+      if (editing && value !== (state.notes[noteId()] || '')) {
+        $('saveStatus').textContent='Заметка изменилась в другой вкладке. Ваш текст оставлен в поле. Сравните версии или скачайте их перед дальнейшим вводом.';
+        noteConflict.replaceChildren(el('summary','Показать сохранённую версию из другой вкладки'),el('p',state.notes[noteId()] || '(Пустая заметка)'));
+        noteConflict.hidden=false;
+      }
+      else renderNotes();
+      updateStats(); updateCompleteButton(); renderToc();
+    } catch { /* A bad remote copy must not overwrite this tab. */ }
+  });
+  function viewportChanged() {
+    document.documentElement.style.setProperty('--viewport-height',(window.visualViewport?.height || innerHeight)+'px');
+    updateTables();
+  }
+  window.addEventListener('resize',viewportChanged); window.visualViewport?.addEventListener('resize',viewportChanged); viewportChanged();
   document.addEventListener('visibilitychange', () => { if (document.hidden) { recordPosition(); save(); } checkSpeech(); });
   window.addEventListener('pagehide', e => { recordPosition(); save(); if (!e.persisted) stopSpeech(); if (pdfUrl) URL.revokeObjectURL(pdfUrl); });
   sections = M.flatten(book); applyPreferences(); renderOverview(); renderLibrary(); renderRoute();
