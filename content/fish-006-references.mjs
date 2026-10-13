@@ -1,0 +1,23 @@
+export const references={type:'list',items:[
+"Abe, N. (2011) How the Brain Shapes Deception: An Integrated Review of the Literature. Neuroscientist, 17:5, 560–74.",
+"Bass, L., & Davis, E. (1988) The Courage to Heal. New York: Harper Row.",
+"Battin, D., & Mahon, E. (2003) Symptom, Screen Memory and Dream: The Complexity of Mental Representation and Disguise. The Psychoanalytic Study of the Child, 58, 246–66.",
+"Bonhoeffer, K. (1901) [Die akuten Geisteskrankheiten der Gewohnheitstrinker]. Jena: Gustav Fischer.",
+"Brandon, S., Boakes, D., Glaser, D. et al. (1998) Recovered Memories of Childhood Sexual Abuse: Implications for Clinical Practice. British Journal of Psychiatry, 172, 296–307.",
+"Brewin, C. R., & Andrews, B. (1998) Recovered Memories of Trauma: Phenomenology and Cognitive Mechanisms. Clinical Psychology Review, 18, 949–70.",
+"Enoch, M. D., Trethowan, W. H., & Barker, J. C. (1967) The Ganser Syndrome. In Some Uncommon Syndromes (ed. M. D. Enoch ), 41–55. Bristol: John Wright & Sons. ED VOLUME.",
+"Freud, S., Breuer, J., Lockhurst, N. et al. (1895) Reprinted in Translation in 2004 as Studies in Hysteria. London: Penguin.",
+"Good, M. I. (1998) Screen Reconstructions: Traumatic Memory, Conviction, and the Problem of Verification. Journal of the American Psychoanalytic Association, 46, 149–83.",
+"Gudjonsson, G. H. (1997) False Memory Syndrome and the Retractors: Methodological and Theoretical issues. Psychological Inquiry, 8, 296−9.",
+"Gudjonsson, G. H., Kopelman, M. D., & MacKeith, J. A. C. (1999) Unreliable Admissions of Homicide: A Case of Misdiagnosis of Amnesia and Misuse of Abreaction Technique. British Journal of Psychiatry, 174, 455–9.",
+"Harrison, N. A., Johnson, K., Corno, F. et al. (2017) Psychogenic Amnesia: Syndromes, Outcomes and Patterns of Retrograde Amnesia. Brain, 140:9, 2498–510.",
+"Hirst, W., Phelps, E. A., Meksin, R. et al. (2015) A Ten-Year Follow-Up Study of Memory for the Attack of September 11, 2001: Flashbulb Memories and Memories for Flashbulb Events. Journal of Experimental Psychology General, 144:3, 604–23.",
+"Johnson, M. K., Hashtroudi, S., & Lindsay, D. S. (1993) Source Monitoring. Psychological Bulletin, 114, 3–28.",
+"Loftus, E. F. (1993) The Reality of Repressed Memories. American Psychologist, 48, 518−37.",
+"Mameli, F., Scaarpazza, C., Tomasini, E. et al. (2017) The Guilty Brain: The Utility of Neuroimaging and Neurostimulation Studies in Forensic Field. Reviews in the Neuroscience, 28:2, 161–72.",
+"McGee, R. (1984) Flashbacks and Memory Phenomena: A Comment on ‘Flashback Phenomena − Clinical and Diagnostic Dilemmas’. Journal of Nervous and Mental Diseases, 172, 273–8.",
+"Pawar, A. V., & Spence, S. A. (2003) Defining Thought Broadcast: Semi-structured Literature Review. British Journal of Psychiatry, 183, 287–91.",
+"Sims, A. (1997) Symptoms in the Mind: An Introduction to Descriptive Psychopathology. London: Saunders.",
+"Whitlock, F. A. (1967) The Ganser Syndrome. British Journal of Psychiatry, 113, 19–29.",
+"Yang, Y., Raine, A. L., Lencz, T. et al. (2005) Prefrontal White Matter in Pathological Liars. British Journal of Psychiatry, 187, 320–5."
+]};
