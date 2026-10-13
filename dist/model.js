@@ -1,6 +1,6 @@
 (function (scope) {
   'use strict';
-  const BOOK_ID = 'shorter-oxford-psychiatry-8-ru';
+  const BOOK_ID = scope.STUDY_BOOK_ID === 'fish-clinical-psychopathology-5-ru' ? scope.STUDY_BOOK_ID : 'shorter-oxford-psychiatry-8-ru';
   const statuses = ['pending', 'draft', 'partial', 'translated', 'reviewed'];
   const ready = s => ['translated', 'reviewed'].includes(s.status);
   const readable = s => ready(s) || s.status === 'partial';

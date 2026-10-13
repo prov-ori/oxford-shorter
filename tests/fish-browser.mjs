@@ -1,0 +1,35 @@
+import {createRequire} from 'node:module';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+import {serve} from '../tools/serve.mjs';
+const require=createRequire(import.meta.url),{chromium}=require('C:/Users/jktru/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+let base=process.env.STUDY_LIVE_URL,server,browser;
+if(!base){server=serve(fileURLToPath(new URL('../dist',import.meta.url)));await new Promise(r=>server.listen(0,'127.0.0.1',r));base='http://127.0.0.1:'+server.address().port;}
+try{
+browser=await chromium.launch({channel:'msedge',headless:true});const context=await browser.newContext({viewport:{width:390,height:844}}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.goto(base+'/');await page.waitForFunction(()=>document.getElementById('coverageHint').textContent.includes('176'));
+await page.click('#notesButton');await page.fill('#personalNotes','Общая заметка Oxford.');await page.click('[data-close="notesDialog"]');
+await page.evaluate(async()=>{await new Promise((resolve,reject)=>{const req=indexedDB.open('psychiatry-study-v1',1);req.onsuccess=()=>{const db=req.result,tx=db.transaction('library','readwrite');tx.objectStore('library').put(STUDY_BOOK,'book');tx.objectStore('library').put({sha256:STUDY_BOOK.source.sha256,filename:'oxford-local.pdf',blob:new Blob(['test'])},'pdf');tx.oncomplete=()=>{db.close();resolve();};tx.onerror=reject;};req.onerror=reject;});});
+await page.goto(base+'/fish.html');await page.waitForFunction(()=>document.getElementById('coverageHint').textContent.includes('1 из 14'));
+assert.equal(await page.evaluate(()=>StudyModel.BOOK_ID),'fish-clinical-psychopathology-5-ru');
+assert.equal(await page.evaluate(()=>STUDY_BOOK.chapters.filter(c=>c.number).length),10);
+assert.equal(await page.evaluate(()=>StudyModel.stats(STUDY_BOOK,StudyModel.emptyState()).partial),1);
+assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+await page.click('#notesButton');assert.equal(await page.inputValue('#personalNotes'),'');await page.fill('#personalNotes','Общая заметка Фиша.');await page.click('[data-close="notesDialog"]');
+await page.click('#libraryButton');assert(!(await page.locator('#pdfInfo').innerText()).includes('oxford-local'));await page.click('[data-close="libraryDialog"]');
+assert.equal(await page.evaluate(()=>{try{StudyModel.cleanState({schemaVersion:1,bookId:'shorter-oxford-psychiatry-8-ru'});return false;}catch{return true;}}),true);
+await page.goto(base+'/fish.html#section=fish-preface');await page.waitForFunction(()=>document.getElementById('article').textContent.includes('128-страничную'));
+await page.click('#completeButton');assert.match(await page.locator('#readCount').innerText(),/^1 из 14/);
+await page.click('#nextButton');await page.waitForFunction(()=>location.hash==='#section=fish-ch01-text'&&!document.getElementById('partialNotice').hidden);
+assert.match(await page.locator('#partialNotice').innerText(),/PDF 8–9/);assert.match(await page.locator('#continuationNotice').innerText(),/читаемая копия/);
+assert.equal(await page.locator('#article h2').count(),3);
+await page.click('#notesButton');assert.equal(await page.locator('#summary li').count(),5);await page.fill('#personalNotes','Синдром не обязательно является самостоятельной болезнью.');await page.click('[data-close="notesDialog"]');await page.reload();await page.click('#notesButton');assert.equal(await page.inputValue('#personalNotes'),'Синдром не обязательно является самостоятельной болезнью.');await page.click('[data-close="notesDialog"]');
+await page.click('#completeButton');assert.match(await page.locator('#readCount').innerText(),/^1 из 14/);assert.match(await page.locator('#readHint').innerText(),/части: 1/);
+assert(!(await page.locator('#speakButton').isDisabled()));await page.click('#nextButton');await page.waitForFunction(()=>location.hash==='#section=fish-ch02-text'&&document.getElementById('completeButton').disabled);
+await page.goto(base+'/fish.html');await page.waitForFunction(()=>document.getElementById('coverageHint').textContent.includes('1 из 14'));await page.click('#notesButton');assert.equal(await page.inputValue('#personalNotes'),'Общая заметка Фиша.');await page.click('[data-close="notesDialog"]');
+await fs.mkdir(new URL('../tmp/qa/',import.meta.url),{recursive:true});await page.screenshot({path:fileURLToPath(new URL('../tmp/qa/fish-home-mobile.png',import.meta.url)),fullPage:true});
+await page.goto(base+'/');await page.waitForFunction(()=>document.getElementById('coverageHint').textContent.includes('176'));await page.click('#notesButton');assert.equal(await page.inputValue('#personalNotes'),'Общая заметка Oxford.');await page.click('[data-close="notesDialog"]');assert.match(await page.locator('#readCount').innerText(),/^0 из 267/);
+await page.goto(base+'/library.html');await page.locator('#search').fill('Фиш');const link=page.locator('a[href="fish.html"]');await page.locator('.book-head').click();assert.equal(await link.count(),1);
+assert.deepEqual(errors,[]);console.log('PASS Fish '+(process.env.STUDY_LIVE_URL?'live':'local')+': source scope,10chapters,1complete/1partial,independent notes/PDF/progress,backup rejection,mobile,library link.');
+}finally{await browser?.close();if(server){server.closeAllConnections();await new Promise(r=>server.close(r));}}

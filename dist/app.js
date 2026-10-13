@@ -18,7 +18,7 @@
   async function database() {
     if (db) return db;
     db = await new Promise((resolve, reject) => {
-      const r = indexedDB.open('psychiatry-study-v1', 1);
+      const r = indexedDB.open(M.BOOK_ID === 'shorter-oxford-psychiatry-8-ru' ? 'psychiatry-study-v1' : M.BOOK_ID + ':library:v1', 1);
       r.onupgradeneeded = () => r.result.createObjectStore('library');
       r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error);
       r.onblocked = () => reject(new Error('Закройте другую вкладку библиотеки и повторите.'));
@@ -78,7 +78,7 @@
     const numberedChapters = book.chapters.filter(c => c.number).length || book.chapters.length;
     $('packageInfo').textContent = sections.length ? `Версия ${book.revision}: ${numberedChapters} глав, ${st.total} разделов с учётом предварительных и справочных частей. Полностью переведено и сверено с PDF: ${st.translated}; частично: ${st.partial}; черновиков: ${st.draft}.` : 'Текст и оглавление ещё не добавлены.';
     if (book.source) {
-      $('sourceTitle').textContent = book.outlineComplete ? `${numberedChapters} глав · от начала до конца` : 'Учебник пополняется поэтапно';
+      $('sourceTitle').textContent = book.outlineScope === 'chapters' ? `Оглавление: ${numberedChapters} глав` : book.outlineComplete ? `${numberedChapters} глав · от начала до конца` : 'Учебник пополняется поэтапно';
       $('sourceDescription').textContent = book.translationBoundary ? `Сейчас переведены: ${book.translationBoundary}` : `Источник: ${book.source.filename}. Переведено и сверено с PDF: ${st.translated} разделов. ${book.outlineComplete ? 'В навигации доступны главы и основные разделы.' : 'Оглавление пока неполное.'}`;
       $('sourceFootnote').textContent = `${book.source.pageCount} страниц в PDF. Добавленный перевод сверен с оригиналом; независимая клиническая редактура не проводилась. Частично переведённые разделы показывают точную границу готового текста; пустые разделы ожидают перевода.`;
       $('sourceButton').textContent = 'Открыть материалы →';
