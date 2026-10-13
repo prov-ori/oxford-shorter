@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import {fishBook} from '../content/fish-012.mjs';
+import {fishBook} from '../content/fish-013.mjs';
 const output=new URL('../dist/data/',import.meta.url);
 await fs.mkdir(output,{recursive:true});
 await fs.writeFile(new URL('fish.json',output),JSON.stringify(fishBook,null,2));
