@@ -17,9 +17,9 @@ test('chapters and sections run in PDF reading order with separate page labels',
 });
 test('precise published boundary distinguishes complete, partial and pending material',()=>{
   const sections=StudyModel.flatten(book),done=sections.filter(StudyModel.ready);
-  assert.equal(done.length,194);
-  assert.deepEqual(done.map(s=>s.id),book.chapters.filter(c=>c.id==='front'||[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17].includes(c.number)).flatMap(c=>c.sections.map(s=>s.id)).concat(book.chapters.find(c=>c.number===18).sections.map(s=>s.id),book.chapters.find(c=>c.number===19).sections.slice(0,5).map(s=>s.id)));
-  assert.equal(done.at(-1).id,'ch19-s05');
+  assert.equal(done.length,196);
+  assert.deepEqual(done.map(s=>s.id),book.chapters.filter(c=>c.id==='front'||[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17].includes(c.number)).flatMap(c=>c.sections.map(s=>s.id)).concat(book.chapters.find(c=>c.number===18).sections.map(s=>s.id),book.chapters.find(c=>c.number===19).sections.map(s=>s.id)));
+  assert.equal(done.at(-1).id,'ch19-s07');
   assert.deepEqual(sections.filter(s=>s.status==='partial'),[]);
   for(const s of sections.filter(s=>!StudyModel.readable(s))){assert.equal(s.status,'pending');assert.equal(s.blocks.length,0);}
   const completed=sections.find(s=>s.id==='ch01-s03');assert.equal(completed.revision,3);assert.equal(completed.coverage,undefined);assert.equal(completed.source.pdfEnd,29);
@@ -66,7 +66,7 @@ test('chapters 7–8 preserve numbered boxes, tables and source boundaries',()=>
   for(let n=1;n<=count;n++)assert(boxes.some(b=>b.title.includes(number+'.'+n)));
  }
  const c=book.chapters.find(c=>c.number===8);assert.equal(c.sections.flatMap(s=>collect(s.blocks)).filter(b=>b.type==='table').length,2);
- assert.equal(c.sections[5].source.pdfStart,191);assert.equal(book.chapters.find(c=>c.number===19).sections[5].status,'pending');
+ assert.equal(c.sections[5].source.pdfStart,191);assert.equal(book.chapters.find(c=>c.number===20).sections[0].status,'pending');
  const panic=c.sections[4].blocks.map(StudyModel.blockText).join(' ');
  for(const value of ['2,7%','4,7%','40%','30 дней','5 мг','шести месяцев','12 недель'])assert(panic.includes(value),value);
 });
@@ -128,19 +128,19 @@ test('chapters 13–15 are complete and preserve numbered source material',async
  }
  const c=book.chapters.find(c=>c.number===15);assert.equal(c.sections[7].blocks.find(b=>b.type==='table').rows.length,10);const text=c.sections.flatMap(s=>s.blocks).map(StudyModel.blockText).join(' ');for(const value of ['7,8%','6,1–9,5%','88%','0,35–0,81','5-HT2A','SCID II'])assert(text.includes(value),value);assert.equal(c.sections.at(-1).blocks.length,4);
  const figure=book.chapters.find(c=>c.number===13).sections.flatMap(s=>s.blocks).find(b=>b.type==='figure');const svg=await fs.readFile(new URL('../dist/'+figure.src,import.meta.url),'utf8');assert(svg.includes('<svg'));assert(!/<script|onload=/i.test(svg));
- assert.equal(book.chapters.find(c=>c.number===19).sections[5].status,'pending');
+ assert.equal(book.chapters.find(c=>c.number===20).sections[0].status,'pending');
 });
 
-test('chapter 16 is complete with all numbered source material and appendix',()=>{const c=book.chapters.find(c=>c.number===16);assert.equal(c.sections.length,12);assert(c.sections.every(StudyModel.ready));const collect=bs=>bs.flatMap(b=>[b,...(b.blocks?collect(b.blocks):[])]),bs=c.sections.flatMap(s=>collect(s.blocks)),boxes=bs.filter(b=>b.type==='box'),tables=bs.filter(b=>b.type==='table');assert.equal(boxes.length,11);for(let n=1;n<=11;n++)assert(boxes.some(b=>b.title.startsWith('Вставка 16.'+n+'.')));assert.deepEqual(tables.map(t=>t.rows.length),[8,6,6,5]);for(const [n,counts] of [[10,[9,3,6]],[11,[3,3,4,2,3,3,2,3]]])assert.deepEqual(boxes.find(b=>b.title.startsWith('Вставка 16.'+n+'.')).blocks.filter(b=>b.type==='list').map(b=>b.items.length),counts);assert.equal(c.sections[8].summary.length,40);assert.deepEqual(c.sections[11].blocks.filter(b=>b.type==='list').map(b=>b.items.length),[10,4,5,7,8,8]);assert.equal(book.chapters.find(c=>c.number===19).sections[5].status,'pending');});
+test('chapter 16 is complete with all numbered source material and appendix',()=>{const c=book.chapters.find(c=>c.number===16);assert.equal(c.sections.length,12);assert(c.sections.every(StudyModel.ready));const collect=bs=>bs.flatMap(b=>[b,...(b.blocks?collect(b.blocks):[])]),bs=c.sections.flatMap(s=>collect(s.blocks)),boxes=bs.filter(b=>b.type==='box'),tables=bs.filter(b=>b.type==='table');assert.equal(boxes.length,11);for(let n=1;n<=11;n++)assert(boxes.some(b=>b.title.startsWith('Вставка 16.'+n+'.')));assert.deepEqual(tables.map(t=>t.rows.length),[8,6,6,5]);for(const [n,counts] of [[10,[9,3,6]],[11,[3,3,4,2,3,3,2,3]]])assert.deepEqual(boxes.find(b=>b.title.startsWith('Вставка 16.'+n+'.')).blocks.filter(b=>b.type==='list').map(b=>b.items.length),counts);assert.equal(c.sections[8].summary.length,40);assert.deepEqual(c.sections[11].blocks.filter(b=>b.type==='list').map(b=>b.items.length),[10,4,5,7,8,8]);assert.equal(book.chapters.find(c=>c.number===20).sections[0].status,'pending');});
 
-test('chapter 17 retains its complete assessment, care and numbered material',()=>{const c=book.chapters.find(c=>c.number===17);assert.equal(c.sections.length,13);assert(c.sections.every(StudyModel.ready));const all=c.sections.flatMap(s=>s.blocks),boxes=all.filter(b=>b.type==='box'),tables=all.filter(b=>b.type==='table');assert.equal(boxes.length,4);assert.deepEqual(tables.map(t=>t.rows.length),[9,34,21,12,7]);for(let n=1;n<=4;n++)assert(boxes.some(b=>b.title.startsWith('Вставка 17.'+n+'.')));assert.equal(boxes[0].blocks[0].items.length,8);assert.deepEqual(boxes[2].blocks.filter(b=>b.type==='list').map(b=>b.items.length),[6,5]);assert.deepEqual(boxes[3].blocks.filter(b=>b.type==='list').map(b=>b.items.length),[5,7]);const assessment=c.sections[8],t=assessment.blocks.find(b=>b.type==='table');assert.equal(t.headers.length,2);assert.equal(t.rows[6][1],'');assert(assessment.blocks.map(StudyModel.blockText).join(' ').includes('уровень E'));assert(c.sections[10].blocks.some(b=>b.type==='heading'&&b.text==='Модификация поведения'));assert.equal(c.sections[12].blocks.length,2);assert.equal(book.chapters.find(c=>c.number===19).sections[5].status,'pending');});
+test('chapter 17 retains its complete assessment, care and numbered material',()=>{const c=book.chapters.find(c=>c.number===17);assert.equal(c.sections.length,13);assert(c.sections.every(StudyModel.ready));const all=c.sections.flatMap(s=>s.blocks),boxes=all.filter(b=>b.type==='box'),tables=all.filter(b=>b.type==='table');assert.equal(boxes.length,4);assert.deepEqual(tables.map(t=>t.rows.length),[9,34,21,12,7]);for(let n=1;n<=4;n++)assert(boxes.some(b=>b.title.startsWith('Вставка 17.'+n+'.')));assert.equal(boxes[0].blocks[0].items.length,8);assert.deepEqual(boxes[2].blocks.filter(b=>b.type==='list').map(b=>b.items.length),[6,5]);assert.deepEqual(boxes[3].blocks.filter(b=>b.type==='list').map(b=>b.items.length),[5,7]);const assessment=c.sections[8],t=assessment.blocks.find(b=>b.type==='table');assert.equal(t.headers.length,2);assert.equal(t.rows[6][1],'');assert(assessment.blocks.map(StudyModel.blockText).join(' ').includes('уровень E'));assert(c.sections[10].blocks.some(b=>b.type==='heading'&&b.text==='Модификация поведения'));assert.equal(c.sections[12].blocks.length,2);assert.equal(book.chapters.find(c=>c.number===20).sections[0].status,'pending');});
 
 
-test('chapter18 first four sections preserve source data without claiming completion',()=>{const c=book.chapters.find(c=>c.number===18);assert(c.sections.slice(0,4).every(StudyModel.ready));assert(book.chapters.find(c=>c.number===19).sections.slice(5).every(s=>s.status==='pending'));const blocks=c.sections.slice(0,4).flatMap(s=>s.blocks),boxes=blocks.filter(b=>b.type==='box'),tables=blocks.filter(b=>b.type==='table');assert.equal(boxes.length,3);assert.equal(tables.length,1);assert.deepEqual(tables[0].rows,[['Расстройство шизофренического спектра','4,8','13,7'],['Аффективные расстройства','3,5','4,3'],['Трудности обучения (learning difficulties)','1,7','—'],['Расстройства личности','5,7','7,9']]);assert.equal(boxes[0].blocks.find(b=>b.type==='list').items.length,3);assert.deepEqual(boxes[1].blocks.filter(b=>b.type==='list').map(b=>b.items.length),[8,4]);assert.equal(boxes[2].blocks[0].items.length,5);assert.deepEqual(c.sections[1].blocks.filter(b=>b.type==='list').map(b=>b.items.length),[4,5,3,6]);for(const term of ['55 008','492 914','286 500','19%','4,5%'])assert(c.sections[1].blocks.map(StudyModel.blockText).join(' ').includes(term));const t=c.sections[3].blocks.map(StudyModel.blockText).join(' ');for(const term of ['18 423','5,2%','10,7%','2,7%','Пиромания','Клептомания','Pages 53, 54'])assert(t.includes(term),term);assert(book.translationBoundary.includes('восемнадцать глав переведены полностью'));});
+test('chapter18 first four sections preserve source data without claiming completion',()=>{const c=book.chapters.find(c=>c.number===18);assert(c.sections.slice(0,4).every(StudyModel.ready));assert(book.chapters.find(c=>c.number===20).sections.every(s=>s.status==='pending'));const blocks=c.sections.slice(0,4).flatMap(s=>s.blocks),boxes=blocks.filter(b=>b.type==='box'),tables=blocks.filter(b=>b.type==='table');assert.equal(boxes.length,3);assert.equal(tables.length,1);assert.deepEqual(tables[0].rows,[['Расстройство шизофренического спектра','4,8','13,7'],['Аффективные расстройства','3,5','4,3'],['Трудности обучения (learning difficulties)','1,7','—'],['Расстройства личности','5,7','7,9']]);assert.equal(boxes[0].blocks.find(b=>b.type==='list').items.length,3);assert.deepEqual(boxes[1].blocks.filter(b=>b.type==='list').map(b=>b.items.length),[8,4]);assert.equal(boxes[2].blocks[0].items.length,5);assert.deepEqual(c.sections[1].blocks.filter(b=>b.type==='list').map(b=>b.items.length),[4,5,3,6]);for(const term of ['55 008','492 914','286 500','19%','4,5%'])assert(c.sections[1].blocks.map(StudyModel.blockText).join(' ').includes(term));const t=c.sections[3].blocks.map(StudyModel.blockText).join(' ');for(const term of ['18 423','5,2%','10,7%','2,7%','Пиромания','Клептомания','Pages 53, 54'])assert(t.includes(term),term);assert(book.translationBoundary.includes('девятнадцать глав переведены полностью'));});
 
 test('chapter18 offender groups and specific crimes retain complete source hierarchy and safeguards',()=>{
  const c=book.chapters.find(c=>c.number===18),groups=c.sections[4],crimes=c.sections[5];
- assert(c.sections.slice(0,6).every(StudyModel.ready));assert(book.chapters.find(c=>c.number===19).sections.slice(5).every(s=>s.status==='pending'));
+ assert(c.sections.slice(0,6).every(StudyModel.ready));assert(book.chapters.find(c=>c.number===20).sections.every(s=>s.status==='pending'));
  assert.deepEqual([groups.source.pdfStart,groups.source.pdfEnd,crimes.source.pdfStart,crimes.source.pdfEnd],[510,511,511,516]);
  assert.equal(groups.blocks.filter(b=>b.type==='heading').length,3);
  assert.equal(crimes.blocks.filter(b=>b.type==='heading').length,25);
@@ -155,7 +155,7 @@ test('chapter18 offender groups and specific crimes retain complete source hiera
 });
 test('chapter18 victims, criminal courts and treatment retain the PDF boundaries and distinctions',()=>{
  const c=book.chapters.find(c=>c.number===18),victims=c.sections[6],courts=c.sections[7],treatment=c.sections[8];
- assert(c.sections.slice(0,9).every(StudyModel.ready));assert(book.chapters.find(c=>c.number===19).sections.slice(5).every(s=>s.status==='pending'));
+ assert(c.sections.slice(0,9).every(StudyModel.ready));assert(book.chapters.find(c=>c.number===20).sections.every(s=>s.status==='pending'));
  assert.deepEqual([victims,courts,treatment].map(s=>[s.source.pdfStart,s.source.pdfEnd]),[[517,518],[518,520],[520,522]]);
  assert.deepEqual([victims,courts,treatment].map(s=>s.blocks.filter(b=>b.type==='heading').length),[9,12,7]);
  assert.deepEqual(courts.blocks.filter(b=>b.type==='list').map(b=>[!!b.ordered,b.items.length]),[[true,3],[false,5],[true,3]]);
@@ -180,10 +180,10 @@ test('chapter18 is complete with all numbered source material and translated dia
  assert.deepEqual(risk.blocks.filter(b=>b.type==='list').map(b=>[!!b.ordered,b.items.length]),[[true,2],[false,4]]);
  assert.equal(report.blocks.find(b=>b.type==='box').blocks[0].items.length,7);assert.equal(report.blocks.find(b=>b.type==='table').headers.length,4);assert.equal(report.blocks.find(b=>b.type==='table').rows.length,2);
  assert.equal(report.blocks.find(b=>b.type==='list').items.length,6);assert.equal(report.blocks.filter(b=>b.type==='heading').length,5);
- assert.equal(c.sections[12].blocks.length,2);assert.match(c.sections[12].editorNotes[0],/пустая/);assert(book.chapters.find(c=>c.number===19).sections.slice(5).every(s=>s.status==='pending'));
+ assert.equal(c.sections[12].blocks.length,2);assert.match(c.sections[12].editorNotes[0],/пустая/);assert(book.chapters.find(c=>c.number===20).sections.every(s=>s.status==='pending'));
 });
 test('chapter19 first three sections preserve age distinctions and all source tables',()=>{
- const c=book.chapters.find(c=>c.number===19);assert(c.sections.slice(0,3).every(StudyModel.ready));assert(c.sections.slice(5).every(s=>s.status==='pending'));
+ const c=book.chapters.find(c=>c.number===19);assert(c.sections.slice(0,3).every(StudyModel.ready));assert(book.chapters.find(c=>c.number===20).sections.every(s=>s.status==='pending'));
  assert.deepEqual(c.sections.slice(0,3).map(s=>[s.source.pdfStart,s.source.pdfEnd]),[[530,530],[530,532],[532,534]]);
  const [intro,age,epi]=c.sections;assert.equal(intro.blocks.find(b=>b.type==='list').items.length,2);assert.deepEqual([intro.summary.length,age.summary.length,epi.summary.length],[3,5,6]);
  assert.equal(age.blocks.filter(b=>b.type==='heading').length,5);assert.equal(epi.blocks.filter(b=>b.type==='heading').length,5);
@@ -193,7 +193,7 @@ test('chapter19 first three sections preserve age distinctions and all source ta
  assert.match(age.blocks.map(StudyModel.blockText).join(' '),/Кратковременная память.*Тесты рабочей памяти/);assert(epi.editorNotes.some(s=>s.includes('не суммируются')));
 });
 test('chapter19 practice retains complete services, assessment, treatment and legal material',()=>{
- const c=book.chapters.find(c=>c.number===19),s=c.sections[3];assert(c.sections.slice(0,4).every(StudyModel.ready));assert(c.sections.slice(5).every(s=>s.status==='pending'));
+ const c=book.chapters.find(c=>c.number===19),s=c.sections[3];assert(c.sections.slice(0,4).every(StudyModel.ready));assert(book.chapters.find(c=>c.number===20).sections.every(s=>s.status==='pending'));
  assert.deepEqual([s.source.pdfStart,s.source.pdfEnd],[534,541]);assert.equal(s.blocks.filter(b=>b.type==='heading').length,30);
  assert.deepEqual(s.blocks.filter(b=>b.type==='list').map(b=>[!!b.ordered,b.items.length]),[[false,11],[true,3],[false,6],[false,3],[true,3],[true,2],[false,3],[false,3],[false,5]]);
  const boxes=s.blocks.filter(b=>b.type==='box');assert.equal(boxes.length,2);assert.equal(boxes[0].blocks[0].items.length,6);assert.deepEqual(boxes[1].blocks.filter(b=>b.type==='list').map(b=>b.items.length),[3,2]);assert.equal(boxes[1].blocks.filter(b=>b.type==='paragraph').length,5);
@@ -203,8 +203,14 @@ test('chapter19 practice retains complete services, assessment, treatment and le
  const idx=s.blocks.findIndex(b=>b.type==='heading'&&b.text==='Ухаживающие');assert.match(s.blocks[idx-1].text,/Добровольческие организации/);assert.match(s.blocks.at(-1).text,/Patel et al\. \(2021\)/);
 });
 test('chapter19 clinical section preserves depression distinctions, doses and late-onset features',()=>{
- const c=book.chapters.find(c=>c.number===19),s=c.sections[4];assert(c.sections.slice(0,5).every(StudyModel.ready));assert(c.sections.slice(5).every(s=>s.status==='pending'));assert.deepEqual([s.source.pdfStart,s.source.pdfEnd],[541,545]);
+ const c=book.chapters.find(c=>c.number===19),s=c.sections[4];assert(c.sections.slice(0,5).every(StudyModel.ready));assert(book.chapters.find(c=>c.number===20).sections.every(s=>s.status==='pending'));assert.deepEqual([s.source.pdfStart,s.source.pdfEnd],[541,545]);
  assert.equal(s.blocks.filter(b=>b.type==='heading').length,17);assert.deepEqual(s.blocks.filter(b=>b.type==='list').map(b=>b.items.length),[4,6]);const box=s.blocks.find(b=>b.type==='box');assert.deepEqual(box.blocks.filter(b=>b.type==='list').map(b=>b.items.length),[3,3,6]);assert.equal(s.blocks.filter(b=>b.type==='table'||b.type==='figure').length,0);
  const text=s.blocks.map(StudyModel.blockText).join(' ');for(const term of ['277','32%','44%','23%','12 месяцев','0,4–0,6 ммоль/л','10–20%','3:1','1760','10–15%','Connors et al., 2019','Riisgaard et al., 2015','Hamedani and Pelak (2019)'])assert(text.includes(term),term);
  assert(s.editorNotes.some(t=>t.includes('не суммируются')));assert(s.editorNotes.some(t=>t.includes('напряжении с предыдущим разделом')));assert.equal(s.summary.length,9);assert.match(s.blocks.at(-1).text,/Hamedani/);
+});
+test('chapter19 complete dementia treatment retains all numbered material and source limitations',()=>{
+ const c=book.chapters.find(c=>c.number===19);assert.equal(c.sections.length,7);assert(c.sections.every(StudyModel.ready));const bs=c.sections.flatMap(s=>s.blocks);assert.equal(bs.filter(b=>b.type==='table').length,4);const boxes=bs.filter(b=>b.type==='box');assert.equal(boxes.length,5);for(let n=1;n<=5;n++)assert(boxes.some(b=>b.title.startsWith('Вставка 19.'+n+'.')));
+ const s=c.sections[5];assert.equal(s.blocks.filter(b=>b.type==='heading').length,15);assert.deepEqual(s.blocks.filter(b=>b.type==='list').map(b=>[!!b.ordered,b.items.length]),[[false,7],[false,4],[false,3],[true,3],[true,3]]);assert.deepEqual(boxes[3].blocks.filter(b=>b.type==='list').map(b=>b.items.length),[6,4,4]);assert.deepEqual(boxes[4].blocks.filter(b=>b.type==='list').map(b=>b.items.length),[5,2,2,6]);
+ const text=s.blocks.map(StudyModel.blockText).join(' ');for(const term of ['27%','ADAS-Cog','CIBIC-Plus','выше 12','ARIA','SPRINT-MIND','5-HT1A'])assert(text.includes(term),term);
+ assert.match(s.editorNotes[1],/ошибочно.*5-HT1A/);assert(s.editorNotes[1].includes('5-HT2A'));assert(s.editorNotes[1].includes('207318s010lbl.pdf'));assert.deepEqual([s.summary.length,c.sections[6].summary.length],[8,1]);assert.equal(c.sections[6].blocks.length,2);assert.match(c.sections[6].editorNotes[0],/пустая/);assert(book.chapters.find(c=>c.number===20).sections.every(s=>s.status==='pending'));
 });
