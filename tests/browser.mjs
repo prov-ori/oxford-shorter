@@ -33,7 +33,7 @@ try {
   const page=await context.newPage(); const errors=[]; page.on('pageerror',e=>errors.push(e.message));
   await page.goto(origin); await page.locator('#sourceTitle').waitFor();
   assert.equal(await page.locator('#toc details').count(),29);
-  assert.equal(await page.locator('#translatedMetric').innerText(),'234 раздела');
+  assert.equal(await page.locator('#translatedMetric').innerText(),'236 разделов');
   assert.match(await page.locator('#sourceTitle').innerText(),/26 глав/);
   await page.screenshot({path:path.join(output,'home-desktop.png'),fullPage:true});
   await page.click('#notesButton'); await page.fill('#personalNotes','Общая заметка: проверить источник.'); await page.click('[data-close="notesDialog"]');
