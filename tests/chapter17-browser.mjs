@@ -12,7 +12,7 @@ const context=await browser.newContext({viewport:{width:390,height:844}}),page=a
 page.on('pageerror',e=>errors.push(e.message));
 await page.goto(base+'/#section=ch17-s09');
 await page.waitForFunction(()=>window.STUDY_BOOK&&document.querySelectorAll('#article tbody tr').length===7);
-assert.equal(await page.evaluate(()=>STUDY_BOOK.revision),32);
+assert.equal(await page.evaluate(()=>STUDY_BOOK.revision),33);
 assert.equal(await page.evaluate(()=>STUDY_BOOK.chapters.flatMap(c=>c.sections).filter(s=>['translated','reviewed'].includes(s.status)).length),199);
 assert.equal(await page.locator('#article tbody td').count(),14);
 assert.match(await page.locator('#article').innerText(),/WISC V/);
@@ -29,6 +29,6 @@ assert(!(await page.locator('#completeButton').isDisabled()));assert(await page.
 }
 await page.click('#nextButton');await page.waitForFunction(()=>location.hash==='#section=ch18-s01'&&!document.getElementById('completeButton').disabled);
 assert.deepEqual(errors,[]);
-console.log('PASS chapter17 '+(process.env.STUDY_LIVE_URL?'live':'local')+': revision32,199ready,table17.5,mobile,notes persistence,progress,17-s09→18-s01ready.');
+console.log('PASS chapter17 '+(process.env.STUDY_LIVE_URL?'live':'local')+': revision33,199ready,table17.5,mobile,notes persistence,progress,17-s09→18-s01ready.');
 }finally{await browser?.close();if(server){server.closeAllConnections();await new Promise(r=>server.close(r));}}
 
