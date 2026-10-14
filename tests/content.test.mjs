@@ -17,10 +17,10 @@ test('chapters and sections run in PDF reading order with separate page labels',
 });
 test('precise published boundary distinguishes complete, partial and pending material',()=>{
   const sections=StudyModel.flatten(book),done=sections.filter(StudyModel.ready);
-  assert.equal(done.length,198);
-  assert.deepEqual(done.map(s=>s.id),book.chapters.filter(c=>c.id==='front'||[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17].includes(c.number)).flatMap(c=>c.sections.map(s=>s.id)).concat(book.chapters.find(c=>c.number===18).sections.map(s=>s.id),book.chapters.find(c=>c.number===19).sections.map(s=>s.id),book.chapters.find(c=>c.number===20).sections.slice(0,2).map(s=>s.id)));
-  assert.equal(done.at(-1).id,'ch20-s02');
-  assert.deepEqual(sections.filter(s=>s.status==='partial').map(s=>s.id),['ch20-s03']);
+  assert.equal(done.length,199);
+  assert.deepEqual(done.map(s=>s.id),book.chapters.filter(c=>c.id==='front'||[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17].includes(c.number)).flatMap(c=>c.sections.map(s=>s.id)).concat(book.chapters.find(c=>c.number===18).sections.map(s=>s.id),book.chapters.find(c=>c.number===19).sections.map(s=>s.id),book.chapters.find(c=>c.number===20).sections.slice(0,3).map(s=>s.id)));
+  assert.equal(done.at(-1).id,'ch20-s03');
+  assert.deepEqual(sections.filter(s=>s.status==='partial').map(s=>s.id),[]);
   for(const s of sections.filter(s=>!StudyModel.readable(s))){assert.equal(s.status,'pending');assert.equal(s.blocks.length,0);}
   const completed=sections.find(s=>s.id==='ch01-s03');assert.equal(completed.revision,3);assert.equal(completed.coverage,undefined);assert.equal(completed.source.pdfEnd,29);
   assert(sections.every(s=>/[а-яё]/i.test(s.title)));
@@ -218,12 +218,12 @@ test('chapter20 classification preserves source tables, linked box and diagnosti
  const c=book.chapters.find(c=>c.number===20),s=c.sections[1];assert(c.sections.slice(0,2).every(StudyModel.ready));assert(c.sections.slice(3).every(s=>s.status==='pending'));assert.deepEqual([s.source.pdfStart,s.source.pdfEnd],[552,555]);const tables=s.blocks.filter(b=>b.type==='table');assert.deepEqual(tables.map(t=>[t.rows.length,t.headers.length]),[[12,2],[11,2],[5,2]]);assert.deepEqual(tables[0].rows[2],['','Зависимость']);assert.equal(tables[0].rows.at(-1)[1],'');assert.equal(s.blocks.filter(b=>b.type==='heading').length,5);
  const box=s.blocks.find(b=>b.type==='box');assert.equal(box.blocks.find(b=>b.type==='list').items.length,11);assert(box.blocks[0].text.includes('2–3'));const text=s.blocks.map(StudyModel.blockText).join(' ');for(const term of ['не менее12','трёх месяцев','stave off alcohol dependence','МКБ-10','MDMA'])assert(text.replaceAll('не менее 12','не менее12').includes(term),term);assert(s.editorNotes.some(t=>/вопросы\s*3 и\s*4/.test(t)));assert.deepEqual(c.sections.slice(0,2).map(s=>s.summary.length),[2,6]);
 });
-test('alcohol section has a precise partial boundary and unchanged source quantities',()=>{
- const c=book.chapters.find(c=>c.number===20),s=c.sections[2];assert.equal(s.status,'partial');assert.equal(s.source.pdfEnd,574);assert.deepEqual([s.coverage.pdfStart,s.coverage.pdfEnd],[554,570]);assert.match(s.coverage.next,/570/);assert.equal(s.blocks.filter(b=>b.type==='heading').length,64);assert.deepEqual(s.blocks.filter(b=>b.type==='list').map(b=>[!!b.ordered,b.items.length]),[[true,4],[true,3],[false,4],[false,2],[true,4],[true,4]]);assert.equal(s.blocks.filter(b=>b.type==='box').length,9);
- const table=s.blocks.find(b=>b.type==='table');assert.equal(table.headers.length,4);assert.equal(table.rows.length,14);assert.deepEqual(table.rows[8],['Столовое вино — бокал','10–14','10','2']);assert.deepEqual(table.rows[9],['Столовое вино — бутылка','10–14','70','12']);assert.match(s.editorNotes[1],/не соответствуют/);assert.equal(s.summary.length,25);assert.equal(s.blocks.at(-1).type,'paragraph');assert.match(s.blocks.at(-1).text,/Вернике–Корсакова/);
+test('complete alcohol section retains source extent and unchanged quantities',()=>{
+ const c=book.chapters.find(c=>c.number===20),s=c.sections[2];assert.equal(s.status,'translated');assert.equal(s.source.pdfEnd,574);assert.equal(s.coverage,undefined);assert.equal(s.blocks.filter(b=>b.type==='heading').length,69);assert.deepEqual(s.blocks.filter(b=>b.type==='list').map(b=>[!!b.ordered,b.items.length]),[[true,4],[true,3],[false,4],[false,2],[true,4],[true,4],[false,3],[true,4]]);assert.equal(s.blocks.filter(b=>b.type==='box').length,11);
+ const table=s.blocks.find(b=>b.type==='table');assert.equal(table.headers.length,4);assert.equal(table.rows.length,14);assert.deepEqual(table.rows[8],['Столовое вино — бокал','10–14','10','2']);assert.deepEqual(table.rows[9],['Столовое вино — бутылка','10–14','70','12']);assert.match(s.editorNotes[1],/не соответствуют/);assert.equal(s.summary.length,30);assert.equal(s.blocks.at(-1).type,'list');assert.match(s.blocks.at(-1).items[3],/Просвещение/);
 });
 test('expanded alcohol partial preserves previous content and expires earlier partial progress',async()=>{
- const s=book.chapters.find(c=>c.number===20).sections[2],{translations:old}=await import('../content/translation-ch20b.mjs');assert.deepEqual(s.blocks.slice(0,old['ch20-s03'].blocks.length),old['ch20-s03'].blocks);assert.equal(s.revision,5);assert.deepEqual(s.blocks.find(b=>b.type==='box').blocks.filter(b=>b.type==='list').map(b=>b.items.length),[4,5,5]);
+ const s=book.chapters.find(c=>c.number===20).sections[2],{translations:old}=await import('../content/translation-ch20b.mjs');assert.deepEqual(s.blocks.slice(0,old['ch20-s03'].blocks.length),old['ch20-s03'].blocks);assert.equal(s.revision,6);assert.deepEqual(s.blocks.find(b=>b.type==='box').blocks.filter(b=>b.type==='list').map(b=>b.items.length),[4,5,5]);
  const text=s.blocks.map(StudyModel.blockText).join(' ');for(const term of ['5%','194','129','48 часов','2%','3,3 миллиона','5,9%','сознание в тот момент сохранялось','неотложное медицинское состояние'])assert(text.includes(term),term);
  const state=StudyModel.emptyState();state.completed[s.id]={revision:2,source:book.source.sha256};state.notes[s.id]='Старая заметка';assert.equal(StudyModel.isPartRead(s,state,book),false);assert.equal(state.notes[s.id],'Старая заметка');assert.equal(StudyModel.stats(book,state).read,0);assert.equal(StudyModel.stats(book,state).partialRead,0);
 });
@@ -232,16 +232,23 @@ test('neurocognitive and societal addition retains source boundaries and prior c
  const s=book.chapters.find(c=>c.number===20).sections[2],{translations:old}=await import('../content/translation-ch20c.mjs');assert.deepEqual(s.blocks.slice(0,old['ch20-s03'].blocks.length),old['ch20-s03'].blocks);
  const box=s.blocks.find(b=>b.type==='box'&&b.title.includes('20.3'));assert.equal(box.blocks[0].items.length,4);assert.equal(box.blocks[0].ordered,true);
  const text=s.blocks.map(StudyModel.blockText).join(' ');for(const term of ['17%','9000','20 единиц','ALDH2','40–70%','D2/3','55%','32%','14%','7%','Beeston et al., 2020','Yap al., 2017','ясном сознании'])assert(text.includes(term),term);
- assert(s.blocks.some(b=>b.type==='heading'&&/Скрининговые опросники/.test(b.text)));assert.match(s.coverage.next,/570/);
+ assert(s.blocks.some(b=>b.type==='heading'&&/Скрининговые опросники/.test(b.text)));assert.equal(s.coverage,undefined);
  const state=StudyModel.emptyState();state.completed[s.id]={revision:3,source:book.source.sha256};state.notes[s.id]='Сохранить заметку';assert.equal(StudyModel.isPartRead(s,state,book),false);assert.equal(state.notes[s.id],'Сохранить заметку');
 });
 
 test('alcohol recognition and withdrawal retain complete questions and clinical distinctions',async()=>{
- const s=book.chapters.find(c=>c.number===20).sections[2],{translations:old}=await import('../content/translation-ch20d.mjs');assert.deepEqual(s.blocks.slice(0,old['ch20-s03'].blocks.length),old['ch20-s03'].blocks);assert.equal(s.revision,5);
- const boxes=s.blocks.filter(b=>b.type==='box');assert.deepEqual(boxes.map(b=>b.title.match(/20\.\d+/)[0]),['20.2','20.3','20.4','20.5','20.6','20.7','20.8','20.9','20.10']);
+ const s=book.chapters.find(c=>c.number===20).sections[2],{translations:old}=await import('../content/translation-ch20d.mjs');assert.deepEqual(s.blocks.slice(0,old['ch20-s03'].blocks.length),old['ch20-s03'].blocks);assert.equal(s.revision,6);
+ const boxes=s.blocks.filter(b=>b.type==='box');assert.deepEqual(boxes.map(b=>b.title.match(/20\.\d+/)[0]),['20.2','20.3','20.4','20.5','20.6','20.7','20.8','20.9','20.10','20.11','20.12']);
  const audit=boxes[2];assert.equal(audit.blocks.filter(b=>b.type==='heading').length,10);assert.deepEqual(audit.blocks.filter(b=>b.type==='list').map(b=>b.items.length),[5,5,5,5,5,5,5,5,3,3]);
  assert.match(audit.blocks[2].text,/Сколько единиц/);assert.match(audit.blocks[4].text,/шесть или более порций/);assert.equal(boxes[3].blocks[0].items.length,6);assert.equal(boxes[5].blocks[0].items.length,7);assert.equal(boxes[6].blocks[0].items.length,5);assert.equal(boxes[7].blocks[0].items.length,4);assert.equal(boxes[8].blocks[0].items.length,6);
  const text=s.blocks.map(StudyModel.blockText).join(' ');for(const term of ['AUDIT-C','8–15','16–19','20–40','0, 2 и 4','5 баллов','70%','60%','24 часов','SADQ','выше 30','20–30 мг четыре раза','5–7 дней','парентерально','профилактике делирия','ежедневная оценка'])assert(text.includes(term),term);
- assert(!s.blocks.some(b=>b.type==='heading'&&b.text==='Психологическое лечение'));assert.match(s.coverage.next,/570/);
+ assert(s.blocks.some(b=>b.type==='heading'&&b.text==='Психологическое лечение'));assert.equal(s.coverage,undefined);
  const state=StudyModel.emptyState();state.completed[s.id]={revision:4,source:book.source.sha256};state.notes[s.id]='Старые заметки';assert.equal(StudyModel.isPartRead(s,state,book),false);assert.equal(state.notes[s.id],'Старые заметки');assert.equal(StudyModel.stats(book,state).partialRead,0);
+});
+
+test('complete alcohol section keeps therapies, trial data and source inconsistencies',async()=>{
+ const s=book.chapters.find(c=>c.number===20).sections[2],{translations:old}=await import('../content/translation-ch20e.mjs');assert.deepEqual(s.blocks.slice(0,old['ch20-s03'].blocks.length),old['ch20-s03'].blocks);assert.equal(s.status,'translated');assert.equal(s.coverage,undefined);assert.equal(s.revision,6);
+ const boxes=s.blocks.filter(b=>b.type==='box');assert.equal(boxes[9].blocks.filter(b=>b.type==='heading').length,6);assert.equal(boxes[10].blocks[0].items.length,3);assert.match(boxes[10].blocks[0].items[0],/20.9/);assert(s.editorNotes.some(x=>/ошибочная ссылка/.test(x)));assert(s.editorNotes.some(x=>/какой исход/.test(x)));
+ const text=s.blocks.map(StudyModel.blockText).join(' ');for(const term of ['800 мг','100–200 мг','333 мг','60 кг','0,77–0,88','0,75–0,91','45 единиц','35 единиц','COMBINE','19 рандомизированных','27 рандомизированных','27 до 19','30% до 45%','GRIK1','35%','11%','2%','£800 млн'])assert(text.includes(term),term);assert.equal(s.blocks.at(-1).items.length,4);
+ const state=StudyModel.emptyState();state.completed[s.id]={revision:5,source:book.source.sha256};state.notes[s.id]='Заметка из неполного перевода';assert.equal(StudyModel.isRead(s,state,book),false);assert.equal(StudyModel.stats(book,state).read,0);assert.equal(state.notes[s.id],'Заметка из неполного перевода');assert.equal(StudyModel.stats(book,state).partial,0);
 });
