@@ -29,6 +29,6 @@ assert(!(await page.locator('#completeButton').isDisabled()));assert(await page.
 }
 await page.click('#nextButton');await page.waitForFunction(()=>location.hash==='#section=ch18-s01'&&!document.getElementById('completeButton').disabled);
 assert.deepEqual(errors,[]);
-console.log('PASS chapter17 '+(process.env.STUDY_LIVE_URL?'live':'local')+': revision40,213ready,table17.5,mobile,notes persistence,progress,17-s09→18-s01ready.');
+console.log('PASS chapter17 '+(process.env.STUDY_LIVE_URL?'live':'local')+': revision41,213ready,table17.5,mobile,notes persistence,progress,17-s09→18-s01ready.');
 }finally{await browser?.close();if(server){server.closeAllConnections();await new Promise(r=>server.close(r));}}
 
