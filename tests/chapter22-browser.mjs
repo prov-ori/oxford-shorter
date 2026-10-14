@@ -8,7 +8,7 @@ let base=process.env.STUDY_LIVE_URL,server,browser;
 if(!base){server=serve(fileURLToPath(new URL('../dist',import.meta.url)));await new Promise(r=>server.listen(0,'127.0.0.1',r));base='http://127.0.0.1:'+server.address().port;}
 try{
  browser=await chromium.launch({channel:'msedge',headless:true});const page=await browser.newPage({viewport:{width:390,height:844}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
- await fs.mkdir(new URL('../tmp/qa',import.meta.url),{recursive:true});await page.goto(base+'/#section=ch22-s01');await page.waitForFunction(()=>STUDY_BOOK.revision===68&&!document.getElementById('completeButton').disabled);
+ await fs.mkdir(new URL('../tmp/qa',import.meta.url),{recursive:true});await page.goto(base+'/#section=ch22-s01');await page.waitForFunction(()=>STUDY_BOOK.revision===69&&!document.getElementById('completeButton').disabled);
  assert.equal(await page.evaluate(()=>StudyModel.stats(STUDY_BOOK,StudyModel.emptyState()).translated),250);
  for(const [n,summary,pages] of [[1,2,'618'],[2,4,'618–620'],[3,5,'620–621'],[4,8,'622–625']]){
   await page.waitForFunction(id=>location.hash==='#section='+id&&!document.getElementById('completeButton').disabled,'ch22-s0'+n);assert(await page.locator('#partialNotice').isHidden());assert.match(await page.locator('#sourceReference').innerText(),new RegExp(pages));assert(!(await page.locator('#speakButton').isDisabled()));
