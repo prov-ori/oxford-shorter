@@ -88,3 +88,8 @@ translation-references-a partial revision2, coverage788–790, sourcefull788–8
 ## Продолжение PDF839–841
 
 15.10.2026. Изображения/текст839–841 прочитаны.99полныхновых33+35+31,Slade2000→Tam2019NatRevGenet20(8)467–484,IDs1727–1825,всего1825. TampiJeste2022начало841НЕвключено:окончание842НЕпрочитано.Nextseedtmp/references-839-841.jsonlastrecord. SourceissuesSpinelli186,2/Spitzer1987DSMIV/StrangBMJ341640/Strausse186Articlee186/SpensleyStackStrathdeeDOIдублисохраненысвидимойпометкой. ДефисыMedico-Psychological/DSM-III/bmjpo-2017-000112сверены. ПорядокStedalпередSteadmanсохранён. ЗаголовкиSwansonAgainst/Szasz/Spitzerневыданывыводамисайта. Предыдущие1726неизменны. Book102:265full/1partial/1pending;referencespartialrevision19,coverage788–841. Названиянестатьи,внешнегоаудитанет.
+
+
+## Продолжение PDF842–844
+
+15.10.2026. Изображения/текст842–844 прочитаны.100полныхновых=carry841(1)+32+33+34,TampiJeste2022→Vigod2016BMJ352i1547,IDs1826–1925,всего1925. Tampiначало841конец842объединён/pdfEnd842,прежняяboxпометкасталаисторической. Обрывовнаконеc844нет,845НЕпрочитан. SourceissuesTansellaзвёздочка/TaoAmJRes148/TaquetNatureMed/ThomBuiM/UN2020том45/Townsend(18)/TyrerPONE-D-13-31784[pii]/TorokDOIповтор/Torgersen848/TileyS56–S56сохраненысвидимойпометкой. PIIсохранёнсотдельнымпробеломпослеURL. ДефисыSARS-CoV-2/Real-world/Meta-analysis/post-mortemсверены. Предыдущие1825неизменны. Book103:265full/1partial/1pending;referencespartialrevision20,coverage788–844. Названиянестатьи,ассоциацияневыданапричинностью,внешнегоаудитанет.
