@@ -73,3 +73,8 @@ translation-references-a partial revision2, coverage788–790, sourcefull788–8
 ## Продолжение PDF830–832
 
 15.10.2026. Изображения/текст830–832 прочитаны.100полныхновых35+32+33,Oud2019→PurcellMullen2020NewOxford1142–1460,IDs1423–1522,всего1522. Обрывовнаконеc832нет,833НЕпрочитан. SourceissuesPercieduSertPritchardDOIдубли/Purcell1142–1460/Pardosvander/ParryKeegan/PinelVol1806/Princee62сохраненысвидимойпометкой. Дефисыphospho-tau/MRI-based/EEG-based/meta-analysisвосстановлены. ИсторическаялексикаPenrosePerryPinel/названиеPhillipsразъяснены. Предыдущие1422неизменны. Book99:265full/1partial/1pending;referencespartialrevision16,coverage788–832. Названиянестатьи,актуальностьклиническихрекомендацийнезаявлена,внешнегоаудитанет.
+
+
+## Продолжение PDF833–835
+
+15.10.2026. Изображения/текст833–835 прочитаны.102полныхновых32+33+37,Qasrawi2023→Sajatovic2015BipolarDisord17(7)689–704,IDs1523–1624,всего1624. Обрывовнаконеc835нет,836НЕпрочитан. Roberts2016/Ruocco2013переходымеждуколонкамивосстановлены. ДубликатRobins1966сохранёнобаместа(индексы45/50новойгруппы),IDразные. SourceissuesRaine128–119/Ristori19DOI21/Raphaeldoi.orgDOI/Robbins1991/KarrRyle2020/HumRepUpdateRockliffсохраненысвидимойпометкой. ДефисыKleine-Levin/D-cycloserine/16-Item/QIDS-SR/URLthe-role-of-genetic-testingсверены. ПорядокRaadпослеRayсохранён. Предыдущие1522неизменны. Book100:265full/1partial/1pending;referencespartialrevision17,coverage788–835. Названиянестатьи,внешнегоаудитанет.
