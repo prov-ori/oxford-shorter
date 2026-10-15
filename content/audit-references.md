@@ -48,3 +48,8 @@ translation-references-a partial revision2, coverage788–790, sourcefull788–8
 ## Продолжение PDF815–817
 
 15.10.2026. Изображения/текст815–817 прочитаны.103новыхполных36+35+32,Jilek2000→King2019CNS24(1)127–143,IDs0911–1013,всего1013. Kendler1981начинается816/кончается817,объединён. King-Hele2009начало817НЕвключено:окончание818НЕпрочитано. SourceissuesKahnPersonlichkeiten/двойнаяточка,Kelleherdoi.org/doi:,Kerr129(5),KesslerWJсохраненысвидимойпометкой. Немецкиеназванияпереведены. Дефисынормализованыпоизображениям. ПорядокKesslerпередKellarсохранён. Предыдущие910неизменны. Book94:265full/1partial/1pending;referencespartialrevision11,coverage788–817. NextKing-Hele817→818,seedtmp/references-815-817.jsonlastrecord. Названиянестатьи,внешнегоаудитанет.
+
+
+## Продолжение PDF818–820
+
+15.10.2026. Изображения/текст818–820 прочитаны.105полныхновых=carry817(1)+36+35+33,King-Hele2009→Levy2019CurrTreatOptionsPsychiatry6(4)312–324,IDs1014–1118,всего1118. King-Heleначало817конец818объединён/pdfEnd818. Обрывовнаконеc820нет,821НЕпрочитан. НемецкиеназванияKohl/Kretschmer/Leonhardпереведены,оригиналысохранены. SourceissuesKnappLeichsenringDOIдубли/Levkovitz5964/KretschmerWJHSprottKPTrench/LeonhardunddenFamilienphasishenсохраненысвидимойпометкой. Дефисысверены. Предыдущие1013неизменны. Book95:265full/1partial/1pending;referencespartialrevision12,coverage788–820. Названиянестатьи,внешнегоаудитанет.
