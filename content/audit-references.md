@@ -23,3 +23,8 @@ translation-references-a partial revision2, coverage788–790, sourcefull788–8
 ## Продолжение PDF800–802
 
 15.10.2026. Текст/изображения800–802прочитаны,началоCuijpers799сверено.101полнаяновая(1carry799/33на800/32на801/35на802),IDs0405–0505,всего505. Cuijpers799→800CognBehavTher49(3)165–180иDean800→801CD011611восстановлены. ПоследняяEng2013AdvPsychiatrTreat19(6)429–436полная. DeningK,G./DemontismedRxiv+DOI/Demeter2022том10/EckerArticle147/DohertyDOI:/DepartmentEducation2022vsURL2022-23сохранены,видимаяпометкабезвнешнейпроверки. Переносыlife-threatening/Transference-focused/STOP-PTSDиURLвосстановленыпоизображению. Старые404неизменны. Book89:265full/1partial/1pending;referencespartialrevision6coverage788–802. Далее803НЕпрочитан,Index850–881НЕпереведён.
+
+
+## Продолжение PDF803–805
+
+15.10.2026. Текст/изображения803–805прочитаны.100полныхновых36+32+32,Engel1977→FultonWinokur1993,IDs0506–0605. Всего605. Fairburn2009черезколонки803311–319восстановлен;Foulkes1945DOIj.2044-8341.1945.tb00751.xсохранёндефиспопереносу. SourceissuesFinebergm/Dunhman/McLoughlinM/Lancet, Psychiatry/experimental/DOIдублиFlottorpFoulkesсохранены,естьвидимоепояснение. Сохранены23000/73samples24827/861suicides/35-38-41лет/годовыесуффиксы. Названияневыданыутверждениямисайта,внешнегоаудитанет. Старые505неизменны. Book90:265full/1partial/1pending;referencespartialrevision7coverage788–805,следующий806НЕпрочитан. Обновлениесекционнойревизиивтестахограниченотолькобиблиографическимипроверками,другиеглавынеизменены.
