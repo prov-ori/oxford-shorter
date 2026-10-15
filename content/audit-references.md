@@ -18,3 +18,8 @@ translation-references-a partial revision2, coverage788–790, sourcefull788–8
 ## Продолжение PDF797–799
 
 15.10.2026. Текст/изображения797–799прочитаны.96полныхновых33+32+31,Chekroud2016→CuijpersSijbrandijKoole2013WorldPsychiatry12(2)137–148. Всего404,IDs0309–0404. Collin798колонки199–208/Copeland798→799892–899 восстановлены. СледующаяCuijpersVeen2020EMDRобрываетсянаCognвнизу799,НЕвключена,800непрочитан. DOIдублиCooperRussell2020/Crawford2012,Guildford/Kendall/Couteur/†Crawford2016сохранены,видимоеуточнение. Названияневыданыактуальнымиклиническимирекомендациями,внешнейпроверкиисследований/адресовнет. ПереносыTeeling-Smith/Survey-Adolescent/risk-benefitиартефактыизвлечениявосстановленыпоизображению. Прежние308неизменны. Book88:265full/1partial/1pending. referencespartialrevision5coverage788–799;частичнаяотметка4обновляется,заметкисохраняются.
+
+
+## Продолжение PDF800–802
+
+15.10.2026. Текст/изображения800–802прочитаны,началоCuijpers799сверено.101полнаяновая(1carry799/33на800/32на801/35на802),IDs0405–0505,всего505. Cuijpers799→800CognBehavTher49(3)165–180иDean800→801CD011611восстановлены. ПоследняяEng2013AdvPsychiatrTreat19(6)429–436полная. DeningK,G./DemontismedRxiv+DOI/Demeter2022том10/EckerArticle147/DohertyDOI:/DepartmentEducation2022vsURL2022-23сохранены,видимаяпометкабезвнешнейпроверки. Переносыlife-threatening/Transference-focused/STOP-PTSDиURLвосстановленыпоизображению. Старые404неизменны. Book89:265full/1partial/1pending;referencespartialrevision6coverage788–802. Далее803НЕпрочитан,Index850–881НЕпереведён.
