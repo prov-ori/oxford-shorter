@@ -33,7 +33,7 @@ try {
   const page=await context.newPage(); const errors=[]; page.on('pageerror',e=>errors.push(e.message));
   await page.goto(origin); await page.locator('#sourceTitle').waitFor();
   assert.equal(await page.locator('#toc details').count(),29);
-  assert.equal(await page.locator('#translatedMetric').innerText(),'250 разделов');
+  assert.equal(await page.locator('#translatedMetric').innerText(),'251 раздел');
   assert.match(await page.locator('#sourceTitle').innerText(),/26 глав/);
   await page.screenshot({path:path.join(output,'home-desktop.png'),fullPage:true});
   await page.click('#notesButton'); await page.fill('#personalNotes','Общая заметка: проверить источник.'); await page.click('[data-close="notesDialog"]');
@@ -97,7 +97,7 @@ try {
   await page.goto(origin+'/#section=ch15-s07');await page.locator('table').waitFor();assert.equal(await page.locator('#article .box').count(),8);assert.equal(await page.locator('table tbody tr').count(),11);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));await page.locator('table').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,'personality-criteria-mobile.png')});
   await page.goto(origin+'/#section=ch15-s13');await page.locator('#sectionTitle').waitFor();assert.equal(await page.locator('#article .box').count(),2);await page.click('#notesButton');assert.equal(await page.locator('#summary li').count(),6);await page.fill('#personalNotes','Глава 15: различать симптоматические и функциональные исходы.');await page.click('[data-close="notesDialog"]');await page.reload();await page.click('#notesButton');assert.equal(await page.inputValue('#personalNotes'),'Глава 15: различать симптоматические и функциональные исходы.');await page.click('[data-close="notesDialog"]');
   await page.goto(origin+'/#section=index-main');await page.locator('#sectionTitle').waitFor();assert(await page.locator('#nextButton').isDisabled());
-  await page.goto(origin+'/#section=ch25-s09');await page.locator('#sectionTitle').waitFor();assert.equal(await page.locator('#sectionTitle').innerText(),'Антидепрессанты');assert(!(await page.locator('#completeButton').isDisabled()));assert.match(await page.locator('#partialNotice').innerText(),/720–735/);
+  await page.goto(origin+'/#section=ch25-s09');await page.locator('#sectionTitle').waitFor();assert.equal(await page.locator('#sectionTitle').innerText(),'Антидепрессанты');assert(!(await page.locator('#completeButton').isDisabled()));assert(await page.locator('#partialNotice').isHidden());
   await context.close();
   const ctx=await browser.newContext({viewport:{width:1365,height:1000},acceptDownloads:true});
   await ctx.addInitScript(()=>{
