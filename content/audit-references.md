@@ -68,3 +68,8 @@ translation-references-a partial revision2, coverage788–790, sourcefull788–8
 ## Продолжение PDF827–829
 
 15.10.2026. Изображения/текст827–829 прочитаны.95полныхновых=carry826(1)+30+31+33,Murphy2013→Otgaar2022Memory30(1)16–21,IDs1328–1422,всего1422. Murphyначало826конец827объединён/pdfEnd827;прежняяпометкаобнеполнотесталаисторической. Обрывовнаконеc829нет,830НЕпрочитан. SourceissuesNICE2009CG90URLng222/NICE2013bCG170URLcg185/Nicholls5/Olfson373(11)1079/Osborne357сохраненысвидимойпометкой. ДефисыURLacute-management/drug-use-amongвосстановлены. ПорядокNICEгодыисуффиксысохранены. Предыдущие1327неизменны. Book98:265full/1partial/1pending;referencespartialrevision15,coverage788–829. Названиянестатьи,актуальностьNICEнезаявлена,внешнегоаудитанет.
+
+
+## Продолжение PDF830–832
+
+15.10.2026. Изображения/текст830–832 прочитаны.100полныхновых35+32+33,Oud2019→PurcellMullen2020NewOxford1142–1460,IDs1423–1522,всего1522. Обрывовнаконеc832нет,833НЕпрочитан. SourceissuesPercieduSertPritchardDOIдубли/Purcell1142–1460/Pardosvander/ParryKeegan/PinelVol1806/Princee62сохраненысвидимойпометкой. Дефисыphospho-tau/MRI-based/EEG-based/meta-analysisвосстановлены. ИсторическаялексикаPenrosePerryPinel/названиеPhillipsразъяснены. Предыдущие1422неизменны. Book99:265full/1partial/1pending;referencespartialrevision16,coverage788–832. Названиянестатьи,актуальностьклиническихрекомендацийнезаявлена,внешнегоаудитанет.
