@@ -63,3 +63,8 @@ translation-references-a partial revision2, coverage788–790, sourcefull788–8
 ## Продолжение PDF824–826
 
 15.10.2026. Изображения/текст824–826 прочитаны.101полнаяновая=carry823(1)+35+32+33,McElroy2020→Muñoz-NegroCervilla2016JClinPsychopharmacol36(6)684–690,IDs1227–1327,всего1327. McElroyначало823конец824объединён/pdfEnd824;прежняяпометкаобнеполнотесталаисторической. Murphy2013начало826НЕвключено:окончание827НЕпрочитано.Nextseedtmp/references-824-826.jsonlastrecord. DOI Mehlumj.1600-0447исправленпоизображению;Evidence-based/Meta-analysis/non-epilepticсверены. SourceissuesMeyer2013/Monahan1977/Ministry2022URL2020–2021/Mounier258безстраниц/Moher&etal/MesholamGoffKPNeuropsycholсохраненысвидимойпометкой. Предыдущие1226неизменны. Book97:265full/1partial/1pending;referencespartialrevision14,coverage788–826. Названиянестатьи,внешнегоаудитанет.
+
+
+## Продолжение PDF827–829
+
+15.10.2026. Изображения/текст827–829 прочитаны.95полныхновых=carry826(1)+30+31+33,Murphy2013→Otgaar2022Memory30(1)16–21,IDs1328–1422,всего1422. Murphyначало826конец827объединён/pdfEnd827;прежняяпометкаобнеполнотесталаисторической. Обрывовнаконеc829нет,830НЕпрочитан. SourceissuesNICE2009CG90URLng222/NICE2013bCG170URLcg185/Nicholls5/Olfson373(11)1079/Osborne357сохраненысвидимойпометкой. ДефисыURLacute-management/drug-use-amongвосстановлены. ПорядокNICEгодыисуффиксысохранены. Предыдущие1327неизменны. Book98:265full/1partial/1pending;referencespartialrevision15,coverage788–829. Названиянестатьи,актуальностьNICEнезаявлена,внешнегоаудитанет.
