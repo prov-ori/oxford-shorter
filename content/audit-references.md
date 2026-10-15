@@ -38,3 +38,8 @@ translation-references-a partial revision2, coverage788–790, sourcefull788–8
 ## Продолжение PDF809–811
 
 15.10.2026. Текст/изображения809–811прочитаны.105полныхновых36+36+33,Gottlieb2020→Heslop2014,IDs0703–0807,всего807. HarrisonNKopelman810→811Lishman617–688восстановлен. GrayJбезгода/Gottliebttpsбезh/GroupPMR/Gudjonssonпунктуация/GurejeHareDOIдубли/Halfdanarsonattentionслэш/Heckerandсохраненыивидимоотмечены,неисправленыподогадке. ПереносыN-acetylcysteine/Multi-infarct/metabolic/ГАМКAбензодиазепинвосстановлены. Внешнейпроверкинет. Старые702неизменны. Book92:265full/1partial/1pending;referencespartialrevision9coverage788–811. На811нетобрывазаписи,следующий812НЕпрочитан.
+
+
+## Продолжение PDF812–814
+
+15.10.2026. Текст/изображения812–814прочитаны.103полныхновых33+34+36,Heston1966→Jick2004JAMA292(3)338–343,IDs0808–0910;всего910. НемецкиеназванияJäger/Jaspersпереведены,оригинал/исходныйEnglishJägerсохранены. Типографическиепереносыhome-reared/NIA-AA/C-reactive/CO-MED/multi-episodeвосстановлены. DOIдублиHofstraHwang/PsychologicMed/Hughesпунктуация/ChineseZueсохраненыивидимоотмечены. ЭффективностьвназванииHittiневыданаклиническимвыводомсайта. Внешнегоаудитанет. Старые807неизменны. Book93:265full/1partial/1pending;referencespartialrevision10coverage788–814. Обрыванаконеc814нет,следующий815НЕпрочитан.
