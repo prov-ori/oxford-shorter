@@ -13,3 +13,8 @@ translation-references-a partial revision2, coverage788–790, sourcefull788–8
 ## Продолжение PDF794–796
 
 15.10.2026. Текст/изображения794–796прочитаны, началоBoland793повторно.106полныхновых:Bolandначало793+33на794+36на795+36на796;всего308,ID0203–0308. Переведеныназвания,оригинальныеавторы/годы/тома/страницы/DOIсохранены. Boland793→7941389–1398/Bower794колонки203–215/Bundy795колонки98–106восстановлены. Chawla2022полнаяпоследняяна796BMJ376e066084. ДублиDOI3(Bucher/BurnsCattyBecker/Carr),DOIBurns2013с60107–5en-dash,Illiffe/stageing/OReillyбезинициалов/Carmiбеззапятойсохранены,видимаяоговорка. Типографическиеартефактыdrughyphens/ii33–ii38/Low-dose/matched-cohort/first-andвосстановленыпоизображению;внешнейпроверкибиблиографиинет. Старые202неизменны. Book87:265full/1partial/1pending. referencespartialrevision4,coverage788–796;следующий797НЕизвлечён/НЕпрочитан.
+
+
+## Продолжение PDF797–799
+
+15.10.2026. Текст/изображения797–799прочитаны.96полныхновых33+32+31,Chekroud2016→CuijpersSijbrandijKoole2013WorldPsychiatry12(2)137–148. Всего404,IDs0309–0404. Collin798колонки199–208/Copeland798→799892–899 восстановлены. СледующаяCuijpersVeen2020EMDRобрываетсянаCognвнизу799,НЕвключена,800непрочитан. DOIдублиCooperRussell2020/Crawford2012,Guildford/Kendall/Couteur/†Crawford2016сохранены,видимоеуточнение. Названияневыданыактуальнымиклиническимирекомендациями,внешнейпроверкиисследований/адресовнет. ПереносыTeeling-Smith/Survey-Adolescent/risk-benefitиартефактыизвлечениявосстановленыпоизображению. Прежние308неизменны. Book88:265full/1partial/1pending. referencespartialrevision5coverage788–799;частичнаяотметка4обновляется,заметкисохраняются.
