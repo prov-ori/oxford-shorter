@@ -78,3 +78,8 @@ translation-references-a partial revision2, coverage788–790, sourcefull788–8
 ## Продолжение PDF833–835
 
 15.10.2026. Изображения/текст833–835 прочитаны.102полныхновых32+33+37,Qasrawi2023→Sajatovic2015BipolarDisord17(7)689–704,IDs1523–1624,всего1624. Обрывовнаконеc835нет,836НЕпрочитан. Roberts2016/Ruocco2013переходымеждуколонкамивосстановлены. ДубликатRobins1966сохранёнобаместа(индексы45/50новойгруппы),IDразные. SourceissuesRaine128–119/Ristori19DOI21/Raphaeldoi.orgDOI/Robbins1991/KarrRyle2020/HumRepUpdateRockliffсохраненысвидимойпометкой. ДефисыKleine-Levin/D-cycloserine/16-Item/QIDS-SR/URLthe-role-of-genetic-testingсверены. ПорядокRaadпослеRayсохранён. Предыдущие1522неизменны. Book100:265full/1partial/1pending;referencespartialrevision17,coverage788–835. Названиянестатьи,внешнегоаудитанет.
+
+
+## Продолжение PDF836–838
+
+15.10.2026. Изображения/текст836–838 прочитаны.102полныхновых35+35+32,Salazar2021→Slade2014WorldPsychiatry13(1)12–20,IDs1625–1726,всего1726. Обрывовнаконеc838нет,839НЕпрочитан. Simon2015переходколонок838восстановлен. SourceissuesSegal-ZindallWilliamsMGGuildford/Semchishen2026том26/Skodolpersonaltity/SanToo/SilveiraSeemanпунктуация/Agustus/SheridanDOIдублисохраненысвидимойпометкой. ДефисыHIV-associated/mega-analysis/All-cause/first-episodeсверены. Предыдущие1624неизменны. Book101:265full/1partial/1pending;referencespartialrevision18,coverage788–838. Названиянестатьи,внешнегоаудитанет.
