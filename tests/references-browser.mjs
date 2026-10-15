@@ -3,7 +3,7 @@ const require=createRequire(import.meta.url),{chromium}=require('C:/Users/jktru/
 let base=process.env.STUDY_LIVE_URL,server,browser;if(!base){server=serve(fileURLToPath(new URL('../dist',import.meta.url)));await new Promise(r=>server.listen(0,'127.0.0.1',r));base='http://127.0.0.1:'+server.address().port;}
 try{
  browser=await chromium.launch({channel:'msedge',headless:true});const page=await browser.newPage({viewport:{width:390,height:844}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto(base+'/#section=references-main');await page.waitForFunction(()=>STUDY_BOOK.revision===105);
+ await page.goto(base+'/#section=references-main');await page.waitForFunction(()=>STUDY_BOOK.revision===106);
  assert(await page.locator('#partialNotice').isHidden());assert(await page.locator('#continuationNotice').isHidden());assert.equal(await page.evaluate(()=>StudyModel.stats(STUDY_BOOK,StudyModel.emptyState()).translated),266);assert.match(await page.locator('#sourceReference').innerText(),/788–849/);
  assert.equal(await page.locator('#article li').count(),2063);assert.match(await page.locator('#article li').first().innerText(),/перинатальной депрессией.*Abajobir/s);assert.match(await page.locator('#article li').last().innerText(),/Психобиология личности.*Zuckerman.*2005/s);assert.match(await page.locator('#article .box').first().innerText(),/независимо не проверялись/);assert(!(await page.locator('#speakButton').isDisabled()));
  for(const n of [0,1925,2062]){await page.locator('#article li').nth(n).scrollIntoViewIfNeeded();assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
