@@ -53,3 +53,8 @@ translation-references-a partial revision2, coverage788–790, sourcefull788–8
 ## Продолжение PDF818–820
 
 15.10.2026. Изображения/текст818–820 прочитаны.105полныхновых=carry817(1)+36+35+33,King-Hele2009→Levy2019CurrTreatOptionsPsychiatry6(4)312–324,IDs1014–1118,всего1118. King-Heleначало817конец818объединён/pdfEnd818. Обрывовнаконеc820нет,821НЕпрочитан. НемецкиеназванияKohl/Kretschmer/Leonhardпереведены,оригиналысохранены. SourceissuesKnappLeichsenringDOIдубли/Levkovitz5964/KretschmerWJHSprottKPTrench/LeonhardunddenFamilienphasishenсохраненысвидимойпометкой. Дефисысверены. Предыдущие1013неизменны. Book95:265full/1partial/1pending;referencespartialrevision12,coverage788–820. Названиянестатьи,внешнегоаудитанет.
+
+
+## Продолжение PDF821–823
+
+15.10.2026. Изображения/текст821–823 прочитаны.108полныхновых37+35+36,LevyJohnson2019→McCutcheon2020WorldPsychiatry19(1)15–33,IDs1119–1226,всего1226. Loganначало821конец822объединён/pdfEnd822. McElroy2020начало823НЕвключено:окончание824НЕпрочитано. Nextseedtmp/references-821-823.jsonlastrecord. SourceissuesLievesleyMcClellanDOI+dx/MacLeanповторDOI/Marshall2011выпуск2001(12)/MarshallLockwood1998выпуск2000(2)/LightflowerWaswani/Ludvigssonбезтомастраниц/MaynardMartinhoчисласохраненысвидимойпометкой. URLYouth-Justice-in-Scotland.pdfвосстановленповизуалу. Предыдущие1118неизменны. Book96:265full/1partial/1pending;referencespartialrevision13,coverage788–823. Названиянестатьи,внешнегоаудитанет.
