@@ -58,3 +58,8 @@ translation-references-a partial revision2, coverage788–790, sourcefull788–8
 ## Продолжение PDF821–823
 
 15.10.2026. Изображения/текст821–823 прочитаны.108полныхновых37+35+36,LevyJohnson2019→McCutcheon2020WorldPsychiatry19(1)15–33,IDs1119–1226,всего1226. Loganначало821конец822объединён/pdfEnd822. McElroy2020начало823НЕвключено:окончание824НЕпрочитано. Nextseedtmp/references-821-823.jsonlastrecord. SourceissuesLievesleyMcClellanDOI+dx/MacLeanповторDOI/Marshall2011выпуск2001(12)/MarshallLockwood1998выпуск2000(2)/LightflowerWaswani/Ludvigssonбезтомастраниц/MaynardMartinhoчисласохраненысвидимойпометкой. URLYouth-Justice-in-Scotland.pdfвосстановленповизуалу. Предыдущие1118неизменны. Book96:265full/1partial/1pending;referencespartialrevision13,coverage788–823. Названиянестатьи,внешнегоаудитанет.
+
+
+## Продолжение PDF824–826
+
+15.10.2026. Изображения/текст824–826 прочитаны.101полнаяновая=carry823(1)+35+32+33,McElroy2020→Muñoz-NegroCervilla2016JClinPsychopharmacol36(6)684–690,IDs1227–1327,всего1327. McElroyначало823конец824объединён/pdfEnd824;прежняяпометкаобнеполнотесталаисторической. Murphy2013начало826НЕвключено:окончание827НЕпрочитано.Nextseedtmp/references-824-826.jsonlastrecord. DOI Mehlumj.1600-0447исправленпоизображению;Evidence-based/Meta-analysis/non-epilepticсверены. SourceissuesMeyer2013/Monahan1977/Ministry2022URL2020–2021/Mounier258безстраниц/Moher&etal/MesholamGoffKPNeuropsycholсохраненысвидимойпометкой. Предыдущие1226неизменны. Book97:265full/1partial/1pending;referencespartialrevision14,coverage788–826. Названиянестатьи,внешнегоаудитанет.
