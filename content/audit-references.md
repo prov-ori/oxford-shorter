@@ -28,3 +28,8 @@ translation-references-a partial revision2, coverage788–790, sourcefull788–8
 ## Продолжение PDF803–805
 
 15.10.2026. Текст/изображения803–805прочитаны.100полныхновых36+32+32,Engel1977→FultonWinokur1993,IDs0506–0605. Всего605. Fairburn2009черезколонки803311–319восстановлен;Foulkes1945DOIj.2044-8341.1945.tb00751.xсохранёндефиспопереносу. SourceissuesFinebergm/Dunhman/McLoughlinM/Lancet, Psychiatry/experimental/DOIдублиFlottorpFoulkesсохранены,естьвидимоепояснение. Сохранены23000/73samples24827/861suicides/35-38-41лет/годовыесуффиксы. Названияневыданыутверждениямисайта,внешнегоаудитанет. Старые505неизменны. Book90:265full/1partial/1pending;referencespartialrevision7coverage788–805,следующий806НЕпрочитан. Обновлениесекционнойревизиивтестахограниченотолькобиблиографическимипроверками,другиеглавынеизменены.
+
+
+## Продолжение PDF806–808
+
+15.10.2026. Текст/изображения806–808прочитаны.97полныхновых30+31+36,Furukawa2004→GottesmanRF2024Stroke55e61–e76,IDs0606–0702;всего702. На808нетобрыванаследующуюстраницу;809НЕпрочитан. SourceissuesGallagherhttpsdoi+httpdxdoi,Galante/GlennAL/GlennCR/GondekDOIдубли,GoldbergP1972,GadotOnlineaheadofprintсохранены;trailingproseGadotнепоглощенаDOIпосленормализациипробелов. АртефактыICD-10/Meta-analysis/ii13–ii27/2×2исправленыпоизображениям. Невыдаватьисторическиеслужбы/названиязаактуальныерекомендации. Внешнейпроверкинет. Старые605неизменны. Book91:265full/1partial/1pending;referencespartialrevision8coverage788–808.
