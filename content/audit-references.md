@@ -93,3 +93,8 @@ translation-references-a partial revision2, coverage788–790, sourcefull788–8
 ## Продолжение PDF842–844
 
 15.10.2026. Изображения/текст842–844 прочитаны.100полныхновых=carry841(1)+32+33+34,TampiJeste2022→Vigod2016BMJ352i1547,IDs1826–1925,всего1925. Tampiначало841конец842объединён/pdfEnd842,прежняяboxпометкасталаисторической. Обрывовнаконеc844нет,845НЕпрочитан. SourceissuesTansellaзвёздочка/TaoAmJRes148/TaquetNatureMed/ThomBuiM/UN2020том45/Townsend(18)/TyrerPONE-D-13-31784[pii]/TorokDOIповтор/Torgersen848/TileyS56–S56сохраненысвидимойпометкой. PIIсохранёнсотдельнымпробеломпослеURL. ДефисыSARS-CoV-2/Real-world/Meta-analysis/post-mortemсверены. Предыдущие1825неизменны. Book103:265full/1partial/1pending;referencespartialrevision20,coverage788–844. Названиянестатьи,ассоциацияневыданапричинностью,внешнегоаудитанет.
+
+
+## Завершение PDF845–849
+
+15.10.2026. Изображения/текст845–849 прочитаны.138полныхновых34+29+36+34+5,Villa2018→Zuckerman2005PsychobiologyofPersonalityCambridge,IDs1926–2063,всего2063записи. Конецспискавизуальноподтверждён849. Zimmerman2021начало848конец849объединён/pdfEnd849. ПовторWhite2011PACEсохранёнобаместаиндексы40/42. SourceissuesWatsonBhugra48(11)3/WilkinsonLaidla/WinterWkylie/WinczeGuildford/Yonkers848сохранены. ДефисыGenome-wide/late-life/N-acetyl/Creutzfeldt–Jakob/URLsocial-determinants-of-healthсверены. Предыдущие1925неизменны. Book104:266full/0partial/1pending;referencestranslatedrevision21,coverageудалена. Старыеpartialотметкинепереносятсявполноепрочтение,заметкисохранены. Старыетестыбиблиографиипроверяютсянаявномhistoricalpartialbook103;новыйтестпроверяетполнуюактуальнуюкнигу. ОсталсяIndexPDF850–881,НЕпрочитанНЕпереведён. Названиянестатьи,естьповторы,внешнегоаудитанет.
