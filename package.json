@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "node tools/build-book.mjs",
-    "test": "node --test tests/model.test.mjs tests/content.test.mjs",
+    "test": "node --test tests/model.test.mjs tests/content.test.mjs tests/index-complete.test.mjs",
     "start": "node tools/serve.mjs"
   },
   "engines": {"node": ">=20"}
