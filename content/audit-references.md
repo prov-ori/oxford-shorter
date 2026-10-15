@@ -33,3 +33,8 @@ translation-references-a partial revision2, coverage788–790, sourcefull788–8
 ## Продолжение PDF806–808
 
 15.10.2026. Текст/изображения806–808прочитаны.97полныхновых30+31+36,Furukawa2004→GottesmanRF2024Stroke55e61–e76,IDs0606–0702;всего702. На808нетобрыванаследующуюстраницу;809НЕпрочитан. SourceissuesGallagherhttpsdoi+httpdxdoi,Galante/GlennAL/GlennCR/GondekDOIдубли,GoldbergP1972,GadotOnlineaheadofprintсохранены;trailingproseGadotнепоглощенаDOIпосленормализациипробелов. АртефактыICD-10/Meta-analysis/ii13–ii27/2×2исправленыпоизображениям. Невыдаватьисторическиеслужбы/названиязаактуальныерекомендации. Внешнейпроверкинет. Старые605неизменны. Book91:265full/1partial/1pending;referencespartialrevision8coverage788–808.
+
+
+## Продолжение PDF809–811
+
+15.10.2026. Текст/изображения809–811прочитаны.105полныхновых36+36+33,Gottlieb2020→Heslop2014,IDs0703–0807,всего807. HarrisonNKopelman810→811Lishman617–688восстановлен. GrayJбезгода/Gottliebttpsбезh/GroupPMR/Gudjonssonпунктуация/GurejeHareDOIдубли/Halfdanarsonattentionслэш/Heckerandсохраненыивидимоотмечены,неисправленыподогадке. ПереносыN-acetylcysteine/Multi-infarct/metabolic/ГАМКAбензодиазепинвосстановлены. Внешнейпроверкинет. Старые702неизменны. Book92:265full/1partial/1pending;referencespartialrevision9coverage788–811. На811нетобрывазаписи,следующий812НЕпрочитан.
