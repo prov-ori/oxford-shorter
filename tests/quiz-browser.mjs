@@ -59,20 +59,39 @@ try {
   const expandedBank=JSON.parse(await fs.readFile(new URL('../dist/data/quiz-bank.json',import.meta.url),'utf8'));
   const frozen=JSON.parse(await fs.readFile(new URL('../content/quiz-v1-fingerprints.json',import.meta.url),'utf8'));
   const originalBank={...expandedBank,questions:expandedBank.questions.filter(q=>Object.hasOwn(frozen.questions,q.id))};delete originalBank.contentRevision;
-  assert.equal(originalBank.questions.length,92);
+  assert.equal(originalBank.questions.length,164);
   const legacyNow=Date.now();let legacyState=KnowledgeModel.start(KnowledgeModel.emptyState(originalBank),originalBank,{mode:'exam',count:5,minutes:20},legacyNow,()=>0.45);
   const oldQuestion=originalBank.questions.find(q=>q.id===legacyState.active.questionIds[0]);legacyState=KnowledgeModel.choose(legacyState,originalBank,oldQuestion.correctOptionId,legacyNow+1);
   const legacyContext=await browser.newContext({viewport:{width:360,height:800}});await legacyContext.addInitScript(({key,saved})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(saved));},{key:KEY,saved:legacyState});
   const legacyPage=await legacyContext.newPage();watch(legacyPage);await legacyPage.goto(url+'#attempt');await legacyPage.waitForFunction(()=>!document.getElementById('runScreen').hidden&&document.querySelector('#answerChoices input:checked'));
-  assert.equal(await legacyPage.evaluate(()=>KNOWLEDGE_BANK.questions.length),164);assert.deepEqual((await active(legacyPage)),legacyState.active);assert(await legacyPage.locator('#answerFeedback').isHidden());
+  assert.equal(await legacyPage.evaluate(()=>KNOWLEDGE_BANK.questions.length),200);assert.deepEqual((await active(legacyPage)),legacyState.active);assert(await legacyPage.locator('#answerFeedback').isHidden());
   await legacyPage.click('#nextQuestion');await choose(legacyPage,true);await legacyPage.reload();await legacyPage.waitForFunction(()=>document.querySelector('#answerChoices input:checked'));
   assert.equal((await active(legacyPage)).deadline,legacyState.active.deadline);assert.deepEqual((await active(legacyPage)).optionOrders,legacyState.active.optionOrders);
   await finish(legacyPage,3);assert.equal(await legacyPage.locator('#resultPercent').innerText(),'40%');assert.equal((await state(legacyPage)).history.length,1);assert.equal((await state(legacyPage)).events.length,5);await legacyContext.close();
+  // Render a new, long question from each book, rather than relying on a random draw to include new content.
+  for(const book of ['oxford','fish']){
+    const newest=expandedBank.questions.filter(q=>q.book===book&&!Object.hasOwn(frozen.questions,q.id));
+    assert.equal(newest.length,book==='oxford'?26:10);
+    const length=q=>q.stem.length+q.options.reduce((sum,o)=>sum+o.text.length,0);
+    const q=newest.sort((a,b)=>length(b)-length(a))[0];
+    const singleBank={...expandedBank,questions:[q]},saved=KnowledgeModel.start(KnowledgeModel.emptyState(singleBank),singleBank,{mode:'training',count:'all'},Date.now(),()=>0.4);
+    const fresh=await browser.newContext({viewport:{width:360,height:800}});
+    await fresh.addInitScript(({key,saved})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(saved));},{key:KEY,saved});
+    const sample=await fresh.newPage();watch(sample);await sample.goto(url+'#attempt');
+    await sample.waitForFunction(()=>!document.getElementById('runScreen').hidden&&document.querySelector('#answerChoices input'));
+    assert((await sample.locator('#questionTitle').innerText()).includes(q.stem));
+    await choose(sample,true);await sample.click('#checkAnswer');
+    await sample.locator('#answerFeedback details').evaluate(element=>element.open=true);
+    assert.equal((await sample.locator('#answerFeedback blockquote').innerText()).trim(),q.sourceEvidence);
+    assert((await sample.locator('#answerFeedback .q-source-link').getAttribute('href')).endsWith('#section='+q.sectionId));
+    await noOverflow(sample);await sample.screenshot({path:fileURLToPath(new URL('quiz-new-'+book+'.png',qa)),fullPage:true});
+    await finish(sample,0);assert.equal(await sample.locator('#resultPercent').innerText(),'100%');await fresh.close();
+  }
   const context = await browser.newContext({viewport: {width: 360, height: 800}, acceptDownloads: true});
   const page = await context.newPage(); watch(page);
   await open(page); await noOverflow(page);
   const counts = await page.evaluate(() => Object.fromEntries(Object.keys(KNOWLEDGE_BANK.books).map(book => [book, KNOWLEDGE_BANK.questions.filter(q => q.book === book).length])));
-  assert.deepEqual(counts,{oxford:104,fish:60});
+  assert.deepEqual(counts,{oxford:130,fish:70});
   assert.equal(await page.locator('#chapterChoices input').count(), 36);
   await page.screenshot({path: fileURLToPath(new URL('quiz-mobile-setup.png', qa)), fullPage: true});
 
@@ -257,7 +276,7 @@ try {
   await shared.close();
 
   assert.deepEqual(errors, []);
-  console.log('PASS knowledge platform:164 questions/legacy92 attempt preserved/both books/training/feedback/source/resume/exam secrecy/skip scoring/backup/import/deadline/corrupt or blocked storage/two tabs/mobile360.');
+  console.log('PASS knowledge platform:200 questions/legacy164 attempt preserved/both books/training/feedback/source/resume/exam secrecy/skip scoring/backup/import/deadline/corrupt or blocked storage/two tabs/mobile360.');
 } finally {
   await browser?.close();
   if (server) await new Promise(resolve => server.close(resolve));
