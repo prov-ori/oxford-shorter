@@ -52,3 +52,5 @@ dialog{max-height:calc(var(--viewport-height,100dvh) - 24px);overscroll-behavior
 
 @media(max-width:850px) and (max-height:600px){.sidebar{gap:10px;padding:16px}.sidebar-bottom p{display:none}.sidebar-bottom{padding-top:10px}.sidebar-bottom button{margin-top:6px}}
 @media(max-width:850px) and (max-height:420px){.sidebar{overflow-y:auto}.sidebar #toc{flex:none;min-height:120px;max-height:50dvh}.sidebar-heading{position:sticky;top:0;background:#f3f4ee;z-index:2}}
+
+.quiz-entry{margin:24px 0}.quiz-entry a{display:inline-block;text-decoration:none}.reader-tools #chapterQuizLink{font-size:12px}

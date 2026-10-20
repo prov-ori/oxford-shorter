@@ -155,6 +155,8 @@
     if (current) {
       state.lastSection = current.id;
       $('chapterLabel').textContent = current.chapter.title;
+      $('chapterQuizLink').hidden=!Number.isInteger(current.chapter.number);
+      $('chapterQuizLink').href='quiz.html?book='+(M.BOOK_ID==='fish-clinical-psychopathology-5-ru'?'fish':'oxford')+'&chapter='+current.chapter.number;
       $('sectionTitle').textContent = current.title; $('sectionStatus').textContent = labels[current.status];
       const s = current.source;
       $('sourceReference').textContent = `PDF: стр. ${s.pdfStart}–${s.pdfEnd}` + (s.printedPages ? ` · В книге: ${s.printedPages}` : '') + ` · ${current.originalTitle}`;
