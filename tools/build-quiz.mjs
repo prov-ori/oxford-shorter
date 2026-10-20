@@ -7,7 +7,7 @@ const sourceBooks={oxford:await read('dist/data/book.json'),fish:await read('dis
 const questions=[...await read('content/questions-oxford.json'),...await read('content/questions-fish.json')];
 const books=Object.fromEntries(Object.entries(sourceBooks).map(([key,b])=>[key,{id:b.id,shortTitle:key==='fish'?'Фиш':'Oxford',title:b.titleRu||b.title,edition:b.edition,sourceSha256:b.source.sha256,sourceRevision:b.revision,chapters:b.chapters.filter(c=>Number.isInteger(c.number)).map(c=>({number:c.number,title:c.title.replace(/^\d+\.\s*/, '')}))}]));
 // Content can grow without invalidating compatible saved attempts. Changed keys/meaning need a migration.
-const bank={schemaVersion:1,revision:1,contentRevision:4,title:'Проверка знаний · Oxford и Fish',books,questions};
+const bank={schemaVersion:1,revision:1,contentRevision:5,title:'Проверка знаний · Oxford и Fish',books,questions};
 KnowledgeModel.validateBank(bank);
 const frozen=await read('content/quiz-v1-fingerprints.json');
 if(frozen.compatibilityRevision!==bank.revision)throw Error('Question compatibility baseline mismatch');
