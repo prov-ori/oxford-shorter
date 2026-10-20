@@ -1,12 +1,20 @@
 import fs from 'node:fs/promises';
+import {createHash} from 'node:crypto';
 import '../dist/quiz-model.js';
 import '../dist/model.js';
 const root=new URL('../',import.meta.url),read=async name=>JSON.parse(await fs.readFile(new URL(name,root),'utf8'));
 const sourceBooks={oxford:await read('dist/data/book.json'),fish:await read('dist/data/fish.json')};
 const questions=[...await read('content/questions-oxford.json'),...await read('content/questions-fish.json')];
 const books=Object.fromEntries(Object.entries(sourceBooks).map(([key,b])=>[key,{id:b.id,shortTitle:key==='fish'?'Фиш':'Oxford',title:b.titleRu||b.title,edition:b.edition,sourceSha256:b.source.sha256,sourceRevision:b.revision,chapters:b.chapters.filter(c=>Number.isInteger(c.number)).map(c=>({number:c.number,title:c.title.replace(/^\d+\.\s*/, '')}))}]));
-const bank={schemaVersion:1,revision:1,title:'Проверка знаний · Oxford и Fish',books,questions};
+// Content can grow without invalidating compatible saved attempts. Changed keys/meaning need a migration.
+const bank={schemaVersion:1,revision:1,contentRevision:2,title:'Проверка знаний · Oxford и Fish',books,questions};
 KnowledgeModel.validateBank(bank);
+const frozen=await read('content/quiz-v1-fingerprints.json');
+if(frozen.compatibilityRevision!==bank.revision)throw Error('Question compatibility baseline mismatch');
+for(const [id,hash]of Object.entries(frozen.questions)){
+ const q=questions.find(q=>q.id===id);
+ if(!q||createHash('sha256').update(JSON.stringify(q)).digest('hex')!==hash)throw Error(id+': published question changed; provide an explicit compatibility migration');
+}
 for(const q of questions){
  const chapter=sourceBooks[q.book].chapters.find(c=>c.number===q.chapter),section=chapter.sections.find(s=>s.id===q.sectionId);
  if(!section)throw Error(q.id+': source section does not belong to chapter');
