@@ -9,3 +9,12 @@ dist/data/book.json
 dist/data/quiz-bank.js
 dist/data/quiz-bank.json
 .vercel/
+dist/data/chapters/
+dist/data/*-manifest.js
+dist/data/*-manifest.json
+dist/data/search-*.json
+dist/data/catalogue.json
+dist/data/practice.js
+dist/data/coverage.json
+dist/data/practice.json
+dist/data/offline-assets.js

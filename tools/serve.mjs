@@ -3,7 +3,7 @@ import {readFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const directory = path.resolve(fileURLToPath(new URL('../dist', import.meta.url)));
-const types = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.png':'image/png','.svg':'image/svg+xml','.webp':'image/webp','.jpg':'image/jpeg','.json':'application/json; charset=utf-8'};
+const types = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.png':'image/png','.svg':'image/svg+xml','.webp':'image/webp','.jpg':'image/jpeg','.json':'application/json; charset=utf-8','.webmanifest':'application/manifest+json'};
 export function serve(root = directory, rewrite) {
   return http.createServer(async(req,res) => {
     try {

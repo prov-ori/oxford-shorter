@@ -4,8 +4,11 @@
   "private": true,
   "scripts": {
     "build": "node tools/build-book.mjs",
-    "test": "node --test tests/model.test.mjs tests/content.test.mjs tests/index-complete.test.mjs tests/quiz-model.test.mjs tests/quiz-content.test.mjs",
-    "start": "node tools/serve.mjs"
+    "test": "node --test tests/model.test.mjs tests/content.test.mjs tests/index-complete.test.mjs tests/quiz-model.test.mjs tests/quiz-content.test.mjs tests/platform-model.test.mjs",
+    "start": "node tools/serve.mjs",
+    "test:platform": "node tests/platform-browser.mjs"
   },
-  "engines": {"node": ">=20"}
+  "engines": {
+    "node": ">=20"
+  }
 }

@@ -4,14 +4,14 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Личная учебная библиотека: последовательное изучение психиатрии, озвучивание, конспекты и заметки.">
   <meta name="theme-color" content="#233e36"><title>Фиш · Клиническая психопатология</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="data/fish.js" defer></script><script src="model.js" defer></script><script src="app.js" defer></script>
-</head>
+  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="platform.css">
+  <script src="data/fish-manifest.js" defer></script><script src="model.js" defer></script><script src="platform-model.js" defer></script><script src="content-loader.js" defer></script><script src="search-client.js" defer></script><script src="common.js" defer></script><script src="app.js" defer></script>
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="assets/app-icon.svg" type="image/svg+xml"></head>
 <body>
 <a class="skip" href="#main">К чтению</a>
 <header class="topbar">
   <a class="brand" href="#home" aria-label="Учебная библиотека, начало"><span class="brand-icon" aria-hidden="true">Ψ</span><span>Психиатрия<small>Личная учебная библиотека</small></span></a>
-  <div class="top-actions"><span class="edition">Фиш · 5-е издание</span><a class="nav-link" href="./">Oxford</a><a class="nav-link" href="library.html">Книги</a><a class="nav-link" href="quiz.html">Проверка знаний</a><a class="nav-link" href="lab.html">Лаборатория</a><button id="libraryButton" class="quiet">Материалы</button><button id="notesButton" class="primary" aria-label="Конспект">▤ <span>Конспект</span></button></div>
+  <div class="top-actions"><nav class="global-nav" aria-label="Разделы сайта"><a class="nav-link" href="study.html" aria-current="page">Учиться</a><a class="nav-link" href="practice.html">Практиковаться</a><a class="nav-link" href="lab.html">Инструменты</a><a class="nav-link" href="library.html">Библиотека</a></nav><button id="libraryButton" class="quiet">Материалы</button><button id="notesButton" class="primary" aria-label="Конспект">▤ <span>Конспект</span></button></div>
 </header>
 <div class="workspace">
   <aside class="sidebar" id="sidebar" aria-label="Содержание учебника">
@@ -22,7 +22,7 @@
     <div class="sidebar-bottom"><span class="eyebrow">Ваш путь</span><div class="progress-line"><strong id="readCount">0 разделов</strong><span id="readPercent">—</span></div><progress id="readingProgress" max="100" value="0" aria-label="Прочитано разделов"></progress><p id="readHint">Прогресс появится после добавления оглавления.</p><button id="backupButton" class="text-button">Сохранить резервную копию ↗</button></div>
   </aside>
   <main id="main" tabindex="-1">
-    <div class="breadcrumb"><button class="quiet mobile-only" id="tocButton">☰ Содержание</button><span id="breadcrumb">Библиотека / Обзор</span></div>
+    <nav class="book-switch" aria-label="Выбор учебника"><a href="index.html">Oxford</a><a href="fish.html">Фиш</a><a href="study.html#search">Общий поиск</a><a href="quiz.html">Тесты</a></nav><div class="breadcrumb"><button class="quiet mobile-only" id="tocButton">☰ Содержание</button><span id="breadcrumb">Библиотека / Обзор</span></div>
     <section id="home">
       <div class="intro"><div class="intro-copy"><span class="eyebrow">Читать. Понимать. Возвращаться.</span><h1>Клиническая<br><em>психопатология Фиша.</em></h1><p>Fish’s Clinical Psychopathology: Signs and Symptoms in Psychiatry<br><span class="muted">5-е издание · 2024 · учебный перевод на русский язык</span></p><button class="primary large" id="continueButton">Подготовить материалы <span aria-hidden="true">↗</span></button></div><div class="book-art" aria-hidden="true"><div class="book-spine"></div><div class="book-front"><span class="book-line">УЧЕБНАЯ БИБЛИОТЕКА</span><span class="book-symbol">Ψ</span><span class="book-title">Фиш</span><span class="book-sub">Чтение и размышление</span><span class="book-edition">V</span></div></div></div>
       <div class="metrics"><div><span class="eyebrow">Переведено</span><strong id="translatedMetric">0 <small>разделов</small></strong><p id="coverageHint">Перевод ещё не добавлен</p></div><div><span class="eyebrow">Изучено вами</span><strong id="readMetric">0 <small>разделов</small></strong><p>В вашем темпе, с сохранением места</p></div><div><span class="eyebrow">Личные заметки</span><strong id="notesMetric">0 <small>записей</small></strong><p>Мысли и вопросы к прочитанному</p></div></div>

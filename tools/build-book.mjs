@@ -223,3 +223,4 @@ await import('./figure-25-2.mjs');
 await import('./figure-26-1.mjs');
 
 await import('./build-quiz.mjs');
+await import('./build-platform.mjs');

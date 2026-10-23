@@ -11,8 +11,11 @@
    if(!q||typeof q.id!=='string'||ids.has(q.id)||!bank.books[q.book]||!Number.isInteger(q.chapter)||!bank.books[q.book].chapters.some(c=>c.number===q.chapter)||typeof q.sectionId!=='string'||!['recall','understanding','application'].includes(q.difficulty)||typeof q.stem!=='string'||q.stem.length<20||typeof q.explanation!=='string'||q.explanation.length<20||!Array.isArray(q.options)||q.options.length!==4||new Set(q.options.map(o=>o.id)).size!==4||new Set(q.options.map(o=>o.text)).size!==4||q.options.some(o=>typeof o.id!=='string'||typeof o.text!=='string'||!o.text.trim())||!q.options.some(o=>o.id===q.correctOptionId)||!q.source||!Number.isInteger(q.source.pdfStart)||q.source.pdfStart<1||!Number.isInteger(q.source.pdfEnd)||q.source.pdfEnd<q.source.pdfStart||typeof q.sourceEvidence!=='string'||!q.sourceEvidence.trim())throw Error('Ошибка в вопросе '+(q?.id||'без ID'));
    ids.add(q.id);
   }
+  if(bank.retiredQuestionIds!==undefined&&(!Array.isArray(bank.retiredQuestionIds)||new Set(bank.retiredQuestionIds).size!==bank.retiredQuestionIds.length||bank.retiredQuestionIds.some(id=>!ids.has(id))))throw Error("Неверный архив банка.");
   return bank;
  }
+ const confidenceValues=['guess','some','confident'];
+ const activeQuestions=bank=>bank.questions.filter(q=>!(bank.retiredQuestionIds||[]).includes(q.id));
  function emptyState(bank){return {schemaVersion:1,bankRevision:bank.revision,version:0,events:[],history:[],active:null};}
  const qmap=bank=>new Map(bank.questions.map(q=>[q.id,q]));
  function validRun(run,bank){
@@ -21,24 +24,25 @@
   for(const id of run.questionIds){const opts=questions.get(id).options.map(o=>o.id),order=run.optionOrders[id];if(!Array.isArray(order)||order.length!==opts.length||new Set(order).size!==opts.length||order.some(o=>!opts.includes(o))||(Object.hasOwn(run.answers,id)&&!opts.includes(run.answers[id])))throw Error('Повреждены варианты ответа.');}
   if(Object.keys(run.answers).some(id=>!run.questionIds.includes(id)))throw Error('Неизвестный ответ в попытке.');
   if(new Set(run.checked).size!==run.checked.length||new Set(run.flags).size!==run.flags.length||run.checked.some(id=>!run.answers[id])||(run.mode==='exam'&&run.checked.length))throw Error('Неверные отметки проверки ответа.');
+  if(run.confidence!==undefined&&(!run.confidence||Array.isArray(run.confidence)||typeof run.confidence!=='object'||Object.entries(run.confidence).some(([id,v])=>!run.questionIds.includes(id)||!confidenceValues.includes(v))))throw Error('Повреждена оценка уверенности.');
   return run;
  }
  function restoreState(raw,bank){
   if(!raw||raw.schemaVersion!==1||raw.bankRevision!==bank.revision||!Number.isInteger(raw.version)||raw.version<0||!Array.isArray(raw.events)||raw.events.length>MAX_EVENTS||!Array.isArray(raw.history)||raw.history.length>100)throw Error('Копия не соответствует этой версии банка вопросов. Исходные данные не изменены.');
   const map=qmap(bank),ids=new Set();
-  for(const e of raw.events){const q=map.get(e.questionId);if(!q||typeof e.id!=='string'||ids.has(e.id)||!finite(e.at)||!(e.choice===null||q.options.some(o=>o.id===e.choice)))throw Error('Повреждена история ответов.');ids.add(e.id);}
+  for(const e of raw.events){const q=map.get(e.questionId);if(!q||typeof e.id!=='string'||ids.has(e.id)||!finite(e.at)||(e.confidence!==undefined&&!confidenceValues.includes(e.confidence))||!(e.choice===null||q.options.some(o=>o.id===e.choice)))throw Error('Повреждена история ответов.');ids.add(e.id);}
   const runs=new Set();for(const run of raw.history){validRun(run,bank);if(!finite(run.finishedAt)||run.finishedAt<run.startedAt||runs.has(run.id))throw Error('Повреждён результат попытки.');runs.add(run.id);}
   if(raw.active){validRun(raw.active,bank);if(raw.active.finishedAt!==undefined||runs.has(raw.active.id))throw Error('Попытка уже завершена.');}
   return copy({schemaVersion:1,bankRevision:bank.revision,version:raw.version,events:[...raw.events].sort((a,b)=>a.at-b.at),history:raw.history,active:raw.active||null});
  }
  function stats(state,bank){
   const map=qmap(bank),result={};
-  for(const e of [...state.events].sort((a,b)=>a.at-b.at)){const q=map.get(e.questionId);if(!q)continue;const s=result[q.id]||(result[q.id]={attempts:0,correct:0,streak:0,lastCorrect:false,dueAt:0,lastSeen:0});const correct=e.choice===q.correctOptionId;s.attempts++;if(correct)s.correct++;s.streak=correct?s.streak+1:0;s.lastCorrect=correct;s.lastSeen=e.at;s.dueAt=correct?e.at+DAY*[1,3,7,14,30][Math.min(s.streak-1,4)]:e.at;}
+  for(const e of [...state.events].sort((a,b)=>a.at-b.at)){const q=map.get(e.questionId);if(!q)continue;const s=result[q.id]||(result[q.id]={attempts:0,correct:0,streak:0,lastCorrect:false,dueAt:0,lastSeen:0});const correct=e.choice===q.correctOptionId;s.attempts++;if(correct)s.correct++;s.streak=correct?s.streak+1:0;s.lastCorrect=correct;s.confidentError=!correct&&e.confidence==='confident';s.lastSeen=e.at;s.dueAt=correct?e.at+DAY*[1,3,7,14,30][Math.min(s.streak-1,4)]:e.at;}
   return result;
  }
  function pool(bank,config,state,now=Date.now()){
   const ss=stats(state,bank);
-  return bank.questions.filter(q=>(!config.book||config.book==='all'||config.book===q.book)&&(!Array.isArray(config.chapters)||config.chapters.includes(q.book+':'+q.chapter))&&(!config.difficulty||config.difficulty==='all'||q.difficulty===config.difficulty)&&(!config.scope||config.scope==='all'||(config.scope==='mistakes'&&ss[q.id]&&!ss[q.id].lastCorrect)||(config.scope==='due'&&ss[q.id]&&ss[q.id].dueAt<=now)));
+  return activeQuestions(bank).filter(q=>(!Array.isArray(config.questionIds)||config.questionIds.includes(q.id))&&(!config.book||config.book==='all'||config.book===q.book)&&(!Array.isArray(config.chapters)||config.chapters.includes(q.book+':'+q.chapter))&&(!config.difficulty||config.difficulty==='all'||q.difficulty===config.difficulty)&&(!config.scope||config.scope==='all'||(config.scope==='mistakes'&&ss[q.id]&&!ss[q.id].lastCorrect)||(config.scope==='due'&&ss[q.id]&&ss[q.id].dueAt<=now)||(config.scope==='confident-errors'&&ss[q.id]?.confidentError)));
  }
  function shuffle(items,random=Math.random){const a=[...items];for(let i=a.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
  function select(bank,config,state,now=Date.now(),random=Math.random){
@@ -47,6 +51,7 @@
   // Round-robin chapters within each book, then books: broad coverage without duplicates.
   const queues={};for(const book of shuffle(Object.keys(bank.books),random)){const chapters=shuffle([...groups.entries()].filter(([key])=>key.startsWith(book+':')).map(([,v])=>v),random);queues[book]=[];while(chapters.some(c=>c.length))for(const ch of chapters)if(ch.length)queues[book].push(ch.pop());}
   const chosen=[];while(chosen.length<size){let changed=false;for(const book of Object.keys(queues)){if(chosen.length>=size)break;if(queues[book].length){chosen.push(queues[book].shift());changed=true;}}if(!changed)break;}
+  if(['mistakes','due','confident-errors'].includes(config.scope)){const ss=stats(state,bank),urgent=shuffle(candidates.filter(q=>ss[q.id]?.confidentError),random);const ids=new Set(urgent.map(q=>q.id));return [...urgent,...shuffle(chosen.filter(q=>!ids.has(q.id)),random)].slice(0,size);}
   return shuffle(chosen,random);
  }
  function bump(state){state.version++;return state;}
@@ -55,14 +60,15 @@
   if(!['training','exam'].includes(config.mode))throw Error('Выберите режим.');
   const selected=select(bank,config,state,now,random);if(!selected.length)throw Error('По этим условиям вопросов нет. Измените фильтры.');
   const s=copy(state),id='run-'+now.toString(36)+'-'+Math.floor(random()*1e12).toString(36);
-  s.active={id,mode:config.mode,startedAt:now,deadline:config.mode==='exam'?now+Math.max(1,Math.min(120,Number(config.minutes)||10))*60000:null,questionIds:selected.map(q=>q.id),optionOrders:Object.fromEntries(selected.map(q=>[q.id,shuffle(q.options.map(o=>o.id),random)])),index:0,answers:{},checked:[],flags:[],scope:config.scope||'all'};
+  s.active={id,mode:config.mode,startedAt:now,deadline:config.mode==='exam'?now+Math.max(1,Math.min(120,Number(config.minutes)||10))*60000:null,questionIds:selected.map(q=>q.id),optionOrders:Object.fromEntries(selected.map(q=>[q.id,shuffle(q.options.map(o=>o.id),random)])),index:0,answers:{},confidence:{},checked:[],flags:[],scope:config.scope||'all'};
   return bump(s);
  }
  function ensureActive(state,now){if(!state.active)throw Error('Нет активной попытки.');if(state.active.mode==='exam'&&now>=state.active.deadline)throw Error('Время экзамена истекло.');}
  function choose(state,bank,choice,now=Date.now()){
   ensureActive(state,now);const s=copy(state),run=s.active,id=run.questionIds[run.index],q=qmap(bank).get(id);if(run.checked.includes(id))throw Error('Ответ уже проверен.');if(!q.options.some(o=>o.id===choice))throw Error('Неизвестный вариант.');run.answers[id]=choice;return bump(s);
  }
- function event(state,run,id,now){const key=run.id+':'+id;if(state.events.some(e=>e.id===key))return;state.events.push({id:key,questionId:id,choice:run.answers[id]||null,at:now});state.events=state.events.slice(-MAX_EVENTS);}
+ function confidence(state,value,now=Date.now()){ensureActive(state,now);const s=copy(state),r=s.active,id=r.questionIds[r.index];if(r.checked.includes(id))throw Error('Ответ уже проверен.');if(value!==null&&!confidenceValues.includes(value))throw Error('Неизвестная оценка уверенности.');r.confidence||={};if(value===null)delete r.confidence[id];else r.confidence[id]=value;return bump(s);}
+ function event(state,run,id,now){const key=run.id+':'+id;if(state.events.some(e=>e.id===key))return;state.events.push({id:key,questionId:id,choice:run.answers[id]||null,at:now,...(run.confidence?.[id]?{confidence:run.confidence[id]}:{})});state.events=state.events.slice(-MAX_EVENTS);}
  function check(state,bank,now=Date.now()){
   ensureActive(state,now);const s=copy(state),r=s.active,id=r.questionIds[r.index];if(r.mode!=='training')throw Error('Разбор будет доступен после экзамена.');if(!r.answers[id])throw Error('Сначала выберите ответ.');if(!r.checked.includes(id)){r.checked.push(id);event(s,r,id,now);}return bump(s);
  }
@@ -74,6 +80,6 @@
  function result(run,bank){const map=qmap(bank),total=run.questionIds.length,answered=run.questionIds.filter(id=>run.answers[id]).length,correct=run.questionIds.filter(id=>run.answers[id]===map.get(id)?.correctOptionId).length;return {total,answered,correct,wrong:answered-correct,skipped:total-answered,percent:Math.round(correct/total*100)};}
  function backup(state){return {format:'psycholibrary-knowledge-backup',schemaVersion:1,exportedAt:new Date().toISOString(),state:copy(state)};}
  function importBackup(raw,bank){if(raw?.format!=='psycholibrary-knowledge-backup'||raw.schemaVersion!==1)throw Error('Это не резервная копия проверки знаний.');return restoreState(raw.state,bank);}
- const api={KEY,DAY,validateBank,emptyState,restoreState,stats,pool,select,shuffle,start,choose,check,move,flag,finish,result,backup,importBackup};
+ const api={KEY,DAY,activeQuestions,confidence,validateBank,emptyState,restoreState,stats,pool,select,shuffle,start,choose,check,move,flag,finish,result,backup,importBackup};
  root.KnowledgeModel=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);

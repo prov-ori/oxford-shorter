@@ -107,15 +107,15 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
 
 @media(max-width:850px){.topbar{height:auto}.lab .scroll-x{overscroll-behavior-x:contain}.tabs button{font-size:14px;min-height:44px}.lab select{font-size:16px}}
 </style>
-</head>
+<style>.evidence-card{padding:14px;border:1px solid var(--line);border-radius:10px}.evidence-card h4{font-size:17px;margin:0 0 10px}.evidence-card strong{font-size:13px}.evidence-card ul{font-size:13px;padding-left:20px}.module-source{font-size:12px;color:var(--muted)}.tox{display:grid;gap:12px}</style><link rel="stylesheet" href="platform.css"><script src="common.js" defer></script><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="assets/app-icon.svg" type="image/svg+xml"></head>
 <body>
 <a class="skip" href="#main">К содержимому</a>
 <header class="topbar">
-  <a class="brand" href="./" aria-label="Учебная библиотека, начало"><span class="brand-icon" aria-hidden="true">Ψ</span><span>Психиатрия<small>Личная учебная библиотека</small></span></a>
-  <div class="top-actions"><a class="nav-link" href="./">Учебник</a><a class="nav-link" href="library.html">Книги</a><a class="nav-link" href="quiz.html">Проверка знаний</a><a class="nav-link" href="lab.html" aria-current="page">Лаборатория</a></div>
+  <a class="brand" href="study.html" aria-label="Учебная библиотека, начало"><span class="brand-icon" aria-hidden="true">Ψ</span><span>Психиатрия<small>Личная учебная библиотека</small></span></a>
+  <nav class="global-nav" aria-label="Разделы сайта"><a class="nav-link" href="study.html">Учиться</a><a class="nav-link" href="practice.html">Практиковаться</a><a class="nav-link" href="lab.html" aria-current="page">Инструменты</a><a class="nav-link" href="library.html">Библиотека</a></nav>
 </header>
 
-<main class="lab" id="main">
+<div class="platform-reader-links"><a href="practice.html#cases">Виртуальный приём</a><a href="quiz.html">Тесты по Oxford и Fish</a></div><main class="lab" id="main">
   <span class="eyebrow">Интерактивные макеты</span>
   <h1>Лаборатория <em>психиатра</em></h1>
   <p class="lede">Крутите ручки, а не заучивайте таблицы: что происходит в синапсе на антидепрессанте, почему эффект приходит через недели, где проходит «окно» блокады D2 и как отличить серотониновый синдром от ЗНС.</p>
@@ -136,7 +136,7 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
 
   <!-- 1. SYNAPSE -->
   <section class="panel" id="p-synapse" role="tabpanel" aria-labelledby="t-synapse">
-    <h2>Что делает антидепрессант в синапсе — и почему эффект запаздывает</h2>
+    <h2>Что делает антидепрессант в синапсе — и почему эффект запаздывает</h2><p class="module-source">Редакция 2 · <a href="index.html#section=ch25-s03">Oxford, 8-е изд. (2026), исходный раздел</a> · Независимая клиническая редактура ожидается.</p><p class="fine">Учебная схема динамики, без прогноза индивидуального ответа.</p>
     <p class="sub">Выберите препарат, задайте степень блокады мишени и подвигайте «неделю лечения»: сверху видна нейрохимия, снизу — схематичный временной ход ответа.</p>
     <div class="grid2">
       <div>
@@ -193,7 +193,7 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
 
   <!-- 2. RECEPTORS -->
   <section class="panel" id="p-receptors" role="tabpanel" aria-labelledby="t-receptors" hidden>
-    <h2>Рецепторный профиль → побочные эффекты</h2>
+    <h2>Рецепторный профиль → побочные эффекты</h2><p class="module-source">Редакция 2 · <a href="index.html#section=ch25-s07">Oxford, 8-е изд. (2026), исходный раздел</a> · Независимая клиническая редактура ожидается.</p><p class="fine">Качественные связи, без расчёта индивидуального риска.</p>
     <p class="sub">Побочные эффекты — это «чужие» мишени. Выберите препарат, чтобы увидеть, какие рецепторы он задевает, а в таблице эффектов нажмите на столбец — препараты отсортируются от наименее к наиболее вероятному.</p>
     <div class="card" style="margin-top:22px"><h3>Аффинность к мишеням</h3>
       <div class="scroll-x"><table class="heat" id="recTable"></table></div>
@@ -205,7 +205,7 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
 
   <!-- 3. D2 -->
   <section class="panel" id="p-d2" role="tabpanel" aria-labelledby="t-d2" hidden>
-    <h2>Окно занятости D2-рецепторов</h2>
+    <h2>Окно занятости D2-рецепторов</h2><p class="module-source">Редакция 2 · <a href="index.html#section=ch25-s07">Oxford, 8-е изд. (2026), исходный раздел</a> · Независимая клиническая редактура ожидается.</p><p class="fine">Схема рецепторной занятости; не подбор дозы.</p>
     <p class="sub">По данным ПЭТ (Kapur и соавт., 2000), клинический ответ на антипсихотик связан с занятостью D2 около 65% и выше, гиперпролактинемия — выше ~72%, экстрапирамидные симптомы — выше ~78%. Двигайте ползунок.</p>
     <div class="card" style="margin-top:22px">
       <div class="field"><label for="d2">Занятость D2 в полосатом теле <output id="d2Out">70%</output></label>
@@ -228,8 +228,8 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
 
   <!-- 4. TOXIDROMES -->
   <section class="panel" id="p-tox" role="tabpanel" aria-labelledby="t-tox" hidden>
-    <h2>Серотониновый синдром, ЗНС или антихолинергическая интоксикация?</h2>
-    <p class="sub">Три «горячих» состояния с похожими вызовами на дежурстве. Отмечайте находки — модель покажет, какой синдром подходит лучше. Ключ к диагнозу — приём препарата, скорость развития, тонус/рефлексы, кожа и перистальтика.</p>
+    <h2>Серотониновый синдром, ЗНС или антихолинергическая интоксикация?</h2><p class="module-source">Редакция 2 · <a href="index.html#section=ch25-s07">Oxford, 8-е изд. (2026), исходный раздел</a> · Независимая клиническая редактура ожидается.</p><p class="fine">Учебное сопоставление; веса не валидированы как диагностическая шкала.</p>
+    <p class="sub">Три «горячих» состояния с похожими вызовами на дежурстве. Отмечайте находки — появятся аргументы за, против и недостающие сведения. Ключ к диагнозу — приём препарата, скорость развития, тонус/рефлексы, кожа и перистальтика.</p>
     <div class="grid2">
       <div class="card"><div class="checks" id="toxChecks"></div>
         <div class="row small-actions"><button class="btn alt" id="toxReset">Сбросить</button></div></div>
@@ -254,13 +254,13 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
 
   <!-- 5. PHQ-9 -->
   <section class="panel" id="p-phq" role="tabpanel" aria-labelledby="t-phq" hidden>
-    <h2>Скрининг PHQ-9</h2>
+    <h2>Скрининг PHQ-9</h2><p class="module-source">Редакция 2 · <a href="index.html#section=ch09-s11">Oxford, 8-е изд. (2026), исходный раздел</a> · Независимая клиническая редактура ожидается.</p><p class="fine">Скрининг; учитывайте формулировки и ограничения версии опросника.</p>
     <p class="sub">За последние 2 недели: как часто вас беспокоили следующие проблемы? Ответы никуда не отправляются и не сохраняются.</p>
     <div class="grid2">
       <form class="phq card" id="phqForm" onsubmit="return false"></form>
       <aside style="position:sticky;top:76px">
-        <div class="card"><span class="eyebrow">Сумма баллов</span><div class="score" id="phqScore">0</div>
-          <h3 id="phqLevel" style="margin-top:8px">Минимальные симптомы</h3>
+        <div class="card"><span class="eyebrow">Сумма баллов</span><div class="score" id="phqScore">—</div><p id="phqCompletion" role="status">Ответили на 0 из 9</p><div class="row"><button class="btn alt" id="phqReset" type="button">Очистить</button><button class="btn alt" id="phqExample" type="button">Учебный пример</button></div><p id="phqExampleNote" class="fine" hidden>Показаны вымышленные ответы учебного примера.</p>
+          <h3 id="phqLevel" style="margin-top:8px">Опрос не завершён</h3>
           <progress id="phqBar" value="0" max="27" style="margin-top:14px"></progress>
           <div class="verdict" id="phqCrit" style="margin-top:16px"></div>
           <div class="verdict bad" id="phqSui" style="margin-top:12px" hidden><strong>Пункт 9 положителен.</strong> Любой ответ выше «Совсем нет» требует клинической оценки суицидального риска (ресурсы, план, намерение, доступ к средствам) в тот же день — независимо от суммы баллов.</div>
@@ -271,14 +271,14 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
 
   <!-- 6. CASES -->
   <section class="panel" id="p-cases" role="tabpanel" aria-labelledby="t-cases" hidden>
-    <h2>Клинические случаи: подберите логику лечения</h2>
+    <h2>Обсуждение лекарственных профилей</h2><p><a class="btn" href="practice.html#cases">Открыть пять виртуальных приёмов →</a></p><p class="module-source">Редакция 2 · <a href="index.html#section=ch25-s09">Oxford, 8-е изд. (2026), исходный раздел</a> · Независимая клиническая редактура ожидается.</p><p class="fine">Исторические короткие задачи сохранены как примеры обсуждения профиля. Расширенные случаи доступны в практике.</p>
     <p class="sub">Выбор антидепрессанта — это сопоставление профиля препарата с профилем пациента. Это учебные упрощённые вариации; на практике решают руководства, взаимодействия и предпочтения пациента.</p>
     <div class="card" style="margin-top:22px" id="caseCard"></div>
   </section>
 
   <!-- 7. LITHIUM -->
   <section class="panel" id="p-lithium" role="tabpanel" aria-labelledby="t-lithium" hidden>
-    <h2>Литий: уровень в крови и токсичность</h2>
+    <h2>Литий: уровень в крови и токсичность</h2><p class="module-source">Редакция 2 · <a href="index.html#section=ch25-s10">Oxford, 8-е изд. (2026), исходный раздел</a> · Независимая клиническая редактура ожидается.</p><p class="fine">Мониторинг индивидуален; клинические симптомы важны и при привычном уровне.</p>
     <p class="sub">Узкий терапевтический индекс — главная причина мониторинга. Двигайте уровень и отмечайте факторы, которые его повышают. Значения — общие ориентиры; целевой диапазон определяется руководством и ситуацией (профилактика или острый эпизод).</p>
     <div class="grid2">
       <div class="card">
@@ -312,7 +312,7 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
 
   <!-- 8. WASHOUT -->
   <section class="panel" id="p-washout" role="tabpanel" aria-labelledby="t-washout" hidden>
-    <h2>Период полувыведения: накопление, отмена, «отмывка»</h2>
+    <h2>Период полувыведения: накопление, отмена, «отмывка»</h2><p class="module-source">Редакция 2 · <a href="index.html#section=ch25-s03">Oxford, 8-е изд. (2026), исходный раздел</a> · Независимая клиническая редактура ожидается.</p><p class="fine">Упрощённая фармакокинетическая модель, без схемы переключения лечения.</p>
     <p class="sub">Почему пароксетин и венлафаксин вызывают синдром отмены чаще, чем флуоксетин, и почему между флуоксетином и ИМАО нужно ждать недели. Значения t½ — приблизительные средние по активному веществу; индивидуально они варьируют.</p>
     <div class="card" style="margin-top:22px">
       <div class="row"><div class="field" style="flex:1;min-width:220px;margin:0"><span class="lbl">Режим</span>
@@ -326,8 +326,8 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
 
   <!-- 9. DDD -->
   <section class="panel" id="p-ddd" role="tabpanel" aria-labelledby="t-ddd" hidden>
-    <h2>Делирий, деменция или депрессия?</h2>
-    <p class="sub">Классическая тройка «дифференциальной диагностики пожилого пациента». Отмечайте находки: модель покажет, какой синдром подходит лучше. Состояния могут сочетаться, особенно делирий на фоне деменции.</p>
+    <h2>Делирий, деменция или депрессия?</h2><p class="module-source">Редакция 2 · <a href="index.html#section=ch19-s05">Oxford, 8-е изд. (2026), исходный раздел</a> · Независимая клиническая редактура ожидается.</p><p class="fine">Возможны сочетания состояний. Сопоставление не исключает иных причин.</p>
+    <p class="sub">Классическая тройка «дифференциальной диагностики пожилого пациента». Отмечайте находки: появятся аргументы за, против и недостающие сведения. Состояния могут сочетаться, особенно делирий на фоне деменции.</p>
     <div class="grid2">
       <div class="card"><div class="checks" id="dddChecks"></div><div class="row small-actions"><button class="btn alt" id="dddReset">Сбросить</button></div></div>
       <div class="card"><h3>Соответствие картины</h3><div class="tox" id="dddBars" style="margin-top:14px"></div>
@@ -338,7 +338,7 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
 
   <!-- 10. MSE -->
   <section class="panel" id="p-mse" role="tabpanel" aria-labelledby="t-mse" hidden>
-    <h2>Конструктор статуса психического состояния</h2>
+    <h2>Конструктор статуса психического состояния</h2><p class="module-source">Редакция 2 · <a href="index.html#section=ch03-s04">Oxford, 8-е изд. (2026), исходный раздел</a> · Независимая клиническая редактура ожидается.</p><p class="fine">Конструктор учебного описания; не заменяет обследование.</p>
     <p class="sub">Выберите находки по доменам — справа соберётся связный текст статуса. Тренирует структуру и терминологию; пустые домены отмечаются как «не оценивалось».</p>
     <div class="grid2">
       <div class="card" id="mseForm"></div>
@@ -638,16 +638,18 @@ $('#d2Presets').addEventListener('click',e=>{const b=e.target.closest('button');
 function ddx(o){
   $(o.checks).innerHTML=o.items.map(([t,w],i)=>w?`<label><input type="checkbox" data-i="${i}">${t}</label>`:`<h4>${t}</h4>`).join('');
   function run(){
-    const sc=o.names.map(()=>0);let n=0;
-    $$(o.checks+' input:checked').forEach(c=>{n++;o.items[+c.dataset.i][1].forEach((w,k)=>sc[k]+=w)});
-    const mx=Math.max(6,...sc),lead=sc.indexOf(Math.max(...sc));
-    $(o.bars).innerHTML=sc.map((s,k)=>`<div class="tox-row ${n&&k===lead?'lead':''}"><strong>${o.names[k]}</strong><div class="bar"><b style="width:${clamp(s/mx*100,0,100)}%;background:${o.cols[k]}"></b></div><span>${s}</span></div>`).join('');
-    const v=$(o.verdict);v.className='verdict';
-    if(!n){v.textContent='Отметьте находки слева.';return}
-    const sorted=[...sc].sort((a,b)=>b-a);
-    if(sorted[0]<4){v.className='verdict warn';v.textContent='Пока недостаточно признаков: ни один синдром не набирает убедительно. '+o.more;return}
-    if(sorted[0]-sorted[1]<2){v.className='verdict warn';v.innerHTML=`Перекрытие: <b>${o.names[lead]}</b> лидирует незначительно. ${o.overlap}`;return}
-    v.className='verdict bad';v.innerHTML=`Лучше всего подходит: <b>${o.names[lead]}</b>. ${o.act[lead]}`;
+    const selected=$$(o.checks+' input:checked').map(c=>+c.dataset.i);
+    const box=$(o.bars);box.replaceChildren();
+    o.names.forEach((name,k)=>{
+      const card=document.createElement('section');card.className='evidence-card';
+      const title=document.createElement('h4');title.textContent=name;card.append(title);
+      for(const [label,indices]of [['Поддерживают',selected.filter(i=>o.items[i][1][k]>0)],['Не согласуются с типичной картиной',selected.filter(i=>o.items[i][1][k]<0)],['Ещё не уточнено',o.items.map((x,i)=>x[1]&&x[1][k]>=2&&!selected.includes(i)?i:-1).filter(i=>i>=0).slice(0,4)]]){
+        const h=document.createElement('strong');h.textContent=label;card.append(h);const list=document.createElement('ul');
+        if(!indices.length){const li=document.createElement('li');li.textContent='По выбранным данным нет оснований для вывода.';list.append(li);}
+        indices.forEach(i=>{const li=document.createElement('li');li.textContent=o.items[i][0];list.append(li);});card.append(list);
+      }box.append(card);
+    });
+    const v=$(o.verdict);v.className='verdict warn';v.textContent=selected.length?'Сопоставление признаков не устанавливает диагноз. Состояния могут сочетаться. '+o.more:'Выберите наблюдения. Неотмеченный пункт означает «не уточнено», а не «отсутствует».';
   }
   $(o.checks).addEventListener('change',run);
   $(o.reset).onclick=()=>{$$(o.checks+' input').forEach(c=>c.checked=false);run()};
@@ -712,25 +714,24 @@ ddx({checks:'#dddChecks',bars:'#dddBars',verdict:'#dddVerdict',reset:'#dddReset'
   names:['Делирий','Деменция','Депрессия'],cols:['#b4533f','#5f7f9f','#2f8f6b'],
   more:'Уточните скорость начала, колебания, внимание и уровень сознания.',
   overlap:'Состояния часто сочетаются (делирий на фоне деменции, депрессия при деменции). Решают скорость начала, внимание/сознание и наличие соматического триггера.',
-  act:['Делирий — неотложное состояние: искать и устранять причину, исключить лекарственные и инфекционные факторы, оценить безопасность.','Типичная картина деменции: нужны когнитивное тестирование, нейровизуализация и лабораторные исключения обратимых причин.','Картина депрессии (в том числе «псевдодеменции»): структурированная оценка депрессии и суицидального риска; когнитивные нарушения обратимы по мере лечения.']});
+  act:['Делирий — неотложное состояние: искать и устранять причину, исключить лекарственные и инфекционные факторы, оценить безопасность.','Типичная картина деменции: нужны когнитивное тестирование, нейровизуализация и лабораторные исключения обратимых причин.','Картина депрессии (в том числе «псевдодеменции»): структурированная оценка депрессии и суицидального риска; когнитивные нарушения могут уменьшиться при лечении; при сохранении нарушений требуется дальнейшая оценка, включая возможность сопутствующей деменции.']});
 
 /* ---------- PHQ-9 ---------- */
 const PHQ=['Малая заинтересованность или удовольствие от дел','Подавленное настроение, тоска или чувство безнадёжности','Трудности с засыпанием, прерывистый сон или избыточный сон','Усталость или упадок сил','Плохой аппетит или переедание','Низкая самооценка, чувство вины или ощущение, что вы неудачник и подвели близких','Трудности с концентрацией (например, при чтении или просмотре телевизора)','Заторможенность, заметная окружающим, или, наоборот, суетливость и беспокойство','Мысли о том, что лучше было бы умереть, или о причинении себе вреда'];
 const PHQ_OPT=['Совсем нет','Несколько дней','Более половины дней','Почти каждый день'];
-$('#phqForm').innerHTML=PHQ.map((q,i)=>`<fieldset><legend>${i+1}. ${q}</legend><div class="opts">${PHQ_OPT.map((o,v)=>`<label><input type="radio" name="q${i}" value="${v}"${v===0?' checked':''}>${o}</label>`).join('')}</div></fieldset>`).join('');
+$('#phqForm').innerHTML=PHQ.map((q,i)=>`<fieldset><legend>${i+1}. ${q}</legend><div class="opts">${PHQ_OPT.map((o,v)=>`<label><input type="radio" name="q${i}" value="${v}">${o}</label>`).join('')}</div></fieldset>`).join('');
 function phq(){
-  const a=PHQ.map((_,i)=>+(document.querySelector(`input[name=q${i}]:checked`)||{value:0}).value);
-  const s=a.reduce((x,y)=>x+y,0);
-  $('#phqScore').textContent=s;$('#phqBar').value=s;
-  const lv=s<5?'Минимальные симптомы':s<10?'Лёгкая выраженность':s<15?'Умеренная выраженность':s<20?'Умеренно тяжёлая':'Тяжёлая выраженность';
-  $('#phqLevel').textContent=lv;
-  const cnt=a.filter((v,i)=>i===8?v>=1:v>=2).length,core=a[0]>=2||a[1]>=2;
-  const c=$('#phqCrit');c.className='verdict';
-  if(cnt>=5&&core)c.innerHTML=`<strong>Паттерн соответствует большому депрессивному эпизоду (предварительно):</strong> ${cnt} симптомов на уровне «более половины дней» и ключевой симптом (пункт 1 или 2). Требуется клиническое интервью, исключение биполярности, соматических и лекарственных причин.`;
-  else{c.classList.add('warn');c.innerHTML=`Алгоритмический паттерн большого депрессивного эпизода не набран (${cnt} из 5 нужных симптомов${core?'':', ключевые пункты 1–2 не достигают порога'}). Сумма баллов при этом может быть значимой — ориентируйтесь на клиническую картину.`}
-  $('#phqSui').hidden=a[8]<1;
+  const values=PHQ.map((_,i)=>document.querySelector('input[name=q'+i+']:checked'));
+  const answered=values.filter(Boolean).length,a=values.map(x=>x?Number(x.value):null);
+  $('#phqCompletion').textContent='Ответили на '+answered+' из 9';$('#phqSui').hidden=!(a[8]>=1);
+  if(answered<9){$('#phqScore').textContent='—';$('#phqBar').value=0;$('#phqLevel').textContent='Опрос не завершён';$('#phqCrit').textContent='Для подсчёта нужны ответы на все девять пунктов. Пропуск не считается нулём.';return;}
+  const s=a.reduce((x,y)=>x+y,0);$('#phqScore').textContent=s;$('#phqBar').value=s;
+  $('#phqLevel').textContent=s<5?'Минимальные симптомы':s<10?'Лёгкая выраженность':s<15?'Умеренная выраженность':s<20?'Умеренно тяжёлая':'Тяжёлая выраженность';
+  $('#phqCrit').textContent='Это сумма ответов скрининга, а не диагноз. Значение оценивают вместе с длительностью, функционированием, анамнезом и клиническим интервью.';
 }
-$('#phqForm').addEventListener('change',phq);
+$('#phqForm').addEventListener('change',()=>{$('#phqExampleNote').hidden=true;phq();});
+$('#phqReset').onclick=()=>{$$('#phqForm input').forEach(x=>x.checked=false);$('#phqExampleNote').hidden=true;phq();};
+$('#phqExample').onclick=()=>{[2,2,1,1,1,1,1,0,0].forEach((v,i)=>document.querySelector('input[name=q'+i+'][value="'+v+'"]').checked=true);$('#phqExampleNote').hidden=false;phq();};
 
 /* ---------- Cases ---------- */
 const CASES=[

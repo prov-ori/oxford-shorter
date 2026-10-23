@@ -62,7 +62,7 @@
         s.blocks.forEach(b => validateBlock(b)); strings(s.summary, 'тезисы');
         if (s.editorNotes !== undefined) strings(s.editorNotes, 'примечания к переводу');
         if (s.status === 'pending') assert(!s.blocks.length && !s.summary.length, 'Ожидающий перевода раздел должен быть пустым');
-        else assert(s.blocks.length > 0, 'Пустой перевод');
+        else assert(s.blocks.length > 0 || (book.lazyContent === true && /^data\/chapters\/[a-z0-9-]+\.json$/.test(s.contentFile || '') && /^[a-f0-9]{64}$/.test(s.contentSha256 || '')), 'Пустой перевод');
         if (readable(s)) { text(s.checkedAgainstSourceAt, 'дата сверки с PDF'); assert(s.summary.length > 0, 'Нет тезисов для конспекта'); }
         if (s.status === 'partial') {
           const c = s.coverage;

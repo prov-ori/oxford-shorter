@@ -1,0 +1,9 @@
+(function(){
+ 'use strict';const n=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
+ function download(name,data){const url=URL.createObjectURL(new Blob([typeof data==='string'?data:JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'})),a=n('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}
+ function sourceBox(sources){const box=n('div',undefined,'platform-sources');box.append(n('p','Учебный материал. Независимая клиническая редактура ожидается.','platform-meta'));for(const s of sources||[]){const a=n('a',s.book+' · '+(s.edition?s.edition+' · ':'')+s.title+' · PDF '+s.pdfStart+'–'+s.pdfEnd);a.href=s.href;box.append(a);if(s.sourceRevision)box.append(n('small',' Редакция перевода: '+s.sourceRevision));const d=n('details'),summary=n('summary','Фрагмент источника');d.append(summary,n('blockquote',s.quote));box.append(d);}return box;}
+ function highlight(container,text,query){container.replaceChildren(...PlatformModel.highlightParts(text,query).map(x=>x.match?n('mark',x.text):document.createTextNode(x.text)));}
+ async function json(path){const r=await fetch(path);if(!r.ok)throw Error('Не удалось загрузить '+path);return r.json();}
+ window.PlatformUI={n,download,sourceBox,highlight,json};
+ if('serviceWorker'in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').then(()=>navigator.serviceWorker.ready).then(()=>{const s=document.getElementById('offlineServiceStatus');if(s)s.textContent='Офлайн-служба готова. Скачайте нужные главы и дождитесь подтверждения комплектности.';}).catch(()=>{const s=document.getElementById('offlineServiceStatus');if(s)s.textContent='Офлайн-служба недоступна в этом браузере.';}));
+})();

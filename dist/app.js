@@ -59,7 +59,7 @@
   }
   function exportBackup() { recordPosition(); download('psychiatry-notes-backup.json', JSON.stringify({...state, exportedAt: new Date().toISOString()}, null, 2)); }
   function recordPosition() { if (current) state.positions[current.id] = window.scrollY; }
-  function route(id) { location.hash = id ? 'section=' + encodeURIComponent(id) : 'home'; }
+  function route(id,extra={}) { location.hash = id ? new URLSearchParams({section:id,...extra}).toString() : 'home'; }
   function updateStats() {
     const st = M.stats(book, state); const pct = st.total ? Math.round(st.read / st.total * 100) : 0;
     $('readCount').textContent = `${st.read} из ${st.total} разделов`;
@@ -74,6 +74,7 @@
     $('coverageHint').textContent = st.total ? `${st.translated} из ${st.total} полностью${st.partial ? ` · частично: ${st.partial}` : ''} · ${book.outlineComplete ? 'полное оглавление' : 'оглавление добавляется'}` : 'Перевод ещё не добавлен';
     $('continueButton').textContent = sections.some(M.readable) ? (state.lastSection ? 'Продолжить чтение →' : 'Начать с начала →') : sections.length ? 'Открыть оглавление →' : 'Подготовить материалы ↗';
   }
+  let tocMatches=null,tocTimer,tocRequest=0,routeRequest=0;
   function renderToc() {
     const normalize = text => text.normalize('NFKC').toLocaleLowerCase('ru').replaceAll('ё','е');
     const q = normalize($('search').value.trim()); const toc = $('toc'); toc.replaceChildren();
@@ -82,17 +83,17 @@
     }
     let found = 0;
     for (const chapter of book.chapters) {
-      const rows = chapter.sections.filter(s => !q || normalize([chapter.title, chapter.originalTitle, s.title, s.originalTitle, ...s.blocks.map(M.blockText)].join(' ')).includes(q));
+      const rows = chapter.sections.filter(s => !q || (tocMatches?tocMatches.has(s.id):normalize([chapter.title, chapter.originalTitle, s.title, s.originalTitle].join(' ')).includes(q)));
       if (!rows.length) continue; found += rows.length;
       const group = el('details'); group.open = Boolean(q) || current?.chapter.id === chapter.id || book.chapters.length === 1;
       group.append(el('summary', chapter.title));
       rows.forEach(s => {
         const done = M.isRead(s, state, book); const b = el('button', (done ? '✓ ' : '') + s.title, 'toc-item');
         b.style.setProperty('--depth', String(s.level - 1)); if (current?.id === s.id) b.setAttribute('aria-current', 'page');
-        b.append(el('small', M.isPartRead(s, state, book) ? 'Доступная часть прочитана' : labels[s.status])); b.onclick = () => { route(s.id); closeToc(); }; group.append(b);
+        b.append(el('small', M.isPartRead(s, state, book) ? 'Доступная часть прочитана' : labels[s.status])); const match=tocMatches?.get(s.id);if(match)b.append(el('small',match.snippet));b.onclick = () => { route(s.id,match?{block:match.block,find:match.hit}:{}); closeToc(); }; group.append(b);
       }); toc.append(group);
     }
-    if (!found) toc.append(el('p', 'Ничего не найдено. Попробуйте другое слово.', 'empty-toc'));
+    if (!found) toc.append(el('p',q.length>=2&&tocMatches===null?'Ищем в тексте…':'Ничего не найдено. Попробуйте другое слово.', 'empty-toc'));
   }
   function renderLibrary() {
     $('pdfInfo').textContent = pdf ? `${pdf.filename} · ${(pdf.blob.size / 1048576).toFixed(1)} МБ · сохранён локально` : 'Пока не подключён.';
@@ -143,11 +144,19 @@
   function updateTables() {
     $('article').querySelectorAll('.table-wrap').forEach(w => { w.querySelector('.table-hint').hidden = w.scrollWidth <= w.clientWidth + 1; });
   }
-  function renderRoute({skipPosition = false} = {}) {
+  async function renderRoute({skipPosition = false} = {}) {
+    const request=++routeRequest;
     const continueReading = autoAdvance; autoAdvance = false;
     if (!skipPosition) recordPosition(); stopSpeech(continueReading ? 'keep' : undefined);
-    let id = null; try { if (location.hash.startsWith('#section=')) id = decodeURIComponent(location.hash.slice(9)); } catch { /* Unknown route displays overview. */ }
-    current = sections.find(s => s.id === id) || null;
+    const routeParams=new URLSearchParams(location.hash.slice(1));let id=routeParams.get('section');
+    const candidate=sections.find(s=>s.id===id)||null;
+    if(candidate?.contentFile&&!candidate.blocks.length){
+      current=null;$('reader').setAttribute('aria-busy','true');$('reader').hidden=false;$('home').hidden=true;$('sectionTitle').textContent=candidate.title;$('sourceReference').textContent='Загрузка главы…';$('article').replaceChildren(el('p','Загрузка главы…'));for(const key of ['completeButton','previousButton','nextButton','notesButton','speakButton'])if($(key))$(key).disabled=true;
+      $('speechStatus').textContent='Загрузка главы…';
+      try{await StudyContent.loadSection(book,candidate);}catch(e){if(request!==routeRequest)return;$('reader').removeAttribute('aria-busy');$('notesButton').disabled=false;toast(e.message);$('reader').hidden=false;$('home').hidden=true;$('sectionTitle').textContent=candidate.title;$('article').replaceChildren(el('p',e.message));const retry=el('button','Повторить загрузку','primary');retry.onclick=()=>renderRoute();$('article').append(retry);current=null;return;}
+    }
+    if(request!==routeRequest)return;current=candidate;$('reader').removeAttribute('aria-busy');$('notesButton').disabled=false;if($('speakButton'))$('speakButton').disabled=false;
+    if(routeParams.get('notes')==='1')setTimeout(()=>{if(request===routeRequest&&!$('notesDialog').open){renderNotes();$('notesDialog').showModal();}},0);
     document.body.classList.toggle('reader-active',Boolean(current));
     if (id && !current) toast('Этот раздел ещё не добавлен. Открыт обзор библиотеки.');
     $('home').hidden = Boolean(current); $('reader').hidden = !current;
@@ -170,7 +179,7 @@
       }
       $('article').replaceChildren(); $('sectionOutline').replaceChildren(); $('editorNotes').replaceChildren();
       if (current.status === 'pending') $('article').append(el('p', 'Перевод этого раздела ещё не добавлен. Его место в структуре книги сохранено. Можно перейти дальше или записать вопросы в конспект.'));
-      else current.blocks.forEach((b, i) => { const node = renderBlock(b); node.dataset.block = String(i); if (b.type === 'heading') node.id = 'block-' + i; $('article').append(node); });
+      else current.blocks.forEach((b, i) => { const node = renderBlock(b); node.dataset.block = String(i); node.id = 'block-' + i; $('article').append(node); });
       const headings = current.blocks.map((b,i) => ({...b,index:i})).filter(b => b.type === 'heading');
       if (headings.length > 1) {
         const menu = el('details'); menu.append(el('summary','В этом разделе · ' + headings.length + ' тем'));
@@ -191,7 +200,10 @@
       }
     } else if (continueReading) stopBackground();
     updateStats(); renderToc(); renderNotes(); save();
-    const restoreId = current?.id; requestAnimationFrame(() => { if (current?.id === restoreId) { window.scrollTo(0, continueReading ? 0 : restoreId ? state.positions[restoreId] || 0 : 0); updateTables(); } });
+    const restoreId = current?.id; requestAnimationFrame(() => { if (current?.id === restoreId) { window.scrollTo(0, continueReading ? 0 : restoreId ? state.positions[restoreId] || 0 : 0); updateTables();
+      const block=routeParams.get('block'),target=block!==null&&/^\d+$/.test(block)?$('article').querySelector('[data-block="'+Number(block)+'"]'):null;
+      if(target){const find=routeParams.get('find');if(find){const walker=document.createTreeWalker(target,NodeFilter.SHOW_TEXT),nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);for(const text of nodes){const parts=PlatformModel.highlightParts(text.textContent,find);if(parts.some(x=>x.match)){const fragment=document.createDocumentFragment();for(const part of parts)fragment.append(part.match?el('mark',part.text):document.createTextNode(part.text));text.replaceWith(fragment);}}}target.scrollIntoView({block:'center'});}
+     } });
   }
   function updateCompleteButton() {
     $('completeButton').disabled = !current || !M.readable(current);
@@ -324,7 +336,7 @@
     if (token !== speechToken) return;
     if (speechIndex >= speechQueue.length) {
       const next = sections[sections.indexOf(current) + 1];
-      if (current?.status !== 'partial' && autoNextOn() && next && M.readable(next) && next.blocks.length) { autoAdvance = true; $('speechStatus').textContent = 'Переход к следующему разделу…'; route(next.id); return; }
+      if (current?.status !== 'partial' && autoNextOn() && next && M.readable(next) && (next.blocks.length||next.contentFile)) { autoAdvance = true; $('speechStatus').textContent = 'Переход к следующему разделу…'; route(next.id); return; }
       stopSpeech(); $('speechStatus').textContent = current?.status === 'partial' ? 'Доступная часть озвучена. Продолжение раздела ещё переводится.' : (next && !next.blocks.length && autoNextOn() ? 'Раздел озвучен. Дальше перевод ещё не добавлен.' : 'Раздел озвучен. Отметьте его прочитанным, когда будете готовы.'); return; }
     const item = speechQueue[speechIndex]; document.querySelectorAll('.speaking').forEach(n => n.classList.remove('speaking'));
     $('article').querySelector(`[data-block="${item.block}"]`)?.classList.add('speaking');
@@ -374,7 +386,7 @@
     }
   });
   matchMedia('(min-width:851px)').addEventListener('change',e=>{if(e.matches)closeToc();});
-  $('search').oninput = renderToc;
+  $('search').oninput = ()=>{clearTimeout(tocTimer);tocMatches=null;const request=++tocRequest,q=$('search').value.trim();renderToc();if(q.length<2)return;tocTimer=setTimeout(async()=>{try{const result=await StudySearch.search(q,{books:[M.BOOK_ID==='fish-clinical-psychopathology-5-ru'?'fish':'oxford'],scope:'books',includeSections:true});if(request!==tocRequest)return;tocMatches=new Map((result.sections||result.results).map(x=>[x.section,x]));renderToc();}catch(e){if(request===tocRequest){tocMatches=new Map();renderToc();toast(e.message);}}},220);};
   $('continueButton').onclick = () => { const last = sections.find(s => s.id === state.lastSection); const next = last || sections.find(s => M.readable(s) && !M.isRead(s, state, book) && !M.isPartRead(s, state, book)) || sections[0]; if (next) route(next.id); else showLibrary(); };
   $('previousButton').onclick = () => route(sections[sections.indexOf(current) - 1]?.id);
   $('nextButton').onclick = () => route(sections[sections.indexOf(current) + 1]?.id);
@@ -461,5 +473,5 @@
   window.addEventListener('resize',viewportChanged); window.visualViewport?.addEventListener('resize',viewportChanged); viewportChanged();
   document.addEventListener('visibilitychange', () => { if (document.hidden) { recordPosition(); save(); } checkSpeech(); });
   window.addEventListener('pagehide', e => { recordPosition(); save(); if (!e.persisted) stopSpeech(); if (pdfUrl) URL.revokeObjectURL(pdfUrl); });
-  sections = M.flatten(book); applyPreferences(); renderOverview(); renderLibrary(); renderRoute();
+  sections = M.flatten(book);if(state.lastSection){document.body.classList.add('returning-reader');const introDetails=el('details',undefined,'platform-details');introDetails.append(el('summary','О возможностях читателя'));const grid=document.querySelector('.feature-grid');if(grid){grid.before(introDetails);introDetails.append(grid);}} applyPreferences(); renderOverview(); renderLibrary(); renderRoute();
 })();
