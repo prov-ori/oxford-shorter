@@ -18,3 +18,5 @@ dist/data/practice.js
 dist/data/coverage.json
 dist/data/practice.json
 dist/data/offline-assets.js
+
+dist/assets/brain-mri-v2.json

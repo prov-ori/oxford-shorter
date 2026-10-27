@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "asset": "assets/brain-mri-v2.bin",
+  "sha256": "eb8b497976c57303e0a508ff4853b6999a4c6424352afecc4f8dbc19bbeedacc",
+  "bytes": 626402,
+  "vertices": 31328,
+  "triangles": 62630,
+  "dataset": "OpenNeuro ds006128",
+  "snapshot": "1.0.11",
+  "doi": "10.18112/openneuro.ds006128.v1.0.11",
+  "subject": "sub-01",
+  "license": "CC0-1.0",
+  "sourceRepository": "https://github.com/OpenNeuroDatasets/ds006128/tree/1.0.11",
+  "sourceFiles": [
+    {
+      "path": "surf/lh.pial.T1",
+      "sha256": "2aac780dd856e8be55362cec46663bd0eb14c03d3cac7ac3969f2083a7bf09f8",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006128/derivatives/FreeSurfer/sub-01/surf/lh.pial.T1"
+    },
+    {
+      "path": "surf/rh.pial.T1",
+      "sha256": "655690359a5cf3c4cd498b31594a22014d7ad4b85620248ae60ed82b25ce3d31",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006128/derivatives/FreeSurfer/sub-01/surf/rh.pial.T1"
+    },
+    {
+      "path": "label/lh.aparc.annot",
+      "sha256": "1ef2dccc752d0eda7f23f3df056bb9839f1457446ddf699a54eb5f5e23dbd1f5",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006128/derivatives/FreeSurfer/sub-01/label/lh.aparc.annot"
+    },
+    {
+      "path": "label/rh.aparc.annot",
+      "sha256": "ca6c4ba089b0f1f8fd51a18d6ed07a306f81a057282bec08c9f2698b05ce25e8",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006128/derivatives/FreeSurfer/sub-01/label/rh.aparc.annot"
+    },
+    {
+      "path": "mri/aseg.mgz",
+      "sha256": "d2c386e1aaa05074042b07c8c9c53e999e6172053586562227c97e77a1a41a96",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006128/derivatives/FreeSurfer/sub-01/mri/aseg.mgz"
+    }
+  ],
+  "coordinateTransform": "FreeSurfer surface RAS (right, anterior, superior), millimetres -> (right, up, front) = (x,z,y), face winding reversed",
+  "quantizationMillimetres": 0.1,
+  "corticalAtlas": "FreeSurfer aparc / Desikan-Killiany, grouped for teaching",
+  "labelGroups": {
+    "1": [
+      "superiorfrontal",
+      "rostralmiddlefrontal",
+      "caudalmiddlefrontal",
+      "parsopercularis",
+      "parstriangularis",
+      "parsorbitalis",
+      "lateralorbitofrontal",
+      "medialorbitofrontal",
+      "precentral",
+      "paracentral",
+      "frontalpole",
+      "caudalanteriorcingulate",
+      "rostralanteriorcingulate"
+    ],
+    "2": [
+      "postcentral",
+      "superiorparietal",
+      "inferiorparietal",
+      "supramarginal",
+      "precuneus",
+      "posteriorcingulate",
+      "isthmuscingulate"
+    ],
+    "3": [
+      "bankssts",
+      "superiortemporal",
+      "middletemporal",
+      "inferiortemporal",
+      "fusiform",
+      "transversetemporal",
+      "temporalpole",
+      "entorhinal",
+      "parahippocampal"
+    ],
+    "4": [
+      "cuneus",
+      "pericalcarine",
+      "lateraloccipital",
+      "lingual"
+    ],
+    "5": [
+      "insula"
+    ]
+  },
+  "regions": {
+    "1": {
+      "id": "frontal",
+      "title": "Лобные доли"
+    },
+    "2": {
+      "id": "parietal",
+      "title": "Теменные доли"
+    },
+    "3": {
+      "id": "temporal",
+      "title": "Височные доли"
+    },
+    "4": {
+      "id": "occipital",
+      "title": "Затылочные доли"
+    },
+    "5": {
+      "id": "insula",
+      "title": "Островковая кора"
+    },
+    "6": {
+      "id": "cerebellum",
+      "title": "Мозжечок"
+    },
+    "7": {
+      "id": "stem",
+      "title": "Ствол мозга"
+    },
+    "8": {
+      "id": "thalamus",
+      "title": "Таламус"
+    },
+    "9": {
+      "id": "callosum",
+      "title": "Мозолистое тело"
+    },
+    "10": {
+      "id": "hippocampus",
+      "title": "Гиппокамп"
+    },
+    "11": {
+      "id": "amygdala",
+      "title": "Миндалина"
+    },
+    "12": {
+      "id": "unlabeled",
+      "title": "Неразмеченная поверхность"
+    }
+  },
+  "processing": [
+    "quadric decimation to 20000 triangles per pial hemisphere",
+    "nearest original-vertex DK label followed by face majority vote; unknown labels retained as unknown",
+    "aseg masks: Gaussian sigma 0.6 voxels, marching cubes at 0.5, removal of components smaller than 50 voxels",
+    "subcortical mesh decimation, no arbitrary relocation or scaling of individual regions",
+    "0.1 mm coordinate quantization"
+  ],
+  "meshes": [
+    {
+      "name": "lh pial, reduced from 306502 faces",
+      "vertices": 10449,
+      "triangles": 20894
+    },
+    {
+      "name": "rh pial, reduced from 305112 faces",
+      "vertices": 10370,
+      "triangles": 20736
+    },
+    {
+      "name": "cerebellum",
+      "vertices": 3999,
+      "triangles": 8000
+    },
+    {
+      "name": "stem",
+      "vertices": 1498,
+      "triangles": 3000
+    },
+    {
+      "name": "thalamus",
+      "vertices": 1502,
+      "triangles": 3000
+    },
+    {
+      "name": "callosum",
+      "vertices": 1002,
+      "triangles": 2000
+    },
+    {
+      "name": "hippocampus",
+      "vertices": 1504,
+      "triangles": 3000
+    },
+    {
+      "name": "amygdala",
+      "vertices": 1004,
+      "triangles": 2000
+    }
+  ],
+  "limits": [
+    "Single participant, automated segmentation; not a normative atlas",
+    "Cortical labels and subcortical contours are simplified and may contain segmentation/decimation errors",
+    "Not suitable for diagnosis, individual lesion localisation or surgical planning"
+  ]
+}
