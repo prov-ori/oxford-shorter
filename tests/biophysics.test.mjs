@@ -15,3 +15,24 @@ test('conductance-based integration changes with inhibition and timing without f
 test('myelin compartment model produces delay or block, not a fixed damage cutoff',()=>{const intact=B.myelin(),mild=B.myelin({damage:.5}),severe=B.myelin({damage:1}),leaky=B.myelin({damage:1,leak:10}),long=B.myelin({damage:1,extent:5});assert(intact.conducts&&mild.conducts&&severe.conducts);assert(mild.delay>intact.delay);assert(severe.delay>mild.delay);assert.equal(leaky.conducts,false);assert.equal(long.conducts,false);assert.equal(leaky.delay,null);assert(intact.arrivals.every(Number.isFinite));const refined=B.myelin({dt:.00125});near(refined.delay,intact.delay,.06);});
 test('MRI asset is verified, structurally valid and contains all twelve independently labelled regions',()=>{const meta=JSON.parse(fs.readFileSync(new URL('../content/brain-mri-provenance.json',import.meta.url))),bytes=fs.readFileSync(new URL('../dist/'+meta.asset,import.meta.url));assert.equal(createHash('sha256').update(bytes).digest('hex'),meta.sha256);const ab=bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),mesh=parseMesh(ab,meta),labels=new Set();assert.equal(mesh.count,meta.triangles*3);for(let i=6;i<mesh.expanded.length;i+=7)labels.add(mesh.expanded[i]);assert.deepEqual([...labels].sort((a,b)=>a-b),Array.from({length:12},(_,i)=>i+1));mesh.min.forEach((v,i)=>{assert(v<mesh.max[i]);assert(mesh.max[i]-v>100&&mesh.max[i]-v<250);});assert.throws(()=>parseMesh(ab,{...meta,vertices:1}));const bad=ab.slice(0);new Uint8Array(bad)[0]=0;assert.throws(()=>parseMesh(bad,meta));});
 test('physiological domain guards reject nonfinite or unstable requested inputs',()=>{assert.throws(()=>B.hh({current:NaN}));assert.throws(()=>B.hh({dt:1}));assert.throws(()=>B.receptor({chloride:0}));assert.throws(()=>B.cable({diameter:-1}));assert.throws(()=>B.myelin({dt:.1}));});
+test('MRI separation translates each source hemisphere rigidly even where its cortex crosses x=0',()=>{
+ const meta=JSON.parse(fs.readFileSync(new URL('../content/brain-mri-provenance.json',import.meta.url))),bytes=fs.readFileSync(new URL('../dist/'+meta.asset,import.meta.url)),ab=bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),m=parseMesh(ab,meta);
+ assert.equal(m.hemispheres.length,m.count);let crossing=0,oldDistortions=0;
+ for(let v=0;v<m.count;v+=3){
+  const side=m.hemispheres[v],p=[0,1,2].map(k=>Array.from(m.expanded.subarray((v+k)*7,(v+k)*7+3)));
+  assert.equal(m.hemispheres[v+1],side);assert.equal(m.hemispheres[v+2],side);
+  const label=m.expanded[v*7+6],cortical=label<=5||label===12;
+  assert.equal(!!side,cortical);
+  if(cortical&&p.some(a=>a[0]<0)&&p.some(a=>a[0]>0))crossing++;
+  for(const split of[0,20,40])for(const [a,b]of[[0,1],[1,2],[2,0]]){
+   const original=Math.hypot(...p[a].map((x,j)=>x-p[b][j]));
+   const moved=p.map(t=>[t[0]+side*split,t[1],t[2]]);
+   assert(Math.abs(Math.hypot(...moved[a].map((x,j)=>x-moved[b][j]))-original)<1e-9);
+   if(cortical&&split===40){const bad=Math.hypot(p[a][0]+Math.sign(p[a][0])*split-p[b][0]-Math.sign(p[b][0])*split,p[a][1]-p[b][1],p[a][2]-p[b][2]);if(Math.abs(bad-original)>1)oldDistortions++;}
+  }
+ }
+ assert(crossing>0,'real source vertices cross the anatomical median plane');
+ assert(oldDistortions>0,'previous per-vertex sign rule must reproduce stretched edges');
+ assert.throws(()=>parseMesh(ab,{...meta,meshes:[]}),/принадлежность/);
+ assert.throws(()=>parseMesh(ab,{...meta,meshes:meta.meshes.map((m,i)=>i?m:{...m,vertices:m.vertices+1})}));
+});

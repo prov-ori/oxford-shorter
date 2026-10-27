@@ -5,5 +5,5 @@
  function highlight(container,text,query){container.replaceChildren(...PlatformModel.highlightParts(text,query).map(x=>x.match?n('mark',x.text):document.createTextNode(x.text)));}
  async function json(path){const r=await fetch(path);if(!r.ok)throw Error('Не удалось загрузить '+path);return r.json();}
  window.PlatformUI={n,download,sourceBox,highlight,json};
- if('serviceWorker'in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').then(()=>navigator.serviceWorker.ready).then(()=>{const s=document.getElementById('offlineServiceStatus');if(s)s.textContent='Офлайн-служба готова. Скачайте нужные главы и дождитесь подтверждения комплектности.';}).catch(()=>{const s=document.getElementById('offlineServiceStatus');if(s)s.textContent='Офлайн-служба недоступна в этом браузере.';}));
+ if('serviceWorker'in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(()=>navigator.serviceWorker.ready).then(()=>{const s=document.getElementById('offlineServiceStatus');if(s)s.textContent='Офлайн-служба готова. Скачайте нужные главы и дождитесь подтверждения комплектности.';}).catch(()=>{const s=document.getElementById('offlineServiceStatus');if(s)s.textContent='Офлайн-служба недоступна в этом браузере.';}));
 })();
