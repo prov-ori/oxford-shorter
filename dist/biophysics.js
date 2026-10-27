@@ -13,14 +13,14 @@
   for(let i=0;i<=Math.round(total/dt);i++){const t=i*dt;if(t>=second&&atSecond===null)atSecond={v:s[0],m:s[1],h:s[2],n:s[3]};if(i%5===0){const[v,m,h,n]=s;trace.push({t,v,m,h,n,iNa:HH.gNa*sodium*m**3*h*(v-HH.eNa),iK:HH.gK*potassium*n**4*(v-HH.eK),iLeak:HH.gL*(v-HH.eL),input:input(t)});}const a=hhDerivative(s,input(t),sodium,potassium),b=hhDerivative(add(s,a,dt/2),input(t+dt/2),sodium,potassium),c=hhDerivative(add(s,b,dt/2),input(t+dt/2),sodium,potassium),d=hhDerivative(add(s,c,dt),input(t+dt),sodium,potassium);s=s.map((x,j)=>x+dt*(a[j]+2*b[j]+2*c[j]+d[j])/6);if(!s.every(Number.isFinite)||s[0]<-150||s[0]>150)throw Error('Неустойчивый расчёт HH');if(lastV<0&&s[0]>=0)spikes.push(t+dt);lastV=s[0];}
   return{trace,points:trace.map(p=>[p.t,p.v]),spikes,atSecond,overlap:interval<duration,parameters:HH,dt};
  }
- function synapse({calcium=1,frequency=20,pulses=4,kind='chemical',coupling=3,source=0,dt=.05}={}){
-  check(calcium,0,2);check(frequency,5,80);check(pulses,1,8);check(coupling,0,10);check(dt,.01,.1);if(!['chemical','electrical'].includes(kind)||![0,1].includes(source))throw Error('Неизвестный тип контакта');
-  const times=Array.from({length:pulses},(_,i)=>20+i*1000/frequency),end=times.at(-1)+100,events=[],trace=[];let next=0,reserve=1,v1=-65,v2=-65,rise=0,decay=0;
-  const probability=.6*(calcium**4/(calcium**4+.5**4));
-  for(let i=0;i<=Math.ceil(end/dt);i++){const t=i*dt;reserve=1-(1-reserve)*Math.exp(-dt/180);if(next<times.length&&t+dt/2>=times[next]){const released=reserve*probability;reserve-=released;rise+=released;decay+=released;events.push({t:times[next],released,reserve});next++;}rise*=Math.exp(-dt/.5);decay*=Math.exp(-dt/6);const g=kind==='chemical'?8*Math.max(0,decay-rise):0;
-   if(kind==='chemical'){v1=-65;v2+=dt*(-5*(v2+65)-g*v2)/100;}else{const injection=times.some(start=>t>=start&&t<start+2)?250:0,old1=v1,old2=v2;v1+=dt*(-5*(old1+65)-coupling*(old1-old2)+(source===0?injection:0))/100;v2+=dt*(-5*(old2+65)-coupling*(old2-old1)+(source===1?injection:0))/100;}
-   if(i%4===0)trace.push({t,v1,v2,g,reserve});
-  }return{trace,events,releaseProbability:probability,kind,units:'ms, mV, nS; expected vesicle fraction'};
+ function synapse({calcium=1,frequency=20,pulses=4,kind='chemical',coupling=3,source=0,delay=.8,dt=.05}={}){
+  check(calcium,0,2);check(frequency,5,80);check(pulses,1,8);check(coupling,0,10);check(delay,0,3);check(dt,.01,.1);if(!Number.isInteger(pulses)||!['chemical','electrical'].includes(kind)||![0,1].includes(source))throw Error('Неизвестный тип контакта');
+  const stimulusTimes=Array.from({length:pulses},(_,i)=>20+i*1000/frequency),times=stimulusTimes.map(t=>t+(kind==='chemical'?delay:0)),end=times.at(-1)+100,events=[],trace=[];let next=0,reserve=1,v1=-65,v2=-65,rise=0,decay=0,cleftSignal=0;
+  const probability=kind==='chemical'?.6*(calcium**4/(calcium**4+.5**4)):0;
+  for(let i=0;i<=Math.ceil(end/dt);i++){const t=i*dt;if(i){reserve=1-(1-reserve)*Math.exp(-dt/180);rise*=Math.exp(-dt/.5);decay*=Math.exp(-dt/6);cleftSignal*=Math.exp(-dt/1.2);}if(next<times.length&&t+dt/2>=times[next]){const released=reserve*probability;reserve-=released;rise+=released;decay+=released;cleftSignal+=released;events.push({t:times[next],stimulusTime:stimulusTimes[next],released,reserve});next++;}const g=kind==='chemical'?8*Math.max(0,decay-rise):0,gapCurrent=kind==='electrical'?coupling*(v1-v2):0,injection=kind==='electrical'&&stimulusTimes.some(start=>t>=start&&t<start+2)?250:0,input1=source===0?injection:0,input2=source===1?injection:0;
+   if(i%4===0)trace.push({t,v1,v2,g,reserve,cleftSignal,gapCurrent,input1,input2});
+   if(kind==='chemical'){v1=-65;v2+=dt*(-5*(v2+65)-g*v2)/100;}else{const old1=v1,old2=v2;v1+=dt*(-5*(old1+65)-coupling*(old1-old2)+input1)/100;v2+=dt*(-5*(old2+65)-coupling*(old2-old1)+input2)/100;}
+  }return{trace,events,stimulusTimes,releaseProbability:probability,kind,calcium,coupling,source,delay:kind==='chemical'?delay:0,units:'ms, mV, nS, pA; expected vesicle fraction; cleftSignal is not a calibrated concentration'};
  }
  function receptor({family='ion',chloride=8,voltage=-65,present=true,conductance=5}={}){
   check(chloride,2,60);check(voltage,-90,-35);check(conductance,0,20);if(!['ion','meta'].includes(family))throw Error('Неизвестное семейство');
