@@ -21,7 +21,7 @@
  }
  function go(hash){if(location.hash===hash)render();else location.hash=hash;}
  function selectedBook(){return document.querySelector('input[name=book]:checked')?.value||'all';}
- function config(){return {questionIds:targetQuestion?[targetQuestion]:undefined,book:selectedBook(),chapters:[...document.querySelectorAll('#chapterChoices input:checked')].map(i=>i.value),mode:$('modeSelect').value,scope:$('scopeSelect').value,count:$('countSelect').value,difficulty:$('difficultySelect').value,minutes:Number($('minutesSelect').value)};}
+ function config(){return {questionIds:targetQuestion?[targetQuestion]:(bank.collections||[]).find(c=>c.id===$('collectionSelect').value)?.questionIds,book:selectedBook(),chapters:[...document.querySelectorAll('#chapterChoices input:checked')].map(i=>i.value),mode:$('modeSelect').value,scope:$('scopeSelect').value,count:$('countSelect').value,difficulty:$('difficultySelect').value,minutes:Number($('minutesSelect').value)};}
  function bookLabel(key){return bank.books[key].shortTitle;}
  const difficultyLabels={recall:'Определения',understanding:'Понимание',application:'Учебная ситуация'};
  function chapterChoices(only){
@@ -31,6 +31,7 @@
  }
  function poolHint(){
   const cfg=config(),list=M.pool(bank,cfg,state,now()),size=Math.min(cfg.count==='all'?list.length:Number(cfg.count),list.length),books=[...new Set(list.map(q=>q.book))].map(bookLabel);
+  const collection=(bank.collections||[]).find(c=>c.id===$('collectionSelect').value);$('collectionHint').textContent=collection?collection.description+' В наборе '+collection.questionIds.length+' вопросов; другие фильтры уточняют этот набор.':'';
   $('selectedChapterCount').textContent=document.querySelectorAll('#chapterChoices input:checked').length+' выбрано';
   $('poolHint').textContent=(targetQuestion?'Выбран конкретный вопрос из поиска. ':'')+(list.length?`Доступно ${list.length} · В попытке ${size} · ${books.join(' + ')}`:'Нет вопросов по выбранным условиям.');
   $('modeHint').textContent=cfg.mode==='exam'?'Разбор появится после завершения. Время продолжает идти при закрытии вкладки. Ответы сохраняются автоматически.':'Ответ фиксируется кнопкой «Проверить». После этого доступны объяснение и ссылка на учебник.';
@@ -108,9 +109,12 @@
   bank=M.validateBank(window.KNOWLEDGE_BANK);state=M.emptyState(bank);
   try{const raw=localStorage.getItem(M.KEY);lastSavedRaw=raw;if(raw){originalRaw=raw;state=M.restoreState(JSON.parse(raw),bank);}}
   catch{storageWritable=false;storageWarning(originalRaw?'Сохранённый прогресс не удалось восстановить. Исходные данные сохранены без изменений. Новые ответы временно хранятся в памяти.':'Хранилище браузера недоступно. Прогресс будет доступен только до закрытия страницы.',originalRaw);}
+  for(const c of bank.collections||[]){const o=node('option',c.title);o.value=c.id;$('collectionSelect').append(o);}
   const params=new URLSearchParams(location.search),initialBook=params.get('book'),initialChapter=Number(params.get('chapter'));
+  if((bank.collections||[]).some(c=>c.id===params.get('collection')))$('collectionSelect').value=params.get('collection');
+  $('collectionSelect').onchange=()=>{targetQuestion=null;$('singleQuestionHint')?.remove();document.querySelector('input[name=book][value=all]').checked=true;$('scopeSelect').value='all';$('difficultySelect').value='all';chapterChoices();};
   const requested=params.get('question'),replacement=bank.replacements?.[requested];targetQuestion=M.activeQuestions(bank).find(q=>q.id===(replacement||requested))?.id||null;
-  if(targetQuestion){const hint=node('p',undefined,'platform-note');hint.append(node('span','Открыт один вопрос из поиска. '));const reset=node('button','Снять ограничение','quiet');reset.type='button';reset.onclick=()=>{targetQuestion=null;hint.remove();poolHint();};hint.append(reset);$('configForm').prepend(hint);}
+  if(targetQuestion){const hint=node('p',undefined,'platform-note');hint.id='singleQuestionHint';hint.append(node('span','Открыт один вопрос из поиска. '));const reset=node('button','Снять ограничение','quiet');reset.type='button';reset.onclick=()=>{targetQuestion=null;hint.remove();poolHint();};hint.append(reset);$('configForm').prepend(hint);}
   if(['all','mistakes','due','confident-errors'].includes(params.get('scope')))$('scopeSelect').value=params.get('scope');if(['5','10','20','40','all'].includes(params.get('count')))$('countSelect').value=params.get('count');
   if(['oxford','fish'].includes(initialBook))document.querySelector('input[name=book][value='+initialBook+']').checked=true;
   if(initialBook&&bank.books[initialBook]?.chapters.some(c=>c.number===initialChapter))chapterChoices([initialBook+':'+initialChapter]);else chapterChoices();

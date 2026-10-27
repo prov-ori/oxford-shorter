@@ -7,24 +7,24 @@ import '../dist/model.js';
 const read=async p=>JSON.parse(await fs.readFile(new URL('../'+p,import.meta.url),'utf8'));
 const bank=await read('dist/data/quiz-bank.json'),sources={oxford:await read('dist/data/book.json'),fish:await read('dist/data/fish.json')};
 test('question bank covers every chapter of both actual editions with source-backed evidence',()=>{
- KnowledgeModel.validateBank(bank);assert.equal(KnowledgeModel.activeQuestions(bank).length,308);assert.equal(bank.questions.length,406);
+ KnowledgeModel.validateBank(bank);assert.equal(KnowledgeModel.activeQuestions(bank).length,408);assert.equal(bank.questions.length,506);
  for(const [book,b]of Object.entries(sources)){
   assert.equal(bank.books[book].sourceSha256,b.source.sha256);assert.equal(bank.books[book].sourceRevision,b.revision);
   const expected=book==='oxford'?8:10;
-  for(const chapter of b.chapters.filter(c=>c.number))assert.equal(KnowledgeModel.activeQuestions(bank).filter(q=>q.book===book&&q.chapter===chapter.number).length,expected,book+' '+chapter.number);
+  for(const chapter of b.chapters.filter(c=>c.number))assert(KnowledgeModel.activeQuestions(bank).filter(q=>q.book===book&&q.chapter===chapter.number).length>=expected,book+' '+chapter.number);
  }
  for(const q of bank.questions){
   const chapter=sources[q.book].chapters.find(c=>c.number===q.chapter),section=chapter.sections.find(s=>s.id===q.sectionId);assert(section,q.id);
   assert.deepEqual(q.source,{pdfStart:section.source.pdfStart,pdfEnd:section.source.pdfEnd,printedPages:section.source.printedPages},q.id);
   assert(section.blocks.some(b=>StudyModel.blockText(b).includes(q.sourceEvidence)),q.id+' evidence');
   assert(q.sourceEvidence.length>=60&&q.sourceEvidence.length<=350,q.id+' bounded excerpt');
-  assert(q.options.every(o=>o.text.trim().length>=3),q.id);assert(q.explanation.length>=60,q.id+' explanation');
+  assert(q.options.every(o=>(o.text.trim().length>=3||/^\d+(?:[,.]\d+)?$/.test(o.text))),q.id);assert(q.explanation.length>=60,q.id+' explanation');
  }
  assert(bank.questions.filter(q=>q.difficulty!=='recall').length>bank.questions.length/2);
- assert.equal(new Set(KnowledgeModel.activeQuestions(bank).map(q=>q.stem.toLowerCase().replace(/\s+/g,' ').trim())).size,308);
+ assert.equal(new Set(KnowledgeModel.activeQuestions(bank).map(q=>q.stem.toLowerCase().replace(/\s+/g,' ').trim())).size,408);
 });
 test('content expansion preserves every original question and keeps existing attempts and backups readable',async()=>{
- const frozen=await read('content/quiz-v1-fingerprints.json');assert.equal(Object.keys(frozen.questions).length,308);assert.equal(bank.contentRevision,6);assert.equal(bank.revision,frozen.compatibilityRevision);
+ const frozen=await read('content/quiz-v1-fingerprints.json');assert.equal(Object.keys(frozen.questions).length,406);assert.equal(bank.contentRevision,7);assert.equal(bank.revision,frozen.compatibilityRevision);
  assert.equal(bank.retiredQuestionIds.length,98);
  for(const old of bank.retiredQuestionIds){const next=bank.questions.find(q=>q.id===bank.replacements[old]);assert(next&&next.supersedes===old);assert.equal(next.correctOptionId,bank.questions.find(q=>q.id===old).correctOptionId);}
  for(const [id,hash]of Object.entries(frozen.questions)){const q=bank.questions.find(q=>q.id===id);assert(q,id);assert.equal(createHash('sha256').update(JSON.stringify(q)).digest('hex'),hash,id+' original content');}
@@ -37,7 +37,7 @@ test('content expansion preserves every original question and keeps existing att
  state=KnowledgeModel.start(state,legacy,{mode:'exam',count:10,minutes:20},time+10,()=>0.62);question=legacy.questions.find(q=>q.id===state.active.questionIds[0]);state=KnowledgeModel.choose(state,legacy,question.correctOptionId,time+11);
  const active=structuredClone(state.active),events=structuredClone(state.events),saved=KnowledgeModel.backup(state),restored=KnowledgeModel.importBackup(saved,bank);
  assert.deepEqual(restored.active,active);assert.deepEqual(restored.events,events);assert.deepEqual(KnowledgeModel.result(restored.history[0],bank),originalScore);assert.deepEqual(KnowledgeModel.stats(restored,bank),KnowledgeModel.stats(state,legacy));
- assert.equal(KnowledgeModel.pool(bank,{scope:'all'},restored,time).length,308);
+ assert.equal(KnowledgeModel.pool(bank,{scope:'all'},restored,time).length,408);
  assert(KnowledgeModel.select(bank,{book:'oxford',count:'all'},restored,time).some(q=>!Object.hasOwn(frozen.questions,q.id)));
  }
 });

@@ -5,3 +5,5 @@
 @media(prefers-reduced-motion:reduce){.knowledge *{scroll-behavior:auto!important;transition:none!important}}
 
 .knowledge .skip:not(:focus){clip-path:inset(50%);width:1px;height:1px;padding:0;overflow:hidden}.q-option.q-wrong:has(input:checked){background:#f8eee9;border-color:#be8d75}.q-book-progress{align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:20px}.q-book-progress>summary{cursor:pointer;display:flex;flex-direction:column;gap:6px}.q-book-progress>summary strong{font:23px Georgia,serif}.q-book-progress>summary span,.q-book-progress>summary small{font-size:11px;color:var(--muted)}.q-book-progress>summary small{margin-top:7px;color:var(--green);text-decoration:underline}.q-book-topic-list{display:grid;gap:10px;margin-top:18px}.q-book-topic-list .q-topic{width:100%}
+
+.q-collection-field{display:grid;gap:8px;margin:20px 0 10px;font-weight:600}.q-collection-field select{width:100%;min-width:0;padding:12px;border:1px solid var(--line);background:var(--surface);border-radius:8px;color:var(--ink)}

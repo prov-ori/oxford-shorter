@@ -107,7 +107,7 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
 
 @media(max-width:850px){.topbar{height:auto}.lab .scroll-x{overscroll-behavior-x:contain}.tabs button{font-size:14px;min-height:44px}.lab select{font-size:16px}}
 </style>
-<style>.evidence-card{padding:14px;border:1px solid var(--line);border-radius:10px}.evidence-card h4{font-size:17px;margin:0 0 10px}.evidence-card strong{font-size:13px}.evidence-card ul{font-size:13px;padding-left:20px}.module-source{font-size:12px;color:var(--muted)}.tox{display:grid;gap:12px}</style><link rel="stylesheet" href="platform.css"><script src="common.js" defer></script><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="assets/app-icon.svg" type="image/svg+xml"></head>
+<style>.evidence-card{padding:14px;border:1px solid var(--line);border-radius:10px}.evidence-card h4{font-size:17px;margin:0 0 10px}.evidence-card strong{font-size:13px}.evidence-card ul{font-size:13px;padding-left:20px}.module-source{font-size:12px;color:var(--muted)}.tox{display:grid;gap:12px}</style><link rel="stylesheet" href="platform.css"><script src="common.js" defer></script><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="assets/app-icon.svg" type="image/svg+xml"><link rel="stylesheet" href="neuro.css"><script src="neuro-model.js" defer></script><script src="evidence.js" defer></script></head>
 <body>
 <a class="skip" href="#main">К содержимому</a>
 <header class="topbar">
@@ -121,7 +121,7 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
   <p class="lede">Крутите ручки, а не заучивайте таблицы: что происходит в синапсе на антидепрессанте, почему эффект приходит через недели, где проходит «окно» блокады D2 и как отличить серотониновый синдром от ЗНС.</p>
   <p class="disclaimer"><strong>Учебные модели, не клинический инструмент.</strong> Кривые и анимации — качественные схемы механизмов, а не количественные данные. Дозировки здесь намеренно не приводятся; решения о лечении принимаются по актуальным руководствам и с учётом пациента.</p>
 
-  <div class="tabs" role="tablist" aria-label="Разделы лаборатории">
+  <section class="platform-card" style="margin:24px 0"><span class="eyebrow">НОВЫЕ УЧЕБНЫЕ МОДЕЛИ</span><h2>От нейрона к сети</h2><p>Десять интерактивных модулей: клетка, синапсы, потенциал действия, рецепторы, медиаторы, миелин, трёхмерная схема мозга, сети, фармакология и патология. В каждом — три задания.</p><div class="platform-actions"><a href="neuro.html">Открыть все 10 лабораторий →</a><a href="neuro.html#atlas">BrainAtlas · 3D-схема →</a><a href="quiz.html?collection=evidence">Тест по доказательной медицине →</a></div></section><div class="tabs" role="tablist" aria-label="Разделы лаборатории">
     <button role="tab" id="t-synapse" aria-controls="p-synapse" aria-selected="true">① Синапс и время</button>
     <button role="tab" id="t-receptors" aria-controls="p-receptors" aria-selected="false" tabindex="-1">② Рецепторный профиль</button>
     <button role="tab" id="t-d2" aria-controls="p-d2" aria-selected="false" tabindex="-1">③ Окно D2</button>
@@ -132,6 +132,7 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
     <button role="tab" id="t-washout" aria-controls="p-washout" aria-selected="false" tabindex="-1">⑧ Отмена и t½</button>
     <button role="tab" id="t-ddd" aria-controls="p-ddd" aria-selected="false" tabindex="-1">⑨ Делирий / деменция / депрессия</button>
     <button role="tab" id="t-mse" aria-controls="p-mse" aria-selected="false" tabindex="-1">⑩ Статус (MSE)</button>
+    <button role="tab" id="t-bayes" aria-controls="p-bayes" aria-selected="false" tabindex="-1">⑪ Тест и базовая частота</button><button role="tab" id="t-effect" aria-controls="p-effect" aria-selected="false" tabindex="-1">⑫ ARR / NNT</button><button role="tab" id="t-confounding" aria-controls="p-confounding" aria-selected="false" tabindex="-1">⑬ Смешение</button>
   </div>
 
   <!-- 1. SYNAPSE -->
@@ -348,7 +349,7 @@ table.heat{border-collapse:collapse;width:100%;font-size:13px}
         <div class="row small-actions"><button class="btn" id="mseCopy">Копировать</button><button class="btn alt" id="mseReset">Сбросить</button></div></div></aside>
     </div>
   </section>
-</main>
+<section class="panel" id="p-bayes" role="tabpanel" aria-labelledby="t-bayes" hidden></section><section class="panel" id="p-effect" role="tabpanel" aria-labelledby="t-effect" hidden></section><section class="panel" id="p-confounding" role="tabpanel" aria-labelledby="t-confounding" hidden></section></main>
 
 <script>
 (()=>{
@@ -835,7 +836,7 @@ calibrate();sync();
 requestAnimationFrame(loop);
 addEventListener('resize',()=>{resizeCanvas()});
 window.addEventListener('hashchange',()=>showTab(location.hash.slice(1)));
-const start=location.hash.slice(1);showTab(['synapse','receptors','d2','tox','phq','cases','lithium','washout','ddd','mse'].includes(start)?start:'synapse');
+const start=location.hash.slice(1);showTab(['synapse','receptors','d2','tox','phq','cases','lithium','washout','ddd','mse','bayes','effect','confounding'].includes(start)?start:'synapse');
 if(reduced)$('#simPlay').textContent='▶ Запустить';
 })();
 </script>

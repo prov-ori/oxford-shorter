@@ -2,13 +2,15 @@ import fs from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import '../dist/quiz-model.js';
 import '../dist/model.js';
+import {collections} from '../content/quiz-collections.mjs';
 const root=new URL('../',import.meta.url),read=async name=>JSON.parse(await fs.readFile(new URL(name,root),'utf8'));
 const sourceBooks={oxford:await read('dist/data/book.json'),fish:await read('dist/data/fish.json')};
 const questions=[...await read('content/questions-oxford.json'),...await read('content/questions-fish.json')];
 const books=Object.fromEntries(Object.entries(sourceBooks).map(([key,b])=>[key,{id:b.id,shortTitle:key==='fish'?'Фиш':'Oxford',title:b.titleRu||b.title,edition:b.edition,sourceSha256:b.source.sha256,sourceRevision:b.revision,chapters:b.chapters.filter(c=>Number.isInteger(c.number)).map(c=>({number:c.number,title:c.title.replace(/^\d+\.\s*/, '')}))}]));
 // Content can grow without invalidating compatible saved attempts. Changed keys/meaning need a migration.
 const editions=await read('content/question-editions.json');
-const bank={retiredQuestionIds:editions.retiredQuestionIds,replacements:editions.replacements,sourceLocations:{},schemaVersion:1,revision:1,contentRevision:6,title:'Проверка знаний · Oxford и Fish',books,questions};
+const bank={retiredQuestionIds:editions.retiredQuestionIds,replacements:editions.replacements,sourceLocations:{},schemaVersion:1,revision:1,contentRevision:7,title:'Проверка знаний · Oxford и Fish',books,questions};
+bank.collections=collections.map(c=>({...c,questionIds:KnowledgeModel.activeQuestions(bank).filter(q=>c.introducedIn?q.introducedIn===c.introducedIn:c.chapters[q.book]?.includes(q.chapter)).map(q=>q.id)}));
 KnowledgeModel.validateBank(bank);
 if(editions.schemaVersion!==1)throw Error('Unsupported question editions');
 for(const id of bank.retiredQuestionIds){const old=questions.find(q=>q.id===id),next=questions.find(q=>q.id===editions.replacements[id]);if(!old||!next||next.supersedes!==id||bank.retiredQuestionIds.includes(next.id))throw Error('Broken replacement '+id);for(const field of ['book','chapter','sectionId','stem','correctOptionId','explanation','sourceEvidence','source'])if(JSON.stringify(old[field])!==JSON.stringify(next[field]))throw Error('Distractor edit changed meaning/key/source '+id);if(old.options.find(o=>o.id===old.correctOptionId).text!==next.options.find(o=>o.id===next.correctOptionId).text)throw Error('Correct answer text changed '+id);}

@@ -12,6 +12,7 @@
    ids.add(q.id);
   }
   if(bank.retiredQuestionIds!==undefined&&(!Array.isArray(bank.retiredQuestionIds)||new Set(bank.retiredQuestionIds).size!==bank.retiredQuestionIds.length||bank.retiredQuestionIds.some(id=>!ids.has(id))))throw Error("Неверный архив банка.");
+  if(bank.collections!==undefined){const seen=new Set();for(const c of bank.collections){if(!c||typeof c.id!=='string'||seen.has(c.id)||typeof c.title!=='string'||!Array.isArray(c.questionIds)||!c.questionIds.length||new Set(c.questionIds).size!==c.questionIds.length||c.questionIds.some(id=>!ids.has(id)||(bank.retiredQuestionIds||[]).includes(id)))throw Error('Повреждён тематический тест');seen.add(c.id);}}
   return bank;
  }
  const confidenceValues=['guess','some','confident'];
