@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "asset": "assets/basal-mri-v1.bin",
+  "sha256": "947f58dbd0c0a3e4351b516115fc00477b5d8a62a1ad7a5c967df7309e2d693c",
+  "bytes": 589954,
+  "vertices": 26831,
+  "triangles": 53618,
+  "dataset": "OpenNeuro ds006128",
+  "snapshot": "1.0.11",
+  "doi": "10.18112/openneuro.ds006128.v1.0.11",
+  "license": "CC0-1.0",
+  "sourceFiles": [
+    {
+      "path": "surf/lh.pial.T1",
+      "sha256": "2aac780dd856e8be55362cec46663bd0eb14c03d3cac7ac3969f2083a7bf09f8",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006128/derivatives/FreeSurfer/sub-01/surf/lh.pial.T1"
+    },
+    {
+      "path": "surf/rh.pial.T1",
+      "sha256": "655690359a5cf3c4cd498b31594a22014d7ad4b85620248ae60ed82b25ce3d31",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006128/derivatives/FreeSurfer/sub-01/surf/rh.pial.T1"
+    },
+    {
+      "path": "mri/aseg.mgz",
+      "sha256": "d2c386e1aaa05074042b07c8c9c53e999e6172053586562227c97e77a1a41a96",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006128/derivatives/FreeSurfer/sub-01/mri/aseg.mgz"
+    }
+  ],
+  "coordinateTransform": "FreeSurfer surface RAS (x,y,z) -> display (x,z,y), mm, winding reversed",
+  "quantizationMillimetres": 0.1,
+  "segments": [
+    {
+      "name": "lh cortex context",
+      "part": 1,
+      "side": 0,
+      "center": [
+        -29.519973764736513,
+        29.73686667410632,
+        -16.36678877277627
+      ],
+      "triangles": 20886
+    },
+    {
+      "name": "rh cortex context",
+      "part": 1,
+      "side": 1,
+      "center": [
+        26.12792011133043,
+        31.377804875821123,
+        -14.869758985524921
+      ],
+      "triangles": 20732
+    },
+    {
+      "name": "left caudate",
+      "part": 2,
+      "side": 0,
+      "center": [
+        -16.20759699605176,
+        29.307172757006093,
+        10.595728362229407
+      ],
+      "triangles": 1500
+    },
+    {
+      "name": "right caudate",
+      "part": 2,
+      "side": 1,
+      "center": [
+        12.392724944050354,
+        30.985465826343678,
+        10.323004072763485
+      ],
+      "triangles": 1500
+    },
+    {
+      "name": "left putamen",
+      "part": 3,
+      "side": 0,
+      "center": [
+        -25.75050701400199,
+        17.406833327499246,
+        6.109961110162216
+      ],
+      "triangles": 1500
+    },
+    {
+      "name": "right putamen",
+      "part": 3,
+      "side": 1,
+      "center": [
+        23.48541137545616,
+        20.498964373872763,
+        6.506031582138451
+      ],
+      "triangles": 1500
+    },
+    {
+      "name": "left pallidum combined",
+      "part": 4,
+      "side": 0,
+      "center": [
+        -20.598117484242437,
+        18.36292184258284,
+        0.5725375325279788
+      ],
+      "triangles": 1500
+    },
+    {
+      "name": "right pallidum combined",
+      "part": 4,
+      "side": 1,
+      "center": [
+        18.604224521954656,
+        20.548033299508994,
+        1.3238505603982536
+      ],
+      "triangles": 1500
+    },
+    {
+      "name": "left thalamus",
+      "part": 5,
+      "side": 0,
+      "center": [
+        -12.442054260499944,
+        25.010385561315264,
+        -13.133031888306075
+      ],
+      "triangles": 1500
+    },
+    {
+      "name": "right thalamus",
+      "part": 5,
+      "side": 1,
+      "center": [
+        10.558165798750226,
+        25.255123241086253,
+        -12.948451510113285
+      ],
+      "triangles": 1500
+    }
+  ],
+  "limits": [
+    "Single participant, automated aseg segmentation and simplified surfaces",
+    "Pallidum is a combined structure; GPe/GPi are not individually segmented",
+    "STN, substantia nigra, neural populations and connections are schematic overlays, not tractography or MRI-derived segmentation"
+  ]
+}

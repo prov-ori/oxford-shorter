@@ -20,3 +20,6 @@ dist/data/practice.json
 dist/data/offline-assets.js
 
 dist/assets/brain-mri-v2.json
+
+dist/assets/basal-mri-v1.json
+dist/assets/*-lab.glb
