@@ -1,11 +1,11 @@
 /* Buildless reader. Content is data; imported text is never interpreted as HTML. */
 (async function () {
   'use strict';
-  const M = StudyModel, $ = id => document.getElementById(id);
+  const M = StudyModel, S = PlatformSpeech, $ = id => document.getElementById(id);
   const KEY = M.BOOK_ID + ':state:v1';
   const labels = {pending: 'Ожидает перевода', draft: 'Черновик', partial: 'Переведено частично', translated: 'Сверено с PDF', reviewed: 'Клиническая редактура'};
   let book = M.validateBook(window.STUDY_BOOK), state = M.emptyState(), sections = [], current = null, pdf = null, pdfUrl = null, db;
-  let toastTimer, speechToken = 0, speechMode = 'idle', speechQueue = [], speechIndex = 0, activeUtterance = null, voices = [];
+  let toastTimer, speechToken = 0, speechMode = 'idle', speechQueue = [], speechIndex = 0, activeUtterance = null, voices = [], speechNotice = '', voiceProbeNotice = '', forceAutoVoice = false, restartOnResume = false, pauseProbe = null, startupTimer = null, recoveryAttempts = 0;
   function el(tag, text, cls) { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (cls) n.className = cls; return n; }
   function toast(message) { $('toast').textContent = message; $('toast').hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { $('toast').hidden = true; }, 6000); }
   function libraryMessage(message) { $('libraryStatus').textContent = message; $('libraryStatus').hidden = false; }
@@ -217,7 +217,7 @@
       $('nextButton').disabled = sections.indexOf(current) === sections.length - 1;
       updateCompleteButton(); updateSpeechUI();
       if (continueReading) {
-        if (current.blocks.length && voices.length) { window.scrollTo(0, 0); startReading(); }
+        if (current.blocks.length && S.supported()) { window.scrollTo(0, 0); startReading(); }
         else { stopBackground(); $('speechStatus').textContent = 'Чтение остановлено: перевод следующего раздела ещё не добавлен.'; }
       }
     } else if (continueReading) stopBackground();
@@ -260,22 +260,37 @@
     download('konspekt-' + noteId() + '.md', content, 'text/markdown;charset=utf-8');
   }
   function fillVoices() {
-    voices = 'speechSynthesis' in window ? speechSynthesis.getVoices().filter(v => /^ru(?:[-_]|$)/i.test(v.lang)).sort((a,b) => Number(b.localService) - Number(a.localService)) : [];
-    $('voiceSelect').replaceChildren();
-    if (!voices.length) $('voiceSelect').append(new Option('Русский голос недоступен', ''));
-    else voices.forEach(v => $('voiceSelect').append(new Option(v.name + (v.localService ? ' · на устройстве' : ' · сетевой'), v.voiceURI)));
-    if (voices.some(v => v.voiceURI === state.voice)) $('voiceSelect').value = state.voice;
-    $('voiceHint').textContent = voices.length ? 'Выберите удобный голос из доступных на устройстве.' : 'Добавьте русский голос в настройках речи системы или откройте сайт в браузере, где он доступен.';
+    const selected = $('voiceSelect').value || state.voice;
+    voices = S.russianVoices();
+    $('voiceSelect').replaceChildren(new Option('Автоматически · русский язык', ''));
+    voices.forEach(v => $('voiceSelect').append(new Option(v.name + (v.localService ? ' · на устройстве' : ' · сетевой'), v.voiceURI)));
+    $('voiceSelect').value = voices.some(v => v.voiceURI === selected) ? selected : '';
+    $('voiceHint').textContent = voiceProbeNotice || (!S.supported() ? 'Этот браузер не поддерживает озвучивание текста.' : voices.length ? 'Можно выбрать голос устройства или оставить автоматический подбор для русского языка.' : 'Браузер не передал список русских голосов. Автоматический режим всё равно попробует запустить системное озвучивание с языком ru-RU.');
+    $('testVoice').disabled = !S.supported();
     updateSpeechUI();
   }
   function updateSpeechUI() {
-    $('speakButton').disabled = !current?.blocks.length || !voices.length;
+    const available = S.supported() && Boolean(current?.blocks.length);
+    $('speakButton').disabled = !available;
     $('speakButton').textContent = speechMode === 'speaking' ? 'Ⅱ Пауза' : speechMode === 'paused' ? '▶ Продолжить' : '▶ Слушать';
     $('stopButton').disabled = speechMode === 'idle'; $('prevParaButton').disabled = $('nextParaButton').disabled = speechMode === 'idle';
-    $('article').classList.toggle('can-seek', Boolean(current?.blocks.length && voices.length));
+    $('article').classList.toggle('can-seek', available);
     if (speechMode !== 'idle' && 'mediaSession' in navigator) { try { navigator.mediaSession.playbackState = speechMode === 'paused' ? 'paused' : 'playing'; } catch (e) {} }
-    if (speechMode !== 'idle') $('speechStatus').textContent = `${speechMode === 'paused' ? 'Пауза' : 'Чтение'} · фрагмент ${speechIndex + 1} из ${speechQueue.length}`;
-    else $('speechStatus').textContent = !('speechSynthesis' in window) ? 'Этот браузер не поддерживает Web Speech API.' : !voices.length ? 'Русский голос пока не доступен. Проверьте настройки голоса.' : 'Озвучивается текст открытого раздела. Нажмите на абзац, чтобы слушать с него.';
+    if (speechMode !== 'idle') $('speechStatus').textContent = (speechMode === 'paused' ? 'Пауза' : 'Чтение') + ' · фрагмент ' + (speechIndex + 1) + ' из ' + speechQueue.length;
+    else $('speechStatus').textContent = speechNotice || (!S.supported() ? 'Этот браузер не поддерживает озвучивание текста.' : !voices.length ? 'Доступен автоматический системный голос. Нажмите «Слушать»; при необходимости откройте настройки голоса.' : 'Озвучивается текст открытого раздела. Нажмите на абзац, чтобы слушать с него.');
+  }
+  function resumeEngine() { if (speechSynthesis.paused) speechSynthesis.resume(); }
+  function speechFailed(code) { stopSpeech(); speechNotice = S.errorMessage(code); updateSpeechUI(); }
+  function voiceProbe(text) { voiceProbeNotice = text; $('voiceHint').textContent = text; }
+  function testVoice() {
+    stopSpeech(); voiceProbeNotice = ''; fillVoices(); if (!S.supported()) return;
+    const token = speechToken, u = S.configure(new SpeechSynthesisUtterance('Проверка русского голоса. Озвучивание текста работает.'), $('voiceSelect').value);
+    activeUtterance = u; u.rate = state.rate;
+    u.onstart = () => { if (token === speechToken && activeUtterance === u) voiceProbe('Воспроизводится проверочная фраза. Проверьте громкость мультимедиа.'); };
+    u.onend = () => { if (token === speechToken && activeUtterance === u) { activeUtterance = null; voiceProbe('Проверочная фраза завершена. Закройте настройки и нажмите «Слушать» для чтения раздела.'); } };
+    u.onerror = e => { if (token === speechToken && activeUtterance === u) { activeUtterance = null; voiceProbe(S.errorMessage(e.error)); } };
+    voiceProbe('Запускаем проверочную фразу…');
+    try { resumeEngine(); speechSynthesis.speak(u); } catch { activeUtterance = null; voiceProbe(S.errorMessage('synthesis-failed')); }
   }
   // Фоновое воспроизведение: беззвучный зацикленный звук заставляет браузер считать страницу медиа-плеером
   // (вкладку не усыпляют, появляются кнопки управления), а сторож возобновляет речь, если браузер её остановил.
@@ -298,9 +313,9 @@
   }
   function seekTo(index) {
     if (index < 0 || index >= speechQueue.length) return;
-    const wasPaused = speechMode === 'paused';
-    speechIndex = index; speechMode = 'speaking'; speechSynthesis.cancel(); if (wasPaused) speechSynthesis.resume();
-    sayNext(++speechToken); revealBlock(speechQueue[index].block);
+    const token = ++speechToken; clearTimeout(pauseProbe); clearTimeout(startupTimer); restartOnResume = false; recoveryAttempts = 0; activeUtterance = null;
+    speechIndex = index; speechMode = 'speaking'; speechSynthesis.cancel(); resumeEngine();
+    sayNext(token); revealBlock(speechQueue[index].block);
   }
   function skipBlock(dir) {
     if (speechMode === 'idle' || !speechQueue.length) return;
@@ -311,7 +326,7 @@
     if (start > 0) seekTo(speechQueue.findIndex(q => q.block === speechQueue[start - 1].block));
   }
   function speakFromBlock(block) {
-    if (!current?.blocks.length || !voices.length) return;
+    if (!current?.blocks.length || !S.supported()) return;
     if (speechMode === 'idle') { stopSpeech(); startReading(block); return; }
     seekTo(speechQueue.findIndex(q => q.block >= block));
   }
@@ -328,12 +343,12 @@
     } catch (e) {}
   }
   function checkSpeech() {
-    if (speechMode !== 'speaking' || !('speechSynthesis' in window)) { stalled = 0; return; }
+    if (speechMode !== 'speaking' || !S.supported()) { stalled = 0; return; }
     if (keepAlive?.paused) keepAlive.play().catch(() => {});
-    if (speechSynthesis.paused) { speechSynthesis.resume(); stalled = 0; return; }
+    if (speechSynthesis.paused) { resumeEngine(); stalled = 0; return; }
     // Речь «молчит» два замера подряд: браузер оборвал её в фоне, перезапускаем текущий фрагмент.
     if (speechSynthesis.speaking === false && speechSynthesis.pending === false) {
-      if (++stalled >= 2) { stalled = 0; speechSynthesis.cancel(); sayNext(++speechToken); }
+      if (++stalled >= 2) { stalled = 0; if (++recoveryAttempts > 2) { speechFailed('synthesis-failed'); return; } const token = ++speechToken; activeUtterance = null; speechSynthesis.cancel(); resumeEngine(); sayNext(token); }
     } else stalled = 0;
   }
   function startBackground() {
@@ -349,8 +364,8 @@
   }
   function stopSpeech(mode) {
     if (mode !== 'keep') stopBackground();
-    speechToken++; speechMode = 'idle'; activeUtterance = null;
-    if ('speechSynthesis' in window) speechSynthesis.cancel();
+    speechToken++; speechMode = 'idle'; activeUtterance = null; speechNotice = ''; forceAutoVoice = false; restartOnResume = false; recoveryAttempts = 0; clearTimeout(pauseProbe); clearTimeout(startupTimer);
+    if (S.supported()) speechSynthesis.cancel();
     document.querySelectorAll('.speaking').forEach(n => n.classList.remove('speaking'));
     updateSpeechUI();
   }
@@ -362,21 +377,39 @@
       stopSpeech(); $('speechStatus').textContent = current?.status === 'partial' ? 'Доступная часть озвучена. Продолжение раздела ещё переводится.' : (next && !next.blocks.length && autoNextOn() ? 'Раздел озвучен. Дальше перевод ещё не добавлен.' : 'Раздел озвучен. Отметьте его прочитанным, когда будете готовы.'); return; }
     const item = speechQueue[speechIndex]; document.querySelectorAll('.speaking').forEach(n => n.classList.remove('speaking'));
     $('article').querySelector(`[data-block="${item.block}"]`)?.classList.add('speaking');
-    const utterance = new SpeechSynthesisUtterance(item.text); activeUtterance = utterance; utterance.lang = 'ru-RU'; utterance.rate = state.rate;
-    utterance.voice = voices.find(v => v.voiceURI === $('voiceSelect').value) || voices[0];
-    utterance.onend = () => { if (token !== speechToken) return; speechIndex++; sayNext(token); };
-    utterance.onerror = e => { if (token !== speechToken) return; stopSpeech(); $('speechStatus').textContent = `Чтение остановлено (${e.error}). Попробуйте другой голос.`; };
-    updateSpeechUI(); speechSynthesis.speak(utterance);
+    const utterance = S.configure(new SpeechSynthesisUtterance(item.text), forceAutoVoice ? '' : $('voiceSelect').value); activeUtterance = utterance; utterance.rate = state.rate;
+    const valid = () => token === speechToken && activeUtterance === utterance;
+    let started = false;
+    utterance.onstart = () => { if (!valid()) return; started = true; clearTimeout(startupTimer); };
+    utterance.onend = () => { if (!valid()) return; clearTimeout(startupTimer); if (speechMode === 'paused') { restartOnResume = true; return; } activeUtterance = null; recoveryAttempts = 0; speechIndex++; sayNext(token); };
+    utterance.onerror = e => {
+      if (!valid()) return; clearTimeout(startupTimer);
+      if (speechMode === 'paused' && ['canceled','interrupted'].includes(e.error)) { restartOnResume = true; return; }
+      if (e.error === 'voice-unavailable' && utterance.voice && !forceAutoVoice) { forceAutoVoice = true; const nextToken = ++speechToken; activeUtterance = null; speechSynthesis.cancel(); resumeEngine(); sayNext(nextToken); return; }
+      speechFailed(e.error);
+    };
+    clearTimeout(startupTimer); startupTimer = setTimeout(() => { if (valid() && speechMode === 'speaking' && !started && speechSynthesis.speaking !== true) speechFailed('synthesis-failed'); }, 15000);
+    updateSpeechUI();
+    try { speechSynthesis.speak(utterance); } catch { if (valid()) speechFailed('synthesis-failed'); }
   }
   function speak() {
-    if (!current?.blocks.length || !voices.length) return;
-    if (speechMode === 'speaking') { speechSynthesis.pause(); keepAlive?.pause(); speechMode = 'paused'; updateSpeechUI(); return; }
-    if (speechMode === 'paused') { speechSynthesis.resume(); keepAlive?.play().catch(() => {}); speechMode = 'speaking'; updateSpeechUI(); return; }
-    stopSpeech(); startReading();
+    if (!current?.blocks.length || !S.supported()) return;
+    if (speechMode === 'speaking') {
+      speechMode = 'paused'; clearTimeout(startupTimer); updateSpeechUI(); keepAlive?.pause(); speechSynthesis.pause();
+      clearTimeout(pauseProbe); pauseProbe = setTimeout(() => { if (speechMode !== 'paused' || speechSynthesis.paused) return; restartOnResume = true; speechToken++; activeUtterance = null; speechSynthesis.cancel(); }, 200);
+      return;
+    }
+    if (speechMode === 'paused') {
+      clearTimeout(pauseProbe); speechMode = 'speaking';
+      if (restartOnResume || (speechSynthesis.speaking === false && speechSynthesis.pending === false)) { const token = ++speechToken; activeUtterance = null; restartOnResume = false; speechSynthesis.cancel(); resumeEngine(); sayNext(token); }
+      else { resumeEngine(); updateSpeechUI(); }
+      keepAlive?.play().catch(() => {}); return;
+    }
+    stopSpeech(); fillVoices(); resumeEngine(); startReading();
   }
   function startReading(fromBlock = 0) {
     speechQueue = current.blocks.flatMap((b,i) => M.chunks(M.blockText(b)).map(text => ({text, block:i})));
-    speechIndex = Math.max(0, speechQueue.findIndex(q => q.block >= fromBlock)); speechMode = 'speaking'; startBackground(); sayNext(speechToken);
+    if (!speechQueue.length) { stopSpeech(); return; } speechIndex = Math.max(0, speechQueue.findIndex(q => q.block >= fromBlock)); speechMode = 'speaking'; resumeEngine(); startBackground(); sayNext(speechToken);
   }
   function viewPdf(page = 1) { if (!pdf) return; if (pdfUrl) URL.revokeObjectURL(pdfUrl); pdfUrl = URL.createObjectURL(pdf.blob); window.open(pdfUrl + '#page=' + page, '_blank', 'noopener,noreferrer'); }
   function showLibrary() { renderLibrary(); $('libraryDialog').showModal(); }
@@ -469,10 +502,12 @@
   $('speechSettingsButton').onclick = () => { fillVoices(); $('speechDialog').showModal(); };
   $('autoNext').checked = autoNextOn();
   $('autoNext').onchange = () => { try { localStorage.setItem(AUTO_KEY, $('autoNext').checked ? '1' : '0'); } catch { /* настройка не сохранится */ } };
-  $('voiceSelect').onchange = () => { stopSpeech(); state.voice = $('voiceSelect').value; save(); };
+  $('refreshVoices').onclick = () => { speechNotice = ''; voiceProbeNotice = ''; fillVoices(); }; $('testVoice').onclick = testVoice;
+  $('voiceSelect').onchange = () => { stopSpeech(); voiceProbeNotice = ''; state.voice = $('voiceSelect').value; fillVoices(); save(); };
   $('rateSelect').onchange = () => { stopSpeech(); state.rate = Number($('rateSelect').value); save(); };
   $('fontSize').onchange = () => { state.fontSize = Number($('fontSize').value); document.documentElement.style.setProperty('--text-size', state.fontSize + 'px'); save(); };
-  if ('speechSynthesis' in window) speechSynthesis.addEventListener('voiceschanged', fillVoices);
+  if (S.supported()) { if (typeof speechSynthesis.addEventListener === 'function') speechSynthesis.addEventListener('voiceschanged', fillVoices); else speechSynthesis.onvoiceschanged = fillVoices; setTimeout(fillVoices, 300); setTimeout(fillVoices, 1500); }
+  window.addEventListener('pageshow', fillVoices);
   window.addEventListener('hashchange', renderRoute);
   window.addEventListener('storage',e=>{
     if (e.key !== KEY || !e.newValue) return;
