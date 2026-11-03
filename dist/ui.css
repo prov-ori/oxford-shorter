@@ -59,3 +59,23 @@ header.topbar.ui-header .ui-nav .nav-link[aria-current]{color:var(--green);backg
 @media(min-width:901px) and (max-width:1100px){:root{--header-height:64px}.topbar.ui-header,.knowledge .topbar.ui-header{height:64px;min-height:64px;padding:0 20px;gap:8px}header.topbar.ui-header .brand{font-size:21px;margin-right:auto}header.topbar.ui-header .ui-nav{position:absolute;left:12px;right:12px;top:calc(100% + 8px);width:auto;padding:10px;display:grid;grid-template-columns:1fr;gap:3px;background:var(--surface);border:1px solid var(--line);box-shadow:0 12px 35px #183e3325;border-radius:14px;margin:0}header.topbar.ui-header .ui-nav .nav-link{font-size:16px;padding:12px 14px;min-height:48px}.ui-nav .ui-materials{margin:6px 0 0;text-align:left}}
 @media(max-width:700px){.ui-library-category{display:block}.lib-tools .chips{display:none}.q-book-picks b{display:none}.q-book-picks label{display:flex}.q-book-picks span{width:100%;height:100%;min-height:110px;padding-top:30px}}
 .ui-connection{display:block;border-radius:0;background:#fff0d7;padding:8px 24px;border-bottom:1px solid #dcc79f;white-space:normal;font-size:13px}.ui-connection a{color:#654311;font-weight:600;text-decoration:underline;text-underline-offset:3px;display:inline-flex;align-items:center;min-height:28px}
+
+/* ===== Polish: отступы, выравнивание, читаемость (3 ноября 2026) ===== */
+.book-switch .seg a{border:0;background:transparent}
+.book-switch .seg a[aria-current=page]{background:var(--green)}
+.book-switch .aux{gap:8px}
+.book-switch .aux a{padding:7px 14px;min-height:36px;display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--green);font-weight:500}
+.book-switch .aux a:hover{background:var(--tint);text-decoration:none}
+.ui-page-study [data-pane=today] #todayTitle{margin-top:32px}
+.platform-reader-links{margin:12px auto 0}
+.platform-reader-links a{text-decoration:none;border:1px solid var(--line);color:var(--green);font-weight:500}
+.platform-reader-links a:hover{background:var(--tint)}
+.q-collection-field select,.q-panel select{text-overflow:ellipsis}
+@media(max-width:580px){
+ .platform-actions a,.platform-actions button{font-size:14px;padding:8px 12px;min-height:40px}
+ .platform-actions{gap:8px}
+ .book-switch .aux{width:100%}
+ .book-switch .aux a{flex:1;justify-content:center;text-align:center;padding:7px 8px}
+ .platform-reader-links{padding:10px 16px 0}
+}
+@media(min-width:901px){body:has(main.lab) .platform-reader-links{max-width:1192px;padding:0}body:has(main.lib) .platform-reader-links{max-width:1116px;padding:0}}
