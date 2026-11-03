@@ -167,6 +167,7 @@
     $('article').querySelectorAll('.table-wrap').forEach(w => { w.querySelector('.table-hint').hidden = w.scrollWidth <= w.clientWidth + 1; });
   }
   async function renderRoute({skipPosition = false} = {}) {
+    window.BookLinks?.renderReader(null,null);
     const request=++routeRequest;
     const continueReading = autoAdvance; autoAdvance = false;
     if (!skipPosition) recordPosition(); stopSpeech(continueReading ? 'keep' : undefined);
@@ -216,6 +217,7 @@
       $('previousButton').disabled = sections.indexOf(current) === 0;
       $('nextButton').disabled = sections.indexOf(current) === sections.length - 1;
       updateCompleteButton(); updateSpeechUI();
+      window.BookLinks?.renderReader(book,current);
       if (continueReading) {
         if (current.blocks.length && S.supported()) { window.scrollTo(0, 0); startReading(); }
         else { stopBackground(); $('speechStatus').textContent = 'Чтение остановлено: перевод следующего раздела ещё не добавлен.'; }

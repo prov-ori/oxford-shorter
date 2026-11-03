@@ -5,8 +5,8 @@
   <meta name="description" content="Личная учебная библиотека: последовательное изучение психиатрии, озвучивание, конспекты и заметки.">
   <meta name="theme-color" content="#233e36"><title>Психиатрия · Учебная библиотека</title>
   <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="platform.css">
-  <script src="data/book-manifest.js" defer></script><script src="model.js" defer></script><script src="platform-model.js" defer></script><script src="content-loader.js" defer></script><script src="search-client.js" defer></script><script src="common.js" defer></script><script src="ui.js" defer></script><script src="app.js" defer></script>
-<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="assets/app-icon.svg" type="image/svg+xml"><link rel="stylesheet" href="site.css"><link rel="stylesheet" href="ui.css"></head>
+  <script src="data/book-manifest.js" defer></script><script src="model.js" defer></script><script src="platform-model.js" defer></script><script src="content-loader.js" defer></script><script src="search-client.js" defer></script><script src="common.js" defer></script><script src="ui.js" defer></script><script src="data/book-links.js" defer></script><script src="book-links.js" defer></script><script src="app.js" defer></script>
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="assets/app-icon.svg" type="image/svg+xml"><link rel="stylesheet" href="site.css"><link rel="stylesheet" href="ui.css"><link rel="stylesheet" href="book-links.css"></head>
 <body>
 <a class="skip" href="#main">К чтению</a>
 <header class="topbar">
@@ -36,7 +36,7 @@
     <section id="reader" hidden>
       <div class="reader-top"><span class="eyebrow" id="chapterLabel"></span><span id="sectionStatus" class="badge"></span></div><h1 id="sectionTitle"></h1><p class="source-reference" id="sourceReference"></p>
       <div class="reader-tools"><a id="chapterQuizLink" class="quiet outlined nav-link" href="quiz.html">Проверить главу →</a><button class="primary" id="speakButton">▶ Слушать</button><button class="quiet" id="stopButton" disabled>■ Стоп</button><button class="quiet" id="prevParaButton" disabled aria-label="Предыдущий абзац" title="Предыдущий абзац">⏮</button><button class="quiet" id="nextParaButton" disabled aria-label="Следующий абзац" title="Следующий абзац">⏭</button><button class="quiet" id="speechSettingsButton">Настройки голоса</button><label class="font-control">Текст <select id="fontSize" aria-label="Размер текста"><option value="18">18</option><option value="20" selected>20</option><option value="22">22</option><option value="24">24</option></select></label></div>
-      <p id="speechStatus" class="fine" role="status"></p><div id="draftWarning" class="notice" hidden>Это черновик перевода. Сверка с исходным PDF ещё не завершена.</div><div id="partialNotice" class="notice" hidden></div><nav id="sectionOutline" aria-label="Темы открытого раздела"></nav><article id="article" class="prose"></article><aside id="editorNotes" aria-label="Примечания переводчика"></aside><p id="continuationNotice" class="notice" hidden></p>
+      <p id="speechStatus" class="fine" role="status"></p><div id="draftWarning" class="notice" hidden>Это черновик перевода. Сверка с исходным PDF ещё не завершена.</div><div id="partialNotice" class="notice" hidden></div><nav id="sectionOutline" aria-label="Темы открытого раздела"></nav><aside id="bookConnections" class="book-connections" aria-label="Связи с другим учебником" hidden></aside><article id="article" class="prose"></article><aside id="editorNotes" aria-label="Примечания переводчика"></aside><p id="continuationNotice" class="notice" hidden></p>
       <div class="reader-bottom"><button id="previousButton" class="quiet">← Назад</button><button id="completeButton" class="primary">Отметить прочитанным</button><button id="nextButton" class="quiet">Далее →</button></div>
     </section>
   </main>

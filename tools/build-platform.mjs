@@ -1,5 +1,7 @@
 import fs from 'node:fs/promises';import {createHash} from 'node:crypto';import '../dist/model.js';
 import {practice} from '../content/practice-content.mjs';
+import {bookLinks} from '../content/book-links.mjs';
+import {compileBookLinks} from './compile-book-links.mjs';
 const root=new URL('../dist/',import.meta.url),hash=t=>createHash('sha256').update(t).digest('hex');
 await fs.mkdir(new URL('data/chapters/',root),{recursive:true});
 const catalogue={schemaVersion:1,books:{}};
@@ -21,6 +23,9 @@ for(const [key,file]of [['oxford','book'],['fish','fish']]){
 await fs.writeFile(new URL('data/catalogue.json',root),JSON.stringify(catalogue));
 const bank=JSON.parse(await fs.readFile(new URL('data/quiz-bank.json',root),'utf8')),retired=new Set(bank.retiredQuestionIds||[]),active=bank.questions.filter(q=>!retired.has(q.id));
 const compiled=structuredClone(practice),booksByKey={};for(const [key,file]of [['oxford','book'],['fish','fish']])booksByKey[key]=JSON.parse(await fs.readFile(new URL('data/'+file+'.json',root),'utf8'));
+const connections=compileBookLinks(bookLinks,booksByKey,bank);
+await fs.writeFile(new URL('data/book-links.js',root),'window.BOOK_LINKS='+JSON.stringify(connections)+';');
+await fs.writeFile(new URL('data/book-links.json',root),JSON.stringify(connections));
 for(const group of ['atlas','cases','audio','timelines','explain'])for(const item of compiled[group]){
  item.sources=item.topics.map(topic=>{const q=bank.questions.find(q=>q.topic===topic);if(!q)throw Error('Practice source missing: '+topic);const s=booksByKey[q.book].chapters.flatMap(c=>c.sections).find(s=>s.id===q.sectionId),block=s.blocks.findIndex(b=>StudyModel.blockText(b).includes(q.sourceEvidence));if(block<0)throw Error('Practice evidence mismatch');return{book:q.book==='oxford'?'Oxford':'Fish',edition:booksByKey[q.book].edition,sourceRevision:booksByKey[q.book].revision,sectionId:s.id,block,title:s.title,pdfStart:s.source.pdfStart,pdfEnd:s.source.pdfEnd,quote:q.sourceEvidence,href:catalogue.books[q.book].reader+'#section='+s.id+'&block='+block};});
 }
@@ -32,6 +37,7 @@ await fs.mkdir(new URL('assets/',root),{recursive:true});
 await fs.copyFile(new URL('../content/brain-mri-provenance.json',root),new URL('assets/brain-mri-v2.json',root));
 await import('./build-systems.mjs');
 const shell=['ui.css','ui.js','model-selection.js','systems-content.js','systems-model.js','systems-geometry.js','systems-state.js','systems-export.js','systems-lab.js','assets/basal-mri-v1.json','assets/basal-mri-v1.bin','micro-mesh.js','micro-view.js','synapse-geometry.js','synapse-state.js','synapse-view3d.js','biophysics.js','neuro-sim.js','neuron-geometry.js','neuron-view3d.js','brain-mri.js','assets/brain-mri-v2.json','assets/brain-mri-v2.bin','neuro.html','neuro.css','neuro.js','neuro-model.js','neuro-content.js','evidence.js','study.html','practice.html','index.html','fish.html','quiz.html','lab.html','library.html','styles.css','quiz.css','platform.css','site.css','app.js','model.js','content-loader.js','quiz.js','quiz-model.js','platform-model.js','common.js','search-client.js','search-worker.js','study.js','practice.js','manifest.webmanifest','assets/app-icon.svg','assets/app-icon-192.png','assets/app-icon-512.png','data/book-manifest.js','data/fish-manifest.js','data/book-manifest.json','data/fish-manifest.json','data/catalogue.json','data/practice.js','data/practice.json','data/coverage.json','data/quiz-bank.js','data/quiz-bank.json'];
+shell.push('connections.html','book-links.js','book-links.css','data/book-links.js','data/book-links.json');
 const shellVersion=hash(Buffer.concat(await Promise.all(shell.map(p=>fs.readFile(new URL(p,root)))))).slice(0,16);
 await fs.writeFile(new URL('data/offline-assets.js',root),'self.STUDY_OFFLINE='+JSON.stringify({version:shellVersion,assets:shell})+';');
 console.log('Generated chapter manifests, verified content shards and search indexes.');
