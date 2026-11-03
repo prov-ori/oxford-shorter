@@ -73,6 +73,15 @@
     $('notesMetric').replaceChildren(document.createTextNode(Object.values(state.notes).filter(n => n.trim()).length + ' '), el('small', noteWord(Object.values(state.notes).filter(n => n.trim()).length)));
     $('coverageHint').textContent = st.total ? `${st.translated} из ${st.total} полностью${st.partial ? ` · частично: ${st.partial}` : ''} · ${book.outlineComplete ? 'полное оглавление' : 'оглавление добавляется'}` : 'Перевод ещё не добавлен';
     $('continueButton').textContent = sections.some(M.readable) ? (state.lastSection ? 'Продолжить чтение →' : 'Начать с начала →') : sections.length ? 'Открыть оглавление →' : 'Подготовить материалы ↗';
+    const hint = $('continueHint');
+    if (hint) {
+      const last = sections.find(s => s.id === state.lastSection);
+      const chapterOf = s => s.chapter || book.chapters.find(c => c.sections.some(x => x.id === s.id));
+      if (last) { const c = chapterOf(last); hint.replaceChildren(document.createTextNode('Вы остановились: '), el('strong', last.title), document.createTextNode(c ? ' · ' + c.title : '')); hint.hidden = false; }
+      else if (sections.some(M.readable)) { hint.textContent = `${st.total} ${sectionWord(st.total)} в порядке книги. Место чтения сохраняется автоматически.`; hint.hidden = false; }
+      else hint.hidden = true;
+    }
+    if (!$('home').hidden && book.chapters.length) renderOverview();
   }
   let tocMatches=null,tocTimer,tocRequest=0,routeRequest=0;
   function renderToc() {
@@ -105,7 +114,8 @@
       $('sourceTitle').textContent = book.outlineScope === 'chapters' ? `Оглавление: ${numberedChapters} глав` : book.outlineComplete ? `${numberedChapters} глав · от начала до конца` : 'Учебник пополняется поэтапно';
       $('sourceDescription').textContent = book.translationBoundary ? `Сейчас переведены: ${book.translationBoundary}` : `Источник: ${book.source.filename}. Переведено и сверено с PDF: ${st.translated} разделов. ${book.outlineComplete ? 'В навигации доступны главы и основные разделы.' : 'Оглавление пока неполное.'}`;
       $('sourceFootnote').textContent = `${book.source.pageCount} страниц в PDF. Добавленный перевод сверен с оригиналом; независимая клиническая редактура не проводилась. ${st.translated === st.total ? 'Все разделы переведены.' : 'Частично переведённые разделы показывают точную границу готового текста; пустые разделы ожидают перевода.'}`;
-      $('sourceButton').textContent = 'Открыть материалы →';
+      $('sourceButton').textContent = 'Материалы и резервная копия →';
+      if ($('sourceSummary')) $('sourceSummary').textContent = `${st.translated === st.total ? 'Переведены все' : 'Переведено'} ${st.translated} из ${st.total} разделов. Перевод сверен с PDF, но независимая клиническая редактура не проводилась — в спорных местах сверяйтесь с оригиналом.`;
     } else if (pdf) {
       $('sourceTitle').textContent = 'Оригинал подключён';
       $('sourceDescription').textContent = 'PDF сохранён для сверки. Теперь нужен подготовленный по нему перевод с оглавлением. На сайте пока нет переведённых разделов.';
@@ -115,11 +125,23 @@
   function renderOverview() {
     const container = $('chapterOverview'); container.replaceChildren();
     if (!book.chapters.length) return;
-    container.append(el('h2', 'Главы учебника'));
+    container.append(el('h2', 'Главы учебника'), el('p', 'Нажмите на главу, чтобы продолжить с первого непрочитанного раздела.', 'overview-hint'));
     for (const c of book.chapters) {
-      const row = el('div', undefined, 'chapter-row'); const copy = el('div'); const partial = c.sections.filter(s => s.status === 'partial').length;
-      copy.append(el('h3', c.title), el('p', `${c.sections.filter(M.ready).length} из ${c.sections.length} разделов переведено полностью${partial ? ` · частично: ${partial}` : ''}`));
-      const button = el('button', 'Открыть главу →', 'quiet outlined'); button.disabled = !c.sections.length; button.onclick = () => route(c.sections[0].id); row.append(copy, button); container.append(row);
+      const total = c.sections.length, read = c.sections.filter(s => M.isRead(s, state, book)).length;
+      const ready = c.sections.filter(M.ready).length, partial = c.sections.filter(s => s.status === 'partial').length;
+      const row = el('div', undefined, 'chapter-row' + (total && read === total ? ' done' : ''));
+      const button = el('button', undefined, 'chapter-open'); button.type = 'button'; button.disabled = !total;
+      const title = el('span', c.title, 'ch-title');
+      const meta = el('span', undefined, 'ch-meta'); const bar = el('span', undefined, 'ch-bar'); bar.setAttribute('aria-hidden', 'true');
+      const fill = document.createElement('i'); fill.style.width = (total ? Math.round(read / total * 100) : 0) + '%'; bar.append(fill);
+      const status = read === total && total ? 'Прочитано полностью' : read ? `Прочитано ${read} из ${total}` : `${total} ${total % 10 === 1 && total % 100 !== 11 ? 'раздел' : total % 10 >= 2 && total % 10 <= 4 && (total % 100 < 10 || total % 100 >= 20) ? 'раздела' : 'разделов'}`;
+      const extra = ready < total ? ` · переведено ${ready} из ${total}${partial ? `, частично ${partial}` : ''}` : '';
+      meta.append(bar, document.createTextNode(status + extra));
+      const go = el('span', read && read < total ? 'Продолжить →' : read === total && total ? 'Повторить →' : 'Открыть →', 'ch-go'); go.setAttribute('aria-hidden', 'true');
+      button.append(title, meta, go);
+      button.setAttribute('aria-label', `${c.title}. ${status}${extra}`);
+      button.onclick = () => { const next = c.sections.find(s => M.readable(s) && !M.isRead(s, state, book)) || c.sections[0]; route(next.id); };
+      row.append(button); container.append(row);
     }
   }
   function renderBlock(b) {
@@ -160,7 +182,7 @@
     document.body.classList.toggle('reader-active',Boolean(current));
     if (id && !current) toast('Этот раздел ещё не добавлен. Открыт обзор библиотеки.');
     $('home').hidden = Boolean(current); $('reader').hidden = !current;
-    $('breadcrumb').textContent = current ? 'Учебник / ' + current.chapter.title : 'Библиотека / Обзор';
+    $('breadcrumb').textContent = current ? (book.id.startsWith('fish') ? 'Фиш' : 'Oxford') + ' / ' + current.chapter.title : (book.id.startsWith('fish') ? 'Фиш' : 'Oxford') + ' / Обзор глав';
     if (current) {
       state.lastSection = current.id;
       $('chapterLabel').textContent = current.chapter.title;

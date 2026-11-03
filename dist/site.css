@@ -1,0 +1,133 @@
+/* site.css — единая шапка, навигация и общие улучшения интерфейса.
+   Подключается ПОСЛЕДНИМ на каждой странице, чтобы перекрыть разрозненные
+   правила styles.css / platform.css / quiz.css / встроенных <style>. */
+
+/* ---------- Шапка ---------- */
+header.topbar,
+.knowledge header.topbar{
+  height:64px;min-height:64px;padding:0 clamp(16px,3vw,40px);
+  display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:nowrap;
+  background:var(--surface);border-bottom:1px solid var(--line)
+}
+header.topbar .brand{display:flex;align-items:center;gap:12px;margin:0;font:21px/1.15 Georgia,serif;color:var(--ink);text-decoration:none;flex:none}
+header.topbar .brand-icon{width:36px;height:39px;font-size:24px;border-radius:18px 18px 4px 4px;flex:none}
+header.topbar .brand small{display:block;font:10px/1.5 'Segoe UI',system-ui,sans-serif;letter-spacing:.8px;margin-top:2px;color:var(--muted)}
+
+header.topbar .top-actions{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;min-width:0}
+header.topbar .global-nav{display:flex;align-items:center;gap:2px;flex-wrap:nowrap;width:auto}
+header.topbar .global-nav .nav-link{
+  display:inline-flex;align-items:center;min-height:40px;padding:8px 14px;border-radius:8px;
+  font-size:14px;line-height:1.2;color:var(--ink);text-decoration:none;white-space:nowrap;background:none;position:relative
+}
+header.topbar .global-nav .nav-link:hover{background:var(--tint)}
+header.topbar .global-nav .nav-link[aria-current=page]{background:var(--tint);color:var(--green);font-weight:600}
+header.topbar .top-actions button{min-height:40px;padding:8px 14px;font-size:14px;white-space:nowrap}
+header.topbar .top-actions .nav-sep{width:1px;height:24px;background:var(--line);margin:0 6px;flex:none}
+
+@media (max-width:1100px){header.topbar .brand small{display:none}}
+@media (max-width:980px){
+  header.topbar .global-nav .nav-link{padding:8px 10px}
+}
+
+/* Телефон: две строки — бренд и действия, затем навигация на всю ширину. */
+@media (max-width:720px){
+  header.topbar,
+  .knowledge header.topbar{height:auto;min-height:0;padding:8px 12px 0;flex-wrap:wrap;gap:0;display:flex}
+  header.topbar .brand{font-size:19px;gap:10px;height:44px;margin:0}
+  header.topbar .brand-icon{width:30px;height:33px;font-size:20px}
+  header.topbar .top-actions{display:contents}
+  header.topbar .top-actions button{order:1;margin-left:auto;min-height:40px;padding:8px 10px;font-size:13px}
+  header.topbar .top-actions button + button{margin-left:6px}
+  header.topbar .global-nav{
+    order:2;flex:1 1 100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;
+    margin:6px -12px 0;border-top:1px solid var(--line);overflow:visible
+  }
+  header.topbar .global-nav .nav-link{
+    justify-content:center;min-height:44px;padding:6px 2px;border-radius:0;font-size:13px;
+    background:none;border-bottom:2px solid transparent
+  }
+  header.topbar .global-nav .nav-link[aria-current=page]{background:none;border-bottom-color:var(--green)}
+  header.topbar .top-actions .nav-sep{display:none}
+}
+@media (max-width:360px){header.topbar .global-nav .nav-link{font-size:12px}}
+
+/* ---------- Переключатель учебников (Oxford / Фиш) ---------- */
+.book-switch{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;padding:14px 0 6px}
+.book-switch .seg{display:inline-flex;padding:3px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.book-switch .seg a{padding:6px 14px;border-radius:7px;font-size:13px;color:var(--ink);text-decoration:none;min-height:32px;display:inline-flex;align-items:center}
+.book-switch .seg a:hover{background:var(--tint)}
+.book-switch .seg a[aria-current=page]{background:var(--green);color:#fff;font-weight:600}
+.book-switch .aux{display:inline-flex;gap:14px;margin-left:auto}
+.book-switch .aux a{font-size:13px;color:var(--green);text-decoration:none;padding:6px 0}
+.book-switch .aux a:hover{text-decoration:underline}
+@media (max-width:580px){.book-switch .aux{margin-left:0}}
+
+/* ---------- Главная учебника ---------- */
+.continue-hint{margin-top:10px;font-size:13px;color:var(--muted);max-width:46ch}
+.continue-hint strong{color:var(--ink);font-weight:600}
+
+.source-more{margin-top:10px}
+.source-more summary{cursor:pointer;font-size:13px;color:var(--green);list-style:none;display:inline-flex;gap:6px;align-items:center;min-height:32px}
+.source-more summary::-webkit-details-marker{display:none}
+.source-more summary::before{content:'▸';transition:transform .15s}
+.source-more[open] summary::before{transform:rotate(90deg)}
+.source-more p{margin-top:8px}
+.source-summary{font-size:15px;line-height:1.6}
+
+.chapter-overview{margin:8px 0 36px}
+.chapter-overview>h2{margin-bottom:6px}
+.chapter-overview .overview-hint{font-size:13px;color:var(--muted);margin-bottom:12px}
+.chapter-row{padding:0;border-bottom:1px solid var(--line)}
+.chapter-row>button.chapter-open{
+  all:unset;box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:center;text-align:left;
+  width:100%;padding:14px 10px;border-radius:10px;cursor:pointer;color:var(--ink)
+}
+.chapter-row>button.chapter-open:hover{background:var(--tint)}
+.chapter-row>button.chapter-open:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.chapter-row>button.chapter-open:disabled{cursor:default;opacity:.55}
+.chapter-row .ch-title{grid-column:1;grid-row:1;font-size:15px;font-weight:600;line-height:1.35}
+.chapter-row .ch-meta{grid-column:1;grid-row:2;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)}
+.chapter-row .ch-bar{flex:0 0 96px;height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.chapter-row .ch-bar i{display:block;height:100%;background:var(--green);border-radius:2px}
+.chapter-row .ch-go{grid-column:2;grid-row:1/3;font-size:13px;color:var(--green);white-space:nowrap}
+.chapter-row.done .ch-title::after{content:' ✓';color:var(--green)}
+@media (max-width:580px){
+  .chapter-row>button.chapter-open{grid-template-columns:minmax(0,1fr);padding:12px 4px}
+  .chapter-row .ch-go{display:none}
+  .chapter-row .ch-bar{flex-basis:64px}
+}
+
+/* ---------- Тесты: пять показателей в одну строку ---------- */
+.q-stats{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media (max-width:900px){
+  .q-stats{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:18px}
+  .q-stats>div:nth-child(3n){border-right:0}
+  .q-stats>div:nth-child(3n+1){padding-left:0}
+}
+@media (max-width:520px){
+  .q-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .q-stats>div{border-right:1px solid var(--line);padding-left:14px}
+  .q-stats>div:nth-child(3n){border-right:1px solid var(--line)}
+  .q-stats>div:nth-child(3n+1){padding-left:14px}
+  .q-stats>div:nth-child(odd){padding-left:0}
+  .q-stats>div:nth-child(even){border-right:0}
+  .q-stats>div:last-child:nth-child(odd){grid-column:1/-1;border-right:0}
+}
+
+/* ---------- Лаборатория: видно, что вкладки прокручиваются ---------- */
+.tabs[role=tablist]{
+  -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent);
+          mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent);
+  padding-right:40px
+}
+.tabs[role=tablist].at-end{-webkit-mask-image:none;mask-image:none}
+
+/* ---------- Общая доступность ---------- */
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
+  outline:2px solid var(--green);outline-offset:2px
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* Подпись у кнопки конспекта видна и на телефоне — одна иконка «▤» непонятна. */
+@media (max-width:720px){header.topbar .top-actions #notesButton span{display:inline}}
+@media (max-width:400px){header.topbar .brand{font-size:17px;gap:8px}header.topbar .top-actions button{padding:8px 8px}}
