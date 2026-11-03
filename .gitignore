@@ -6,6 +6,8 @@ tmp/
 test-results/
 dist/data/book.js
 dist/data/book.json
+dist/data/fish.js
+dist/data/fish.json
 dist/data/quiz-bank.js
 dist/data/quiz-bank.json
 .vercel/
