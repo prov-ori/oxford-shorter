@@ -7,7 +7,7 @@
   const brand=header.querySelector('.brand'),notes=header.querySelector('#notesButton'),materials=header.querySelector('#libraryButton'),nav=n('nav',undefined,'ui-nav'),actions=n('div',undefined,'ui-header-actions'),toggle=n('button','Меню','quiet outlined ui-menu-toggle');
   header.classList.add('ui-header');nav.id='uiGlobalNav';nav.setAttribute('aria-label','Основные разделы');
   if(brand){brand.href='study.html';brand.setAttribute('aria-label','Психиатрия — учебный кабинет');}
-  const active=reader||file==='connections.html'?'study.html':file==='neuro.html'?'lab.html':file;
+  const active=reader||file==='connections.html'?'study.html':file==='neuro.html'?'lab.html':file==='workshop.html'?'practice.html':file;
   for(const [href,text]of[['study.html','Кабинет'],['quiz.html','Тесты'],['practice.html','Практика'],['lab.html','Инструменты'],['library.html','Библиотека']]){const a=n('a',text,'nav-link');a.href=href;if(href===active)a.setAttribute('aria-current',file===href?'page':'location');nav.append(a);}
   if(materials){materials.classList.add('ui-materials');nav.append(materials);}
   const search=n('a',undefined,'ui-search quiet');search.href='study.html#search';search.setAttribute('aria-label','Поиск по материалам');search.title='Поиск по материалам · /';search.innerHTML='<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>';

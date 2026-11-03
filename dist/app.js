@@ -168,6 +168,7 @@
   }
   async function renderRoute({skipPosition = false} = {}) {
     window.BookLinks?.renderReader(null,null);
+    window.ReaderCards?.clear();
     const request=++routeRequest;
     const continueReading = autoAdvance; autoAdvance = false;
     if (!skipPosition) recordPosition(); stopSpeech(continueReading ? 'keep' : undefined);
@@ -218,6 +219,7 @@
       $('nextButton').disabled = sections.indexOf(current) === sections.length - 1;
       updateCompleteButton(); updateSpeechUI();
       window.BookLinks?.renderReader(book,current);
+      window.ReaderCards?.configure(book,current);
       if (continueReading) {
         if (current.blocks.length && S.supported()) { window.scrollTo(0, 0); startReading(); }
         else { stopBackground(); $('speechStatus').textContent = 'Чтение остановлено: перевод следующего раздела ещё не добавлен.'; }

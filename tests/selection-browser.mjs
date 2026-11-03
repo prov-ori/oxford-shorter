@@ -25,6 +25,17 @@ const ready = page => page.waitForFunction(() => document.querySelector('canvas'
 async function frame(page, name, key) {
   const canvas = page.locator('canvas');
   await canvas.scrollIntoViewIfNeeded();
+  // Element screenshots expand fractional CSS bounds to full screenshot pixels.
+  // Align this pixel-picking fixture to the raster grid, so a tiny point sprite
+  // is tested at its actual pixel rather than a rescaled, half-pixel neighbour.
+  await canvas.evaluate(c => {
+    c.style.transform = '';
+    let r = c.getBoundingClientRect();
+    c.style.width = Math.round(r.width) + 'px'; c.style.height = Math.round(r.height) + 'px';
+    r = c.getBoundingClientRect();
+    c.style.transform = 'translate(' + (Math.ceil(r.x) - r.x) + 'px,' + (Math.ceil(r.y) - r.y) + 'px)';
+  });
+  await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
   const bytes = await canvas.screenshot({ style: '.systems-label{visibility:hidden!important}' });
   const png = PNG.sync.read(bytes), hits = [];
   for (let i = 0; i < png.data.length; i += 4) if (pink(png.data, i)) hits.push(i);
