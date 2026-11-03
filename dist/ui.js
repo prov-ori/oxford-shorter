@@ -33,6 +33,20 @@
   if(reader)document.body.classList.toggle('ui-reading',new URLSearchParams(location.hash.slice(1)).has('section'));
  }
  window.addEventListener('hashchange',route);route();
+ // Keep the laboratory switcher one row high on touch screens. The existing
+ // tab handlers remain the source of truth for routing and simulation state.
+ if(file==='lab.html'){
+  const tablist=document.querySelector('.lab .tabs'),tabs=[...document.querySelectorAll('.lab .tabs [role=tab]')];
+  if(tablist&&tabs.length){
+   const picker=n('div',undefined,'ui-lab-picker'),label=n('label','Инструмент'),select=n('select');
+   select.id='labToolSelect';label.htmlFor=select.id;
+   for(const tab of tabs){const option=n('option',tab.textContent.trim());option.value=tab.id.slice(2);select.append(option);}
+   const sync=()=>{const active=tabs.find(t=>t.getAttribute('aria-selected')==='true');if(active){select.value=active.id.slice(2);select.setAttribute('aria-controls',active.getAttribute('aria-controls'));}};
+   sync();picker.append(label,select);tablist.before(picker);tablist.classList.add('ui-lab-tabs');
+   new MutationObserver(sync).observe(tablist,{subtree:true,attributes:true,attributeFilter:['aria-selected']});
+   select.onchange=()=>{const tab=tabs.find(t=>t.id==='t-'+select.value);if(!tab)return;tab.click();requestAnimationFrame(()=>document.getElementById(tab.getAttribute('aria-controls'))?.scrollIntoView({block:'start'}));};
+  }
+ }
  // A quick attempt uses the existing validated form and all currently selected topic filters.
  if(file==='quiz.html'){
   const hero=document.querySelector('.q-hero'),start=document.getElementById('startButton'),resume=document.getElementById('resumeCard');

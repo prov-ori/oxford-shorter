@@ -13,7 +13,8 @@
     "test:ui": "node tests/ui-browser.mjs",
     "test:a11y": "node tools/audit-ui.mjs",
     "test:speech": "node tests/speech-browser.mjs",
-    "test:links": "node --test tests/book-links.test.mjs && node tests/book-links-browser.mjs"
+    "test:links": "node --test tests/book-links.test.mjs && node tests/book-links-browser.mjs",
+    "test:lab-mobile": "node tests/lab-mobile-browser.mjs"
   },
   "engines": {
     "node": ">=20"
