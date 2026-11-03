@@ -75,7 +75,7 @@
 
 @media(max-width:850px){.lib-tools input{font-size:16px!important}.chips button{min-height:44px;padding:8px 12px}.lib-count{align-items:flex-start;flex-wrap:wrap}.lib-count button{min-height:44px}.book-body,.book-head>span:first-child{min-width:0}.book-title,.toc,.book-body p{overflow-wrap:anywhere}.book-meta .badge{font-size:13px}}
 </style>
-<link rel="stylesheet" href="platform.css"><script src="common.js" defer></script><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="assets/app-icon.svg" type="image/svg+xml"><link rel="stylesheet" href="site.css"></head>
+<link rel="stylesheet" href="platform.css"><script src="common.js" defer></script><script src="ui.js" defer></script><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="assets/app-icon.svg" type="image/svg+xml"><link rel="stylesheet" href="site.css"><link rel="stylesheet" href="ui.css"></head>
 <body>
 <a class="skip" href="#main">К списку книг</a>
 <header class="topbar">
@@ -84,14 +84,14 @@
 </header>
 <div class="platform-reader-links"><a href="quiz.html">Тесты по учебникам</a><a href="study.html#search">Найти в учебных материалах</a></div><main id="main" class="lib" tabindex="-1">
   <span class="eyebrow">Личная библиотека</span>
-  <h1>Моя <em>библиотека</em></h1>
+  <h1>Моя психобиблиотека</h1>
   <p class="lib-lede" id="lede"></p>
 
   <div class="lib-status" id="status" role="group" aria-label="Фильтр по наличию"></div>
 
   <div class="lib-tools">
     <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Название или автор" aria-label="Поиск по названию или автору"></label>
-    <div class="chips" id="chips" role="group" aria-label="Фильтр по теме"></div>
+    <label class="ui-library-category">Тема<select id="libraryCategory" aria-label="Тема книги"></select></label><div class="chips" id="chips" role="group" aria-label="Фильтр по теме"></div>
   </div>
 
   <p class="lib-count" role="status"><span id="count"></span><button id="reset" hidden>Сбросить фильтры</button></p>
@@ -162,8 +162,8 @@ fiction:"Худож. проза", anatomy:"Анатомия", medbase:"Меди�
 };
 const GROUPS = {
   have:{icon:"✅",label:"В наличии",hint:"Книги уже в библиотеке"},
-  ru:{icon:"⏳",label:"Ожидается из России",hint:"Срок: 11.26"},
-  eu:{icon:"⏳",label:"Ожидается из Европы",hint:"Срок: 26/27"}
+  ru:{icon:"⏳",label:"Ожидаю · Россия",hint:"Срок: 11.26"},
+  eu:{icon:"⏳",label:"Ожидаю · Европа",hint:"Срок: 26/27"}
 };
 
 const state = {group:null, cat:'all', q:''};
@@ -215,7 +215,7 @@ function renderChips(){
     const n = DATA.filter(b=>b.cat===c && matches(b,'cat')).length;
     html += `<button data-cat="${c}" aria-pressed="${state.cat===c}">${label}<span>${n}</span></button>`;
   }
-  $('chips').innerHTML = html;
+  $('chips').innerHTML = html;const select=$('libraryCategory');select.replaceChildren();for(const [key,label] of [['all','Все темы'],...Object.entries(CATS)]){const option=document.createElement('option');option.value=key;option.textContent=label+' · '+DATA.filter(b=>(key==='all'||b.cat===key)&&matches(b,'cat')).length;select.append(option);}select.value=state.cat;
 }
 
 function bookHtml(b,i){
@@ -261,6 +261,7 @@ $('chips').addEventListener('click', e=>{
   const btn = e.target.closest('button'); if(!btn) return;
   state.cat = btn.dataset.cat; render(); $('chips').querySelector('[data-cat="'+state.cat+'"]').focus({preventScroll:true});
 });
+$('libraryCategory').addEventListener('change',e=>{state.cat=e.target.value;render();});
 $('search').addEventListener('input', e=>{state.q = e.target.value.trim().toLowerCase(); render();});
 $('reset').addEventListener('click', ()=>{state.group=null;state.cat='all';state.q='';$('search').value='';render();});
 $('list').addEventListener('click', e=>{

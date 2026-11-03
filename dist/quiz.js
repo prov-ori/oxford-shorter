@@ -35,7 +35,7 @@
   $('selectedChapterCount').textContent=document.querySelectorAll('#chapterChoices input:checked').length+' выбрано';
   $('poolHint').textContent=(targetQuestion?'Выбран конкретный вопрос из поиска. ':'')+(list.length?`Доступно ${list.length} · В попытке ${size} · ${books.join(' + ')}`:'Нет вопросов по выбранным условиям.');
   $('modeHint').textContent=cfg.mode==='exam'?'Разбор появится после завершения. Время продолжает идти при закрытии вкладки. Ответы сохраняются автоматически.':'Ответ фиксируется кнопкой «Проверить». После этого доступны объяснение и ссылка на учебник.';
-  $('timeField').hidden=cfg.mode!=='exam';$('startButton').disabled=!list.length||!!state.active;$('startButton').firstChild.textContent=cfg.mode==='exam'?'Начать экзамен ':'Начать тренировку ';
+  $('timeField').hidden=cfg.mode!=='exam';$('startButton').dataset.available=String(list.length);$('startButton').disabled=!list.length||!!state.active;$('startButton').firstChild.textContent=cfg.mode==='exam'?'Начать экзамен ':'Начать тренировку ';
   if(state.active)$('modeHint').textContent+=' Сначала завершите или продолжите текущую попытку.';
  }
  function statTiles(container,items){container.replaceChildren(...items.map(([title,value,detail])=>{const div=node('div');div.append(node('span',title),node('strong',value));if(detail)div.append(node('small',detail));return div;}));}

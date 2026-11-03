@@ -6,7 +6,7 @@
  <title>Проверка знаний · Психиатрия</title>
  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="quiz.css">
  <script src="data/quiz-bank.js" defer></script><script src="quiz-model.js" defer></script><script src="quiz.js" defer></script>
-<link rel="stylesheet" href="platform.css"><script src="common.js" defer></script><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="assets/app-icon.svg" type="image/svg+xml"><link rel="stylesheet" href="site.css"></head>
+<link rel="stylesheet" href="platform.css"><script src="common.js" defer></script><script src="ui.js" defer></script><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="assets/app-icon.svg" type="image/svg+xml"><link rel="stylesheet" href="site.css"><link rel="stylesheet" href="ui.css"></head>
 <body class="knowledge">
  <a class="skip" href="#quizMain">К проверке знаний</a>
  <header class="topbar"><a class="brand" href="study.html" aria-label="Психиатрия — главная учебной платформы"><span class="brand-icon" aria-hidden="true">Ψ</span><span>Психиатрия<small>Личная учебная библиотека</small></span></a><nav class="global-nav" aria-label="Разделы сайта"><a class="nav-link" href="study.html">Обучение</a><a class="nav-link" href="practice.html" aria-current="page">Практика</a><a class="nav-link" href="lab.html">Лаборатория</a><a class="nav-link" href="library.html">Библиотека</a></nav></header>
@@ -14,8 +14,7 @@
  <div id="fatalError" class="q-storage" role="alert" hidden></div>
  <main id="quizMain" class="q-main" tabindex="-1">
   <section id="setupScreen" aria-labelledby="setupTitle">
-   <div class="q-hero"><div><span class="eyebrow">ОТ ЧТЕНИЯ К ПОНИМАНИЮ</span><h1 id="setupTitle">Что вы <em>действительно</em><br>запомнили?</h1><p>Два учебника. Одна практика.<br>Проверяйте понятия, разбирайте ошибки и возвращайтесь к источнику.</p></div><div class="q-hero-note"><span aria-hidden="true">?</span><p>Не угадать ответ.<br><strong>Понять различие.</strong></p><small id="bankSize">Загружаем банк вопросов…</small></div></div>
-   <div class="q-stats" id="overviewStats" aria-label="Ваш прогресс"></div>
+   <div class="q-hero"><div><span class="eyebrow">ОТ ЧТЕНИЯ К ПОНИМАНИЮ</span><h1 id="setupTitle">Проверка знаний</h1><p>Oxford и Фиш: тренировка с разбором или экзамен с таймером.</p></div><div class="q-hero-note"><span aria-hidden="true">?</span><p>Не угадать ответ.<br><strong>Понять различие.</strong></p><small id="bankSize">Загружаем банк вопросов…</small></div></div>
    <div id="resumeCard" class="q-resume" hidden><div><strong>У вас есть незавершённая попытка</strong><p id="resumeDescription"></p></div><button id="resumeButton" class="primary">Продолжить →</button><button id="finishSavedButton" class="quiet">Завершить с текущими ответами</button></div>
    <div class="q-dashboard">
     <section class="q-config q-panel" aria-labelledby="configTitle"><span class="eyebrow">СЛЕДУЮЩИЙ ШАГ</span><h2 id="configTitle">Соберите свою проверку</h2>
@@ -28,6 +27,7 @@
     </section>
     <aside class="q-side"><section class="q-panel q-review-card"><span class="eyebrow">ЗАКРЕПЛЕНИЕ</span><h2>Ошибки —<br>точка роста.</h2><p id="reviewHint"></p><button id="practiceMistakes" class="quiet outlined">Разобрать ошибки →</button><p class="q-muted">После верного ответа повторение предлагается через 1, 3, 7, 14 и 30 дней. Ошибки доступны для повторения сразу.</p></section><section class="q-panel"><span class="eyebrow">О БАНКЕ</span><h3>Привязано к учебнику</h3><p id="bankCoverage"></p><p class="q-muted">Это начальный авторский банк, а не исчерпывающий экзамен по каждой главе. Вопросы опираются на опубликованный учебный перевод. Разбор содержит подтверждающий фрагмент и ссылку на раздел.</p></section></aside>
    </div>
+   <div class="q-stats" id="overviewStats" aria-label="Ваш прогресс"></div>
    <section class="q-section" aria-labelledby="chapterStatsTitle"><div class="q-section-head"><div><span class="eyebrow">КАРТА ЗНАНИЙ</span><h2 id="chapterStatsTitle">К каким темам вернуться</h2></div><p class="q-muted">Точность ответов за сохранённую историю</p></div><div id="chapterStats" class="q-topic-grid"></div></section>
    <section class="q-section" aria-labelledby="historyTitle"><div class="q-section-head"><div><span class="eyebrow">ВАШ ПУТЬ</span><h2 id="historyTitle">История попыток</h2></div><div class="q-backup-actions"><button id="exportBackup" class="quiet outlined">Скачать прогресс</button><button id="importBackup" class="quiet outlined">Восстановить</button></div></div><div id="historyList"></div><p class="q-muted">Последние 100 завершённых попыток хранятся в этом браузере. Синхронизации между устройствами нет; для переноса используйте файл прогресса. Данные чтения и личные заметки учебников не изменяются.</p></section>
   </section>

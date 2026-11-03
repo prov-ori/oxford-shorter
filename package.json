@@ -9,7 +9,9 @@
     "test:platform": "node tests/platform-browser.mjs",
     "test:neuro": "node tests/neuro-browser.mjs && node tests/neuron-browser.mjs && node tests/synapse-browser.mjs && node tests/systems-browser.mjs && node tests/mri-failure-browser.mjs && node tests/selection-browser.mjs && node tests/mri-split-browser.mjs",
     "test:selection": "node tests/selection-browser.mjs",
-    "test:mri": "node tests/mri-split-browser.mjs && node tests/mri-failure-browser.mjs"
+    "test:mri": "node tests/mri-split-browser.mjs && node tests/mri-failure-browser.mjs",
+    "test:ui": "node tests/ui-browser.mjs",
+    "test:a11y": "node tools/audit-ui.mjs"
   },
   "engines": {
     "node": ">=20"

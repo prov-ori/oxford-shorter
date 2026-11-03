@@ -91,6 +91,10 @@ try {
     await o.waitForFunction(async () => (await caches.keys()).some(k => k.startsWith('psycholibrary-shell-') && k.endsWith('-b')) && !(await caches.keys()).some(k => k.startsWith('psycholibrary-shell-') && k.endsWith('-a')));
     assert.equal(await o.evaluate(() => localStorage.getItem('mri-regression-note')), 'keep');
     assert.equal(await o.evaluate(async () => (await (await caches.open('psycholibrary-chapters-v1')).match('mri-regression-chapter')).text()), 'keep downloaded chapter');
+    await o.locator('#uiUpdate').waitFor();
+    assert.equal(new URL(o.url()).hash, '#atlas', 'an update must not interrupt the active model with an automatic reload');
+    await o.locator('#uiUpdate').getByRole('button', { name: 'Позже', exact: true }).click();
+    assert.equal(await o.locator('#uiUpdate').count(), 0);
   }
   await offline.setOffline(true); await o.reload(); await ready(o);
   await o.getByLabel('Раздвинуть корковые полушария', { exact: true }).fill('40');
